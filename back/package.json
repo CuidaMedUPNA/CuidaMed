@@ -1,0 +1,15 @@
+{
+  "scripts": {
+    "dev": "nodemon --watch src --ext ts --exec tsx src/index.ts"
+  },
+  "dependencies": {
+    "fastify": "^5.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.4.0",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
+  }
+}
