@@ -1,0 +1,52 @@
+openapi: 3.1.1
+info:
+  title: CuidaMed API
+  version: 1.0.0
+  description: API para la aplicación CuidaMed
+servers:
+  - url: http://localhost:3000
+    description: Servidor de desarrollo
+paths:
+  /health:
+    get:
+      summary: Health check
+      operationId: healthCheck
+      responses:
+        '200':
+          description: Servidor funcionando
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "ok"
+  /users:
+    get:
+      summary: Obtener usuarios
+      operationId: getUsers
+      responses:
+        '200':
+          description: Lista de usuarios
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+      required:
+        - id
+        - name
+        - email

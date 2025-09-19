@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "build-docs": "npx @redocly/cli build-docs ./openapi.yaml -o ../docs/api.html"
+  },
+  "devDependencies": {
+    "@redocly/cli": "^2.1.4",
+    "openapi-typescript": "^7.9.1"
+  }
+}
