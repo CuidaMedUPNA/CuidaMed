@@ -1,0 +1,6 @@
+extends:
+  - minimal
+
+rules:
+  security-defined: off
+  no-server-example.com: off

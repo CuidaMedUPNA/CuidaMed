@@ -1,6 +1,11 @@
 {
+  "workspaces": [
+    "server",
+    "client"
+  ],
   "scripts": {
-    "build-docs": "npx @redocly/cli build-docs ./openapi.yaml -o ../docs/api.html"
+    "build-docs": "npx @redocly/cli build-docs ./openapi.yaml -o ../docs/api.html",
+    "build": "npm run build-docs"
   },
   "devDependencies": {
     "@redocly/cli": "^2.1.4",

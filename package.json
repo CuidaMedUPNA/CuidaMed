@@ -3,10 +3,13 @@
   "private": true,
   "workspaces": [
     "api",
+    "api/server",
+    "api/client",
     "back",
     "front"
   ],
   "scripts": {
-    "build-docs": "npm run build-docs --workspace=api"
+    "build-docs": "npm run build-docs --workspace=api",
+    "build": "npm run build --workspaces --if-present"
   }
 }
