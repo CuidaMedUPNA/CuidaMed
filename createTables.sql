@@ -14,7 +14,8 @@ CREATE TABLE medicamentos (
     pactivo VARCHAR(200) NOT NULL,
     foto TEXT,
     nombre_comercial VARCHAR(200) NOT NULL,
-    dosis VARCHAR(100)
+    dosis VARCHAR(100),
+    unidad VARCHAR(50)
 );
 
 CREATE TABLE tratamientos (
@@ -40,7 +41,6 @@ CREATE TABLE tomas (
     id_medicamento INT NOT NULL,
     id_usuario INT NOT NULL,
     dosis_toma VARCHAR(100),
-    unidad VARCHAR(50),
     hora TIME,
     FOREIGN KEY (id_medicamento) REFERENCES medicamentos(id) ON DELETE CASCADE,
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id) ON DELETE CASCADE
