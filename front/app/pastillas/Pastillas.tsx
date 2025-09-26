@@ -1,6 +1,5 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import Medicamento from "../../components/Medicamento";
-import React = require("react");
 
 const tomas = [
   { id: 1, nombre: "Paracetamol", hora: "08:00" },
@@ -38,36 +37,30 @@ export default function Pastillas() {
             <Medicamento key={toma.id} nombre={toma.nombre} hora={toma.hora} />
           ))}
         </View>
-        <TouchableOpacity
-          style={{
-            padding: 15,
-            borderRadius: 30,
-            margin: 20,
-          }}
-          onPress={() => {
-            // Navegar a la pantalla de a�adir medicamento
-          }}
-        >
-          <View
+        <View style={{ width: "100%", alignItems: "center", margin: 20 }}>
+          <TouchableOpacity
             style={{
-              position: "absolute",
-              left: 0,
-              right: 0,
-              top: 0,
-              bottom: 0,
+              padding: 15,
+              borderRadius: 30,
+              margin: 20,
+              backgroundColor: "#F23728",
             }}
-          ></View>
-          <Text
-            style={{
-              color: "#fff",
-              fontSize: 16,
-              fontWeight: "bold",
-              textAlign: "center",
+            onPress={() => {
+              // Navegar a la pantalla de añadir medicamento
             }}
           >
-            A�adir
-          </Text>
-        </TouchableOpacity>
+            <Text
+              style={{
+                color: "#fff",
+                fontSize: 16,
+                fontWeight: "bold",
+                textAlign: "center",
+              }}
+            >
+              Añadir
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
