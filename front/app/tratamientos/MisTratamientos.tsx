@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity } from "react-native";
-import Medicamento from "../../components/Medicamento";
+import { Medicamento } from "../../components/Medicamento";
 
 const tomas = [
   { id: 1, nombre: "Paracetamol", hora: "08:00" },
@@ -8,7 +8,7 @@ const tomas = [
   { id: 4, nombre: "Aspirina", hora: "22:00" },
 ];
 
-export default function Pastillas() {
+export default function MisTratamientos() {
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <View

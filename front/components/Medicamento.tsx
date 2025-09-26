@@ -6,7 +6,7 @@ export interface MedicamentoProps {
   hora: string;
 }
 
-const Medicamento: FC<MedicamentoProps> = ({ nombre, hora }) => {
+export const Medicamento: FC<MedicamentoProps> = ({ nombre, hora }) => {
   const momentos = [
     { key: "mañana", label: "M" },
     { key: "tarde", label: "T" },
@@ -88,5 +88,3 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
 });
-
-export default Medicamento;
