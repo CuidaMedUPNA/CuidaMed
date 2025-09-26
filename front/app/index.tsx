@@ -4,7 +4,6 @@ import {
   QueryClientProvider,
   useQuery,
 } from "@tanstack/react-query";
-import React from "react";
 import { View, Text } from "react-native";
 
 const queryClient = new QueryClient();
