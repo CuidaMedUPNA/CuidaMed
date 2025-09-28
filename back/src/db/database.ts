@@ -4,10 +4,10 @@ import { Database } from "./types";
 
 const dialect = new PostgresDialect({
   pool: new Pool({
-    database: process.env.DATABASE_URL,
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 5432,
+    connectionString: process.env.DB_URI,
+    ssl: {
+      rejectUnauthorized: false, // 👈 obligatorio en Heroku
+    },
   }),
 });
 

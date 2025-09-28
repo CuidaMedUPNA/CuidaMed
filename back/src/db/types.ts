@@ -1,11 +1,11 @@
 import { Generated, Insertable, Selectable, Updateable } from "kysely";
 
 export interface Database {
-  usuarios: Usuario;
-  medicamentos: Medicamento;
-  tratamientos: Tratamiento;
-  medicamentos_tratamientos: MedicamentoTratamiento;
-  tomas: Toma;
+  usuarios: UsuarioTable;
+  medicamentos: MedicamentoTable;
+  tratamientos: TratamientoTable;
+  medicamentos_tratamientos: MedicamentoTratamientoTable;
+  tomas: TomaTable;
 }
 
 export interface UsuarioTable {
