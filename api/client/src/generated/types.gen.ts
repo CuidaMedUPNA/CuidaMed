@@ -10,6 +10,18 @@ export type User = {
     email: string;
 };
 
+export type Medicine = {
+    id: string;
+    name: string;
+    dosage: string;
+};
+
+export type Treatment = {
+    id?: string;
+    name: string;
+    userId: string;
+};
+
 export type HealthCheckData = {
     body?: never;
     path?: never;
@@ -63,3 +75,39 @@ export type GetMedicationTakeResponses = {
 };
 
 export type GetMedicationTakeResponse = GetMedicationTakeResponses[keyof GetMedicationTakeResponses];
+
+export type CreateTreatmentData = {
+    /**
+     * Datos del tratamiento a crear
+     */
+    body: Treatment;
+    path?: never;
+    query?: never;
+    url: '/treatments';
+};
+
+export type CreateTreatmentErrors = {
+    /**
+     * Solicitud incorrecta
+     */
+    400: {
+        error?: string;
+    };
+    /**
+     * Error interno del servidor
+     */
+    500: {
+        error?: string;
+    };
+};
+
+export type CreateTreatmentError = CreateTreatmentErrors[keyof CreateTreatmentErrors];
+
+export type CreateTreatmentResponses = {
+    /**
+     * Tratamiento creado
+     */
+    200: Treatment;
+};
+
+export type CreateTreatmentResponse = CreateTreatmentResponses[keyof CreateTreatmentResponses];

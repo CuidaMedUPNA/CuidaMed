@@ -2,7 +2,7 @@
 
 import type { RouteHandler } from 'fastify';
 
-import type { GetMedicationTakeResponses, GetUsersResponses, HealthCheckResponses } from './types.gen';
+import type { CreateTreatmentData, CreateTreatmentErrors, CreateTreatmentResponses, GetMedicationTakeResponses, GetUsersResponses, HealthCheckResponses } from './types.gen';
 
 export type RouteHandlers = {
     healthCheck: RouteHandler<{
@@ -13,5 +13,9 @@ export type RouteHandlers = {
     }>;
     getMedicationTake: RouteHandler<{
         Reply: GetMedicationTakeResponses;
+    }>;
+    createTreatment: RouteHandler<{
+        Body: CreateTreatmentData['body'];
+        Reply: CreateTreatmentErrors & CreateTreatmentResponses;
     }>;
 };
