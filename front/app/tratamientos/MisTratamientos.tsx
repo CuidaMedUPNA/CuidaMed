@@ -2,6 +2,7 @@ import { Medicamento } from "@/components/Medicamento";
 import { useState } from "react";
 import { View, TouchableOpacity, Modal, Text } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { useTranslation } from "react-i18next";
 
 const tomas = [
   { id: 1, nombre: "Paracetamol", hora: "08:00" },
@@ -12,7 +13,8 @@ const tomas = [
 
 export default function MisTratamientos() {
   const [modalVisible, setModalVisible] = useState(false);
-
+  const { t } = useTranslation();
+  
   return (
     <SafeAreaProvider>
       <Modal
@@ -55,7 +57,7 @@ export default function MisTratamientos() {
           }}
         >
           <Text style={{ fontSize: 24, fontWeight: "bold", marginBottom: 20 }}>
-            Mis Medicamentos
+            {t("treatmentsTitle")}
           </Text>
           <View
             style={{
@@ -90,7 +92,7 @@ export default function MisTratamientos() {
                   textAlign: "center",
                 }}
               >
-                Añadir
+                {t("treatments.addMedicationButton")}
               </Text>
             </TouchableOpacity>
           </View>
