@@ -61,8 +61,6 @@ Esto instalará todas las dependencias y construirá el paquete de la API necesa
 
 ## 📚 Documentación de la API
 
-Para generar la documentación estática de la API ejecuta desde el root:
+La documentación de la API se genera automáticamente al hacer `npm run build` desde la raíz del monorepo.
 
-```bash
-npm run build-docs
-```
+Para consultarla se recomienda tener el back lanzado (`npm run dev -w back` desde la raíz) y navegar a `localhost:3000/documentation`, aunque también se puede abrir el fichero situado en `/docs/api.html`
