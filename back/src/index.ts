@@ -4,13 +4,6 @@ import { handlers } from "./handlers";
 import openapiGlue from "fastify-openapi-glue";
 import fastifyCors from "@fastify/cors";
 
-console.log("DB CONFIG =>", {
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  user: process.env.DB_USER,
-  db: process.env.DB_NAME,
-});
-
 const fastify = Fastify({ logger: true });
 
 const path = require("path");
