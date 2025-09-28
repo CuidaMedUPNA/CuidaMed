@@ -1,4 +1,5 @@
 import { FC } from "react";
+import { useTranslation } from "react-i18next";
 import { Modal, View, TouchableOpacity, TextInput, Text } from "react-native";
 
 export interface ModalState {
@@ -7,6 +8,7 @@ export interface ModalState {
 }
 
 export const ModalNewTreatment: FC<ModalState> = ({ visible, onClose }) => {
+  const { t } = useTranslation();
   return (
     <Modal
       visible={visible}
@@ -54,7 +56,7 @@ export const ModalNewTreatment: FC<ModalState> = ({ visible, onClose }) => {
               shadowRadius: 4,
             }}
             onPress={() => onClose()}
-            accessibilityLabel="Cerrar"
+            accessibilityLabel={t("treatments.closeButton")}
           >
             <Text style={{ color: "#fff", fontWeight: "bold", fontSize: 18 }}>
               X
@@ -69,10 +71,10 @@ export const ModalNewTreatment: FC<ModalState> = ({ visible, onClose }) => {
               letterSpacing: 0.5,
             }}
           >
-            Añadir nuevo tratamiento
+            {t("addTreatment")}
           </Text>
           <TextInput
-            placeholder="Nombre del tratamiento"
+            placeholder={t("treatments.treatmentNamePlaceholder")}
             placeholderTextColor="#aaa"
             style={{
               height: 48,
@@ -103,7 +105,7 @@ export const ModalNewTreatment: FC<ModalState> = ({ visible, onClose }) => {
             }}
           >
             <Text style={{ color: "#fff", fontWeight: "bold", fontSize: 16 }}>
-              Añadir
+              {t("treatments.addMedicationButton")}
             </Text>
           </TouchableOpacity>
         </View>
