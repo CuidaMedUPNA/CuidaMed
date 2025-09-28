@@ -50,7 +50,7 @@ Esto instalará todas las dependencias y construirá el paquete de la API necesa
    Esto generará los tipos, clientes y handlers actualizados para el nuevo endpoint.
 
 3. **Implementa la lógica del endpoint:**  
-   Añade la implementación correspondiente en el backend (`api/server` o `back` según tu arquitectura).
+   Añade la implementación correspondiente en los handlers del backend `/back/src/handlers.ts`
 
 ---
 
@@ -58,7 +58,6 @@ Esto instalará todas las dependencias y construirá el paquete de la API necesa
 
 - **Siempre ejecuta `npm run build` tras modificar el OpenAPI** para mantener los tipos y clientes sincronizados.
 - **Sigue el estándar OpenAPI 3.1.1** al modificar el archivo YAML.
-- **Consulta la documentación interna** para detalles sobre la estructura de
 
 ## 📚 Documentación de la API
 
