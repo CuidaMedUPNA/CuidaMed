@@ -9,7 +9,6 @@
     "front"
   ],
   "scripts": {
-    "build-docs": "npm run build-docs --workspace=api",
     "build": "npm run build --workspaces --if-present"
   }
 }
