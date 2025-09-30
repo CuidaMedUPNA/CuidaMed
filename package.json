@@ -1,0 +1,14 @@
+{
+  "name": "cuidamed-monorepo",
+  "private": true,
+  "workspaces": [
+    "api",
+    "api/server",
+    "api/client",
+    "back",
+    "front"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present"
+  }
+}
