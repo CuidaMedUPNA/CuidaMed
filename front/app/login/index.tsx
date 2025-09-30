@@ -1,14 +1,25 @@
 import React from "react";
-import { View,Text, Image, TextInput, Pressable, KeyboardAvoidingView, ScrollView, Platform, } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  TextInput,
+  Pressable,
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
+} from "react-native";
 import { useRouter } from "expo-router";
+import { useTranslation } from "react-i18next";
 
 const myImage = require("../../assets/images/logo.png");
 
 export default function LoginScreen() {
   const router = useRouter();
 
+  const { t } = useTranslation();
+
   return (
-    // Se usa para que al escribir en los textsFields no se tape el contenido
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -37,7 +48,7 @@ export default function LoginScreen() {
           }}
         >
           <TextInput
-            placeholder="Usuario"
+            placeholder={t("login.usuarioPlaceholder")}
             style={{
               backgroundColor: "lightgray",
               borderRadius: 9,
@@ -56,7 +67,7 @@ export default function LoginScreen() {
           }}
         >
           <TextInput
-            placeholder="Contraseña"
+            placeholder={t("login.passwordPlaceholder")}
             secureTextEntry
             style={{
               backgroundColor: "lightgray",
@@ -75,7 +86,7 @@ export default function LoginScreen() {
             marginRight: 70,
           }}
         >
-          <Text>¿Olvidaste tu contraseña?</Text>
+          <Text>{t("login.forgotPassword")}</Text>
         </View>
 
         <Pressable
@@ -88,7 +99,7 @@ export default function LoginScreen() {
             justifyContent: "center",
             alignItems: "center",
           }}
-          onPress={() => router.push("/")} // Sin más para ir a la pantalla principal, falta por implementar el login
+          onPress={() => router.push("/")}
         >
           <Text
             style={{
@@ -98,12 +109,12 @@ export default function LoginScreen() {
               width: "100%",
             }}
           >
-            Iniciar sesión
+            {t("login.loginButton")}
           </Text>
         </Pressable>
 
         <View style={{ marginTop: 20 }}>
-          <Text>¿No tienes una cuenta? Regístrate</Text>
+          <Text>{t("login.noAccount")}</Text>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

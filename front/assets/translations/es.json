@@ -16,5 +16,13 @@
       "isPermanent": "Es permanente",
       "badFillFieldsAlert": "Por favor, rellena todos los campos correctamente. La fecha de inicio no puede ser posterior a la fecha de fin."
     }
-  }
+  },
+  "login": {
+    "usuarioPlaceholder": "Usuario",
+    "emailPlaceholder": "Correo electrónico",
+    "passwordPlaceholder": "Contraseña",
+    "loginButton": "Iniciar sesión",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "noAccount": "¿No tienes una cuenta? Regístrate"
+ }
 }
