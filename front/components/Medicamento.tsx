@@ -1,12 +1,11 @@
-import { FC } from "react";
 import { View, Text, StyleSheet } from "react-native";
 
-export interface MedicamentoProps {
+export interface Props {
   nombre: string;
   hora: string;
 }
 
-export const Medicamento: FC<MedicamentoProps> = ({ nombre, hora }) => {
+export const Medicamento = ({ nombre, hora }: Props) => {
   const momentos = [
     { key: "mañana", label: "M" },
     { key: "tarde", label: "T" },

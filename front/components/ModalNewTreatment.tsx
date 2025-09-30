@@ -1,13 +1,12 @@
-import { FC } from "react";
 import { useTranslation } from "react-i18next";
 import { Modal, View, TouchableOpacity, TextInput, Text } from "react-native";
 
-export interface ModalState {
+export interface Props {
   visible: boolean;
   onClose: () => void;
 }
 
-export const ModalNewTreatment: FC<ModalState> = ({ visible, onClose }) => {
+export const ModalNewTreatment = ({ visible, onClose }: Props) => {
   const { t } = useTranslation();
   return (
     <Modal
