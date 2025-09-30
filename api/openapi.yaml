@@ -6,6 +6,7 @@ info:
 servers:
   - url: http://localhost:3000
     description: Servidor de desarrollo
+
 paths:
   /health:
     get:
@@ -22,39 +23,7 @@ paths:
                   status:
                     type: string
                     example: "ok"
-  /users:
-    get:
-      summary: Obtener usuarios
-      operationId: getUsers
-      responses:
-        "200":
-          description: Lista de usuarios
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/User"
-  /take:
-    get:
-      summary: Toma de medicamento
-      operationId: getMedicationTake
-      responses:
-        "200":
-          description: Información de la toma de medicamento
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  medicationId:
-                    type: string
-                  time:
-                    type: string
-                    format: date-time
-                  status:
-                    type: string
-                    enum: [taken, missed, pending]
+
   /treatments:
     post:
       summary: Crear tratamiento
@@ -96,34 +65,6 @@ paths:
 
 components:
   schemas:
-    User:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        email:
-          type: string
-      required:
-        - id
-        - name
-        - email
-
-    Medicine:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        dosage:
-          type: string
-      required:
-        - id
-        - name
-        - dosage
-
     Treatment:
       type: object
       properties:
