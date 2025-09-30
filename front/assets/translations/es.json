@@ -1,0 +1,16 @@
+{
+  "landingPageTitle": "Pantalla principal",
+  "welcome": "🚀 Bienvenido a la app",
+  "treatmentsTitle": "Mis Tratamientos",
+  "treatments": {
+    "addMedicationButton": "Añadir"
+  },
+  "login": {
+    "usuarioPlaceholder": "Usuario",
+    "emailPlaceholder": "Correo electrónico",
+    "passwordPlaceholder": "Contraseña",
+    "loginButton": "Iniciar sesión",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "noAccount": "¿No tienes una cuenta? Regístrate"
+  }
+}
