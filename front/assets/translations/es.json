@@ -2,8 +2,10 @@
   "landingPageTitle": "Pantalla principal",
   "welcome": "🚀 Bienvenido a la app",
   "treatmentsTitle": "Mis Tratamientos",
+  "addTreatment": "Añadir nuevo tratamiento",
   "treatments": {
-    "addMedicationButton": "Añadir"
+    "addMedicationButton": "Añadir",
+    "closeButton": "Cerrar",
+    "treatmentNamePlaceholder": "Nombre del tratamiento"
   }
-
 }

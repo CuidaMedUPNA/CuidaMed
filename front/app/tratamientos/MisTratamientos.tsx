@@ -1,6 +1,7 @@
 import { Medicamento } from "@/components/Medicamento";
+import { ModalNewTreatment } from "@/components/ModalNewTreatment";
 import { useState } from "react";
-import { View, TouchableOpacity, Modal, Text } from "react-native";
+import { View, TouchableOpacity, Text } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 
@@ -14,35 +15,13 @@ const tomas = [
 export default function MisTratamientos() {
   const [modalVisible, setModalVisible] = useState(false);
   const { t } = useTranslation();
-  
+
   return (
     <SafeAreaProvider>
-      <Modal
+      <ModalNewTreatment
         visible={modalVisible}
-        transparent={true}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: "rgba(0,0,0,0.8)",
-          }}
-        >
-          <View
-            style={{
-              height: "50%",
-              width: "50%",
-              backgroundColor: "#fff",
-              borderRadius: 20,
-              padding: 20,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          ></View>
-        </View>
-      </Modal>
+        onClose={() => setModalVisible(false)}
+      />
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <View
           style={{
@@ -82,7 +61,9 @@ export default function MisTratamientos() {
                 margin: 20,
                 backgroundColor: "#F23728",
               }}
-              onPress={() => setModalVisible(true)}
+              onPress={() => {
+                setModalVisible(true);
+              }}
             >
               <Text
                 style={{
