@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { GetMedicationTakeData, GetMedicationTakeResponses, GetUsersData, GetUsersResponses, HealthCheckData, HealthCheckResponses } from './types.gen';
+import type { CreateTreatmentData, CreateTreatmentErrors, CreateTreatmentResponses, GetMedicationTakeData, GetMedicationTakeResponses, GetUsersData, GetUsersResponses, HealthCheckData, HealthCheckResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -45,5 +45,19 @@ export const getMedicationTake = <ThrowOnError extends boolean = false>(options?
     return (options?.client ?? client).get<GetMedicationTakeResponses, unknown, ThrowOnError>({
         url: '/take',
         ...options
+    });
+};
+
+/**
+ * Crear tratamiento
+ */
+export const createTreatment = <ThrowOnError extends boolean = false>(options: Options<CreateTreatmentData, ThrowOnError>) => {
+    return (options.client ?? client).post<CreateTreatmentResponses, CreateTreatmentErrors, ThrowOnError>({
+        url: '/treatments',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
     });
 };
