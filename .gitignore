@@ -31,11 +31,7 @@ yarn-error.*
 *.pem
 
 # local env files
-<<<<<<< HEAD
 **/.env*
-=======
-.env
->>>>>>> 1868016 ([#27] - Implementacion endpoint creacion tratamiento)
 
 # typescript
 *.tsbuildinfo
