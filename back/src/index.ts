@@ -1,3 +1,4 @@
+import "dotenv/config";
 import Fastify from "fastify";
 import { handlers } from "./handlers";
 import openapiGlue from "fastify-openapi-glue";
