@@ -24,12 +24,11 @@ export const handlers: RouteHandlers = {
   createTreatment: async (request, reply) => {
     const treatment = request.body;
 
-    console.log("Received treatment:", treatment);
     const newTreatment: NewTratamiento = {
       nombre: treatment.name,
       id_usuario: Number(treatment.userId),
     };
-    console.log("New treatment to insert:", newTreatment);
+
     await tp.newTreatment(newTreatment);
     await reply.status(200).send(treatment);
   },
