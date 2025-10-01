@@ -1,0 +1,5 @@
+DROP TABLE IF EXISTS intake;
+DROP TABLE IF EXISTS medicine_treatment;
+DROP TABLE IF EXISTS treatment;
+DROP TABLE IF EXISTS medicine;
+DROP TABLE IF EXISTS "user";
