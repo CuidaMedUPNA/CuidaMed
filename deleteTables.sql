@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS tomas;
-DROP TABLE IF EXISTS medicamentos_tratamientos;
-DROP TABLE IF EXISTS tratamientos;
-DROP TABLE IF EXISTS medicamentos;
-DROP TABLE IF EXISTS usuarios;
+DROP TABLE IF EXISTS intake;
+DROP TABLE IF EXISTS medicine_treatment;
+DROP TABLE IF EXISTS treatment;
+DROP TABLE IF EXISTS medicine;
+DROP TABLE IF EXISTS "user";

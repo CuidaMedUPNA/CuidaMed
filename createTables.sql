@@ -1,47 +1,52 @@
-
-CREATE TABLE usuarios (
+CREATE TABLE "user" (
     id SERIAL PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
+    name VARCHAR(100) NOT NULL,
     email VARCHAR(150) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
-    fecha_nacimiento DATE,
-    foto TEXT,
-    sexo VARCHAR(10)
+    birthdate DATE,
+    profile_picture TEXT,
+    gender VARCHAR(10)
 );
 
-CREATE TABLE medicamentos (
+
+CREATE TABLE medicine (
     id SERIAL PRIMARY KEY,
-    pactivo VARCHAR(200) NOT NULL,
-    foto TEXT,
-    nombre_comercial VARCHAR(200) NOT NULL,
-    dosis VARCHAR(100),
-    unidad VARCHAR(50)
+    pactive VARCHAR(200) NOT NULL,
+    picture TEXT,
+    trade_name VARCHAR(200) NOT NULL,
+    dose VARCHAR(100),
+    unit VARCHAR(50)
 );
 
-CREATE TABLE tratamientos (
+
+CREATE TABLE treatment (
     id SERIAL PRIMARY KEY,
-    nombre VARCHAR(200) NOT NULL,
-    id_usuario INT NOT NULL,
-    FOREIGN KEY (id_usuario) REFERENCES usuarios(id) ON DELETE CASCADE
+    name VARCHAR(200) NOT NULL,
+    user_id INT NOT NULL,
+    start_date DATE,
+    end_date DATE,
+    FOREIGN KEY (user_id) REFERENCES "user"(id) ON DELETE CASCADE
 );
 
-CREATE TABLE medicamentos_tratamientos (
-    id_medicamento INT NOT NULL,
-    id_tratamiento INT NOT NULL,
-    PRIMARY KEY (id_medicamento, id_tratamiento),
-    FOREIGN KEY (id_medicamento) REFERENCES medicamentos(id) ON DELETE CASCADE,
-    FOREIGN KEY (id_tratamiento) REFERENCES tratamientos(id) ON DELETE CASCADE
+
+CREATE TABLE medicine_treatment (
+    medicine_id INT NOT NULL,
+    treatment_id INT NOT NULL,
+    PRIMARY KEY (medicine_id, treatment_id),
+    FOREIGN KEY (medicine_id) REFERENCES medicine(id) ON DELETE CASCADE,
+    FOREIGN KEY (treatment_id) REFERENCES treatment(id) ON DELETE CASCADE
 );
 
-CREATE TABLE tomas (
+
+CREATE TABLE intake (
     id SERIAL PRIMARY KEY,
-    fecha_ini DATE NOT NULL,
-    fecha_fin DATE,
-    frecuencia VARCHAR(100) NOT NULL,
-    id_medicamento INT NOT NULL,
-    id_usuario INT NOT NULL,
-    dosis_toma VARCHAR(100),
-    hora TIME,
-    FOREIGN KEY (id_medicamento) REFERENCES medicamentos(id) ON DELETE CASCADE,
-    FOREIGN KEY (id_usuario) REFERENCES usuarios(id) ON DELETE CASCADE
+    start_date DATE NOT NULL,
+    end_date DATE,
+    frequency VARCHAR(100) NOT NULL,
+    medicine_id INT NOT NULL,
+    user_id INT NOT NULL,
+    dose_intake VARCHAR(100),
+    hour TIME,
+    FOREIGN KEY (medicine_id) REFERENCES medicine(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES "user"(id) ON DELETE CASCADE
 );
