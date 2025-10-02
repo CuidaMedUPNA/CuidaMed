@@ -7,6 +7,8 @@ export type ClientOptions = {
 export type Treatment = {
     name: string;
     userId: number;
+    startDate: string;
+    endDate: string;
 };
 
 export type HealthCheckData = {

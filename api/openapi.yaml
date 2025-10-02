@@ -111,6 +111,14 @@ components:
           type: string
         userId:
           type: number
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
       required:
         - name
         - userId
+        - startDate
+        - endDate
