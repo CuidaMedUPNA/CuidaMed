@@ -4,22 +4,11 @@ export type ClientOptions = {
     baseUrl: 'http://localhost:3000' | (string & {});
 };
 
-export type User = {
-    id: string;
-    name: string;
-    email: string;
-};
-
-export type Medicine = {
-    id: string;
-    name: string;
-    dosage: string;
-};
-
 export type Treatment = {
-    id?: string;
     name: string;
-    userId: string;
+    userId: number;
+    startDate: string;
+    endDate: string;
 };
 
 export type HealthCheckData = {
@@ -40,41 +29,43 @@ export type HealthCheckResponses = {
 
 export type HealthCheckResponse = HealthCheckResponses[keyof HealthCheckResponses];
 
-export type GetUsersData = {
+export type GetTreatmentsData = {
     body?: never;
     path?: never;
-    query?: never;
-    url: '/users';
+    query: {
+        /**
+         * ID del usuario para filtrar tratamientos
+         */
+        userId: number;
+    };
+    url: '/treatments';
 };
 
-export type GetUsersResponses = {
+export type GetTreatmentsErrors = {
     /**
-     * Lista de usuarios
+     * Solicitud incorrecta
      */
-    200: Array<User>;
-};
-
-export type GetUsersResponse = GetUsersResponses[keyof GetUsersResponses];
-
-export type GetMedicationTakeData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/take';
-};
-
-export type GetMedicationTakeResponses = {
+    400: {
+        error?: string;
+    };
     /**
-     * Información de la toma de medicamento
+     * Error interno del servidor
      */
-    200: {
-        medicationId?: string;
-        time?: string;
-        status?: 'taken' | 'missed' | 'pending';
+    500: {
+        error?: string;
     };
 };
 
-export type GetMedicationTakeResponse = GetMedicationTakeResponses[keyof GetMedicationTakeResponses];
+export type GetTreatmentsError = GetTreatmentsErrors[keyof GetTreatmentsErrors];
+
+export type GetTreatmentsResponses = {
+    /**
+     * Lista de tratamientos
+     */
+    200: Array<Treatment>;
+};
+
+export type GetTreatmentsResponse = GetTreatmentsResponses[keyof GetTreatmentsResponses];
 
 export type CreateTreatmentData = {
     /**

@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { CreateTreatmentData, CreateTreatmentErrors, CreateTreatmentResponses, GetMedicationTakeData, GetMedicationTakeResponses, GetUsersData, GetUsersResponses, HealthCheckData, HealthCheckResponses } from './types.gen';
+import type { CreateTreatmentData, CreateTreatmentErrors, CreateTreatmentResponses, GetTreatmentsData, GetTreatmentsErrors, GetTreatmentsResponses, HealthCheckData, HealthCheckResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -29,21 +29,11 @@ export const healthCheck = <ThrowOnError extends boolean = false>(options?: Opti
 };
 
 /**
- * Obtener usuarios
+ * Obtener todos los tratamientos de un usuario
  */
-export const getUsers = <ThrowOnError extends boolean = false>(options?: Options<GetUsersData, ThrowOnError>) => {
-    return (options?.client ?? client).get<GetUsersResponses, unknown, ThrowOnError>({
-        url: '/users',
-        ...options
-    });
-};
-
-/**
- * Toma de medicamento
- */
-export const getMedicationTake = <ThrowOnError extends boolean = false>(options?: Options<GetMedicationTakeData, ThrowOnError>) => {
-    return (options?.client ?? client).get<GetMedicationTakeResponses, unknown, ThrowOnError>({
-        url: '/take',
+export const getTreatments = <ThrowOnError extends boolean = false>(options: Options<GetTreatmentsData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetTreatmentsResponses, GetTreatmentsErrors, ThrowOnError>({
+        url: '/treatments',
         ...options
     });
 };

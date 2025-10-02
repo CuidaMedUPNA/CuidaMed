@@ -3,8 +3,8 @@
 import { queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { createTreatment, getMedicationTake, getUsers, healthCheck, type Options } from '../sdk.gen';
-import type { CreateTreatmentData, CreateTreatmentError, CreateTreatmentResponse, GetMedicationTakeData, GetUsersData, HealthCheckData } from '../types.gen';
+import { createTreatment, getTreatments, healthCheck, type Options } from '../sdk.gen';
+import type { CreateTreatmentData, CreateTreatmentError, CreateTreatmentResponse, GetTreatmentsData, HealthCheckData } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -61,15 +61,15 @@ export const healthCheckOptions = (options?: Options<HealthCheckData>) => {
     });
 };
 
-export const getUsersQueryKey = (options?: Options<GetUsersData>) => createQueryKey('getUsers', options);
+export const getTreatmentsQueryKey = (options: Options<GetTreatmentsData>) => createQueryKey('getTreatments', options);
 
 /**
- * Obtener usuarios
+ * Obtener todos los tratamientos de un usuario
  */
-export const getUsersOptions = (options?: Options<GetUsersData>) => {
+export const getTreatmentsOptions = (options: Options<GetTreatmentsData>) => {
     return queryOptions({
         queryFn: async ({ queryKey, signal }) => {
-            const { data } = await getUsers({
+            const { data } = await getTreatments({
                 ...options,
                 ...queryKey[0],
                 signal,
@@ -77,27 +77,7 @@ export const getUsersOptions = (options?: Options<GetUsersData>) => {
             });
             return data;
         },
-        queryKey: getUsersQueryKey(options)
-    });
-};
-
-export const getMedicationTakeQueryKey = (options?: Options<GetMedicationTakeData>) => createQueryKey('getMedicationTake', options);
-
-/**
- * Toma de medicamento
- */
-export const getMedicationTakeOptions = (options?: Options<GetMedicationTakeData>) => {
-    return queryOptions({
-        queryFn: async ({ queryKey, signal }) => {
-            const { data } = await getMedicationTake({
-                ...options,
-                ...queryKey[0],
-                signal,
-                throwOnError: true
-            });
-            return data;
-        },
-        queryKey: getMedicationTakeQueryKey(options)
+        queryKey: getTreatmentsQueryKey(options)
     });
 };
 

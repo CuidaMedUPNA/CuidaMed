@@ -25,6 +25,45 @@ paths:
                     example: "ok"
 
   /treatments:
+    get:
+      summary: Obtener todos los tratamientos de un usuario
+      operationId: getTreatments
+      parameters:
+        - in: query
+          name: userId
+          schema:
+            type: number
+          required: true
+          description: ID del usuario para filtrar tratamientos
+      responses:
+        "200":
+          description: Lista de tratamientos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Treatment"
+        "400":
+          description: Solicitud incorrecta
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Bad Request"
+        "500":
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Internal Server Error"
     post:
       summary: Crear tratamiento
       operationId: createTreatment
@@ -71,7 +110,15 @@ components:
         name:
           type: string
         userId:
+          type: number
+        startDate:
           type: string
+          format: date
+        endDate:
+          type: string
+          format: date
       required:
         - name
         - userId
+        - startDate
+        - endDate
