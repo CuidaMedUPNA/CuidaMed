@@ -10,9 +10,5 @@
   ],
   "scripts": {
     "build": "npm run build --workspaces --if-present"
-  },
-  "dependencies": {
-    "kysely": "^0.28.7",
-    "pg": "^8.16.3"
   }
 }
