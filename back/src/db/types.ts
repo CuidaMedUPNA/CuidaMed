@@ -1,71 +1,72 @@
 import { Generated, Insertable, Selectable, Updateable } from "kysely";
 
 export interface Database {
-  usuarios: UsuarioTable;
-  medicamentos: MedicamentoTable;
-  tratamientos: TratamientoTable;
-  medicamentos_tratamientos: MedicamentoTratamientoTable;
-  tomas: TomaTable;
+  user: UserTable;
+  medicine: MedicineTable;
+  treatment: TreatmentTable;
+  medicine_treatment: MedicineTreatmentTable;
+  intake: IntakeTable;
 }
 
-export interface UsuarioTable {
+export interface UserTable {
   id: Generated<number>;
-  nombre: string;
+  name: string;
   email: string;
   password: string;
-  fecha_nacimiento: Date | null;
-  foto: string | null;
-  sexo: string | null;
+  birthdate: Date | null;
+  profile_picture: string | null;
+  gender: string | null;
 }
 
-export type Usuario = Selectable<UsuarioTable>;
-export type NewUsuario = Insertable<UsuarioTable>;
-export type UsuarioUpdate = Updateable<UsuarioTable>;
+export type User = Selectable<UserTable>;
+export type NewUser = Insertable<UserTable>;
+export type UserUpdate = Updateable<UserTable>;
 
-export interface MedicamentoTable {
+export interface MedicineTable {
   id: Generated<number>;
-  pactivo: string;
-  foto: string | null;
-  nombre_comercial: string;
-  dosis: string | null;
+  pactive: string;
+  picture: string | null;
+  trade_name: string;
+  dose: string | null;
+  unit: string | null;
 }
 
-export type Medicamento = Selectable<MedicamentoTable>;
-export type NewMedicamento = Insertable<MedicamentoTable>;
-export type MedicamentoUpdate = Updateable<MedicamentoTable>;
+export type Medicine = Selectable<MedicineTable>;
+export type NewMedicine = Insertable<MedicineTable>;
+export type MedicineUpdate = Updateable<MedicineTable>;
 
-export interface TratamientoTable {
+export interface TreatmentTable {
   id: Generated<number>;
-  nombre: string;
-  id_usuario: number;
+  name: string;
+  user_id: number;
+  start_date: Date | null;
+  end_date: Date | null;
 }
 
-export type Tratamiento = Selectable<TratamientoTable>;
-export type NewTratamiento = Insertable<TratamientoTable>;
-export type TratamientoUpdate = Updateable<TratamientoTable>;
+export type Treatment = Selectable<TreatmentTable>;
+export type NewTreatment = Insertable<TreatmentTable>;
+export type TreatmentUpdate = Updateable<TreatmentTable>;
 
-export interface MedicamentoTratamientoTable {
-  id_medicamento: number;
-  id_tratamiento: number;
+export interface MedicineTreatmentTable {
+  medicine_id: number;
+  treatment_id: number;
 }
 
-export type MedicamentoTratamiento = Selectable<MedicamentoTratamientoTable>;
-export type NewMedicamentoTratamiento = Insertable<MedicamentoTratamientoTable>;
-export type MedicamentoTratamientoUpdate =
-  Updateable<MedicamentoTratamientoTable>;
+export type MedicineTreatment = Selectable<MedicineTreatmentTable>;
+export type NewMedicineTreatment = Insertable<MedicineTreatmentTable>;
+export type MedicineTreatmentUpdate = Updateable<MedicineTreatmentTable>;
 
-export interface TomaTable {
+export interface IntakeTable {
   id: Generated<number>;
-  fecha_ini: Date;
-  fecha_fin: Date | null;
-  frecuencia: string;
-  id_medicamento: number;
-  id_usuario: number;
-  dosis_toma: string | null;
-  unidad: string | null;
-  hora: string | null; // `TIME` en pg → string en JS
+  start_date: Date;
+  end_date: Date | null;
+  frequency: string;
+  medicine_id: number;
+  user_id: number;
+  dose_intake: string | null;
+  hour: string | null;
 }
 
-export type Toma = Selectable<TomaTable>;
-export type NewToma = Insertable<TomaTable>;
-export type TomaUpdate = Updateable<TomaTable>;
+export type Intake = Selectable<IntakeTable>;
+export type NewIntake = Insertable<IntakeTable>;
+export type IntakeUpdate = Updateable<IntakeTable>;
