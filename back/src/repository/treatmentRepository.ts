@@ -1,9 +1,9 @@
 import { db } from "../db/database";
-import { NewTratamiento } from "../db/types";
+import { NewTreatment } from "../db/types";
 
-export async function insertTreatment(treatment: NewTratamiento) {
+export async function insertTreatment(treatment: NewTreatment) {
   return await db
-    .insertInto("treatments")
+    .insertInto("treatment")
     .values(treatment)
     .returningAll()
     .executeTakeFirstOrThrow();
@@ -11,8 +11,8 @@ export async function insertTreatment(treatment: NewTratamiento) {
 
 export async function getTreatmentsByUserId(userId: number) {
   return await db
-    .selectFrom("tratamientos")
+    .selectFrom("treatment")
     .selectAll()
-    .where("id_usuario", "=", userId)
+    .where("user_id", "=", userId)
     .execute();
 }

@@ -1,5 +1,5 @@
 import { RouteHandlers } from "@cuidamed-api/server";
-import { NewTratamiento } from "./db/types";
+import { NewTreatment } from "./db/types";
 import {
   insertTreatment,
   getTreatmentsByUserId,
@@ -13,9 +13,9 @@ export const handlers: RouteHandlers = {
   createTreatment: async (request, reply) => {
     const treatment = request.body;
 
-    const newTreatment: NewTratamiento = {
-      nombre: treatment.name,
-      id_usuario: Number(treatment.userId),
+    const newTreatment: NewTreatment = {
+      name: treatment.name,
+      user_id: Number(treatment.userId),
     };
 
     await insertTreatment(newTreatment);
