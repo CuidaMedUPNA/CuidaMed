@@ -10,6 +10,7 @@
     "build": "npx @hey-api/openapi-ts && tsup"
   },
   "devDependencies": {
+    "@hey-api/openapi-ts": "^0.84.4",
     "tsup": "^8.5.0"
   },
   "dependencies": {
