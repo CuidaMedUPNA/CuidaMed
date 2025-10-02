@@ -25,9 +25,8 @@ export const handlers: RouteHandlers = {
     const userId = request.query.userId;
 
     console.log("User ID: ", userId);
-
     const treatments = await getTreatmentsByUserId(userId);
 
-    console.log("Tratamientos: ", treatments);
+    await reply.status(200).send(treatments);
   },
 };
