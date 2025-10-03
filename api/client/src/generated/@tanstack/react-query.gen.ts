@@ -3,8 +3,8 @@
 import { queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { createTreatment, getTreatments, healthCheck, type Options } from '../sdk.gen';
-import type { CreateTreatmentData, CreateTreatmentError, CreateTreatmentResponse, GetTreatmentsData, HealthCheckData } from '../types.gen';
+import { createMedicineTreatment, createTreatment, getTreatments, healthCheck, type Options } from '../sdk.gen';
+import type { CreateMedicineTreatmentData, CreateMedicineTreatmentError, CreateMedicineTreatmentResponse, CreateTreatmentData, CreateTreatmentError, CreateTreatmentResponse, GetTreatmentsData, HealthCheckData } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -88,6 +88,23 @@ export const createTreatmentMutation = (options?: Partial<Options<CreateTreatmen
     const mutationOptions: UseMutationOptions<CreateTreatmentResponse, CreateTreatmentError, Options<CreateTreatmentData>> = {
         mutationFn: async (fnOptions) => {
             const { data } = await createTreatment({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Asociar medicamento a tratamiento
+ */
+export const createMedicineTreatmentMutation = (options?: Partial<Options<CreateMedicineTreatmentData>>): UseMutationOptions<CreateMedicineTreatmentResponse, CreateMedicineTreatmentError, Options<CreateMedicineTreatmentData>> => {
+    const mutationOptions: UseMutationOptions<CreateMedicineTreatmentResponse, CreateMedicineTreatmentError, Options<CreateMedicineTreatmentData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await createMedicineTreatment({
                 ...options,
                 ...fnOptions,
                 throwOnError: true
