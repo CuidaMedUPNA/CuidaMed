@@ -13,8 +13,6 @@ export const handlers: RouteHandlers = {
   createTreatment: async (request, reply) => {
     const treatment = request.body;
 
-    console.log("Nuevo tratamiento: ", treatment);
-
     const newTreatment: NewTreatment = {
       name: treatment.name,
       user_id: Number(treatment.userId),
