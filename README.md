@@ -4,6 +4,23 @@
 
 [Kickoff](https://docs.google.com/document/d/17hRGcP4Clw5gyoXT9QIOB-3G5GFOSBJHY-RMWJdsVAs/edit?usp=sharing)
 
+## ⚠️ Requisitos de Node.js
+
+### Instalación de Node.js 22.19 con NVM
+
+Si no tienes la versión requerida, puedes instalarla fácilmente usando [NVM](https://github.com/nvm-sh/nvm):
+
+```bash
+nvm install 22.19
+nvm use 22.19
+```
+
+Verifica la versión activa con:
+
+```bash
+node -v
+```
+
 ## 🏁 Lanzar el proyecto
 
 Para iniciar el entorno de desarrollo de cualquiera de las aplicaciones (frontend o backend), utiliza el siguiente comando desde la raíz del monorepo:
