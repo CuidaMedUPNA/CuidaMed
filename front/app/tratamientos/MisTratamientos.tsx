@@ -36,7 +36,7 @@ export default function MisTratamientos() {
           }}
         >
           <Text style={{ fontSize: 24, fontWeight: "bold", marginBottom: 20 }}>
-            {t("treatmentsTitle")}
+            {t("treatments.treatmentsTitle")}
           </Text>
           <View
             style={{
