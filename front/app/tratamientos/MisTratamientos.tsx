@@ -1,20 +1,19 @@
-import { Medicamento } from "@/components/Medicamento";
 import { ModalNewTreatment } from "@/components/ModalNewTreatment";
-import { useState } from "react";
-import { View, TouchableOpacity, Text } from "react-native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import React, { useState } from "react";
+import { View, TouchableOpacity, Text, ScrollView } from "react-native";
+import {
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
-
-const tomas = [
-  { id: 1, nombre: "Paracetamol", hora: "08:00" },
-  { id: 2, nombre: "Ibuprofeno", hora: "12:00" },
-  { id: 3, nombre: "Omeprazol", hora: "18:00" },
-  { id: 4, nombre: "Aspirina", hora: "22:00" },
-];
+import { Tratamiento } from "@/components/Tratamiento";
+import { Divider } from "@/components/Divider";
+import { AntDesign } from "@expo/vector-icons";
 
 export default function MisTratamientos() {
   const [modalVisible, setModalVisible] = useState(false);
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
 
   return (
     <SafeAreaProvider>
@@ -22,62 +21,98 @@ export default function MisTratamientos() {
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
       />
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <View
-          style={{
-            backgroundColor: "#D9D9D9",
-            height: "90%",
-            width: "90%",
-            borderRadius: 20,
-            display: "flex",
-            flexDirection: "column",
+      <View style={{ flex: 1 }}>
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={{
             alignItems: "center",
-            paddingTop: 20,
+            paddingBottom: 100, // Espacio para el botón flotante
           }}
         >
-          <Text style={{ fontSize: 24, fontWeight: "bold", marginBottom: 20 }}>
-            {t("treatmentsTitle")}
-          </Text>
           <View
             style={{
+              marginBottom: 20,
+              justifyContent: "flex-start",
               width: "100%",
-              flex: 1,
-              alignItems: "center",
+              marginLeft: "5%",
             }}
           >
-            {tomas.map((toma) => (
-              <Medicamento
-                key={toma.id}
-                nombre={toma.nombre}
-                hora={toma.hora}
-              />
-            ))}
-          </View>
-          <View style={{ width: "100%", alignItems: "center", margin: 20 }}>
-            <TouchableOpacity
+            <Text
               style={{
-                padding: 15,
-                borderRadius: 30,
-                margin: 20,
-                backgroundColor: "#F23728",
-              }}
-              onPress={() => {
-                setModalVisible(true);
+                fontSize: 30,
+                fontWeight: "bold",
+                marginTop: insets.top,
+                marginBottom: 20,
+                color: "#e03535ff",
               }}
             >
-              <Text
-                style={{
-                  color: "#fff",
-                  fontSize: 16,
-                  fontWeight: "bold",
-                  textAlign: "center",
-                }}
-              >
-                {t("treatments.addMedicationButton")}
-              </Text>
-            </TouchableOpacity>
+              {t("treatmentsTitle")}
+            </Text>
           </View>
-        </View>
+          <View
+            style={{
+              backgroundColor: "#D9D9D9",
+              height: "80%",
+              width: "95%",
+              borderRadius: 20,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              paddingTop: 20,
+            }}
+          >
+            <View
+              style={{
+                width: "100%",
+                alignItems: "center",
+                margin: 20,
+                padding: "5%",
+              }}
+            >
+              <Tratamiento />
+              <Divider
+                color="#000000ff"
+                thickness={2}
+                style={{ marginHorizontal: 12 }}
+              />
+              <Tratamiento />
+              <Divider
+                color="#000000ff"
+                thickness={2}
+                style={{ marginHorizontal: 12 }}
+              />
+              <Tratamiento />
+              <Divider
+                color="#000000ff"
+                thickness={2}
+                style={{ marginHorizontal: 12 }}
+              />
+            </View>
+          </View>
+        </ScrollView>
+        <TouchableOpacity
+          style={{
+            position: "absolute",
+            bottom: 20,
+            right: 20,
+            width: 60,
+            height: 60,
+            borderRadius: 30,
+            backgroundColor: "#F23728",
+            justifyContent: "center",
+            alignItems: "center",
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.25,
+            shadowRadius: 4,
+            elevation: 5,
+          }}
+          onPress={() => {
+            setModalVisible(true);
+          }}
+        >
+          <AntDesign name="plus" size={24} color="white" />
+        </TouchableOpacity>
       </View>
     </SafeAreaProvider>
   );
