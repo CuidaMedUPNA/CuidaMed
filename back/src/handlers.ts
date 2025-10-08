@@ -4,6 +4,7 @@ import {
   insertTreatment,
   getTreatmentsByUserId,
 } from "./repository/treatmentRepository";
+import { insertMedicineTreatment } from "./repository/medicineTreatmentRepository";
 
 export const handlers: RouteHandlers = {
   healthCheck: async (request, reply) => {
@@ -41,5 +42,6 @@ export const handlers: RouteHandlers = {
     };
 
     await insertMedicineTreatment(newMedicineTreatment);
+    await reply.status(200).send(medicineTreatment);
   }
 };
