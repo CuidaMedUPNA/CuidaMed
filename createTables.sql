@@ -8,7 +8,6 @@ CREATE TABLE "user" (
     gender VARCHAR(10)
 );
 
-
 CREATE TABLE medicine (
     id SERIAL PRIMARY KEY,
     pactive VARCHAR(200) NOT NULL,
@@ -18,7 +17,6 @@ CREATE TABLE medicine (
     unit VARCHAR(50)
 );
 
-
 CREATE TABLE treatment (
     id SERIAL PRIMARY KEY,
     name VARCHAR(200) NOT NULL,
@@ -27,16 +25,6 @@ CREATE TABLE treatment (
     end_date DATE,
     FOREIGN KEY (user_id) REFERENCES "user"(id) ON DELETE CASCADE
 );
-
-
-CREATE TABLE medicine_treatment (
-    medicine_id INT NOT NULL,
-    treatment_id INT NOT NULL,
-    PRIMARY KEY (medicine_id, treatment_id),
-    FOREIGN KEY (medicine_id) REFERENCES medicine(id) ON DELETE CASCADE,
-    FOREIGN KEY (treatment_id) REFERENCES treatment(id) ON DELETE CASCADE
-);
-
 
 CREATE TABLE intake (
     id SERIAL PRIMARY KEY,
@@ -50,3 +38,12 @@ CREATE TABLE intake (
     FOREIGN KEY (medicine_id) REFERENCES medicine(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES "user"(id) ON DELETE CASCADE
 );
+
+CREATE TABLE intake_treatment (
+    intake_id INT NOT NULL,
+    treatment_id INT NOT NULL,
+    PRIMARY KEY (intake_id, treatment_id),
+    FOREIGN KEY (intake_id) REFERENCES intake(id) ON DELETE CASCADE,
+    FOREIGN KEY (treatment_id) REFERENCES treatment(id) ON DELETE CASCADE
+);
+
