@@ -1,10 +1,11 @@
+import { titleStyle } from "@/app/styles/styles";
 import { useTranslation } from "react-i18next";
 import { View, Text } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export const PageTitle = ({ title }: { title: string }) => {
-  const insets = useSafeAreaInsets();
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   return (
     <View
       style={{
@@ -16,11 +17,9 @@ export const PageTitle = ({ title }: { title: string }) => {
     >
       <Text
         style={{
-          fontSize: 30,
+          ...titleStyle,
           fontWeight: "bold",
-          marginTop: insets.top + 30,
-          marginBottom: 20,
-          color: "#e03535ff",
+          marginTop: insets.top + 20,
         }}
       >
         {t(title)}
