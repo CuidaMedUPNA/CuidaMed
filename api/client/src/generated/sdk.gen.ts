@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { CreateMedicineTreatmentData, CreateMedicineTreatmentErrors, CreateMedicineTreatmentResponses, CreateTreatmentData, CreateTreatmentErrors, CreateTreatmentResponses, GetTreatmentsData, GetTreatmentsErrors, GetTreatmentsResponses, HealthCheckData, HealthCheckResponses } from './types.gen';
+import type { CreateMedicineTreatmentData, CreateMedicineTreatmentErrors, CreateMedicineTreatmentResponses, CreateTreatmentData, CreateTreatmentErrors, CreateTreatmentResponses, DeleteMedicineTreatmentData, DeleteMedicineTreatmentErrors, DeleteMedicineTreatmentResponses, GetTreatmentsData, GetTreatmentsErrors, GetTreatmentsResponses, HealthCheckData, HealthCheckResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -53,11 +53,25 @@ export const createTreatment = <ThrowOnError extends boolean = false>(options: O
 };
 
 /**
+ * Eliminar medicamento de un tratamiento
+ */
+export const deleteMedicineTreatment = <ThrowOnError extends boolean = false>(options: Options<DeleteMedicineTreatmentData, ThrowOnError>) => {
+    return (options.client ?? client).delete<DeleteMedicineTreatmentResponses, DeleteMedicineTreatmentErrors, ThrowOnError>({
+        url: '/medicine-treatments',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+/**
  * Asociar medicamento a tratamiento
  */
 export const createMedicineTreatment = <ThrowOnError extends boolean = false>(options: Options<CreateMedicineTreatmentData, ThrowOnError>) => {
     return (options.client ?? client).post<CreateMedicineTreatmentResponses, CreateMedicineTreatmentErrors, ThrowOnError>({
-        url: '/medicineTreatment',
+        url: '/medicine-treatments',
         ...options,
         headers: {
             'Content-Type': 'application/json',
