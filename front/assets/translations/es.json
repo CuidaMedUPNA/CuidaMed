@@ -6,6 +6,8 @@
   "treatments": {
     "addMedicationButton": "Añadir",
     "closeButton": "Cerrar",
-    "treatmentNamePlaceholder": "Nombre del tratamiento"
+    "treatmentNamePlaceholder": "Nombre del tratamiento",
+    "noTreatments": "Aquí no hay nada",
+    "noTreatmentsDescription": "Parece que no tienes ningún tratamiento. ¡Añade uno nuevo!"
   }
 }
