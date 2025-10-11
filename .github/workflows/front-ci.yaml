@@ -29,12 +29,14 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Build API packages
+        run: npm run build
+
       - name: Linting
         run: npm run lint --workspace=front
 
       - name: Type checking
         run: npm run typecheck --workspace=front
 
-      # Cuando metáis tests
       # - name: Run tests
       #   run: npm run test --workspace=front

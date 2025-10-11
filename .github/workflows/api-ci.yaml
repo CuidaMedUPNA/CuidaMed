@@ -29,7 +29,7 @@ jobs:
 
         # Paso 1: Validar que el archivo OpenAPI tiene la sintaxis correcta
       - name: Lint OpenAPI spec
-        run: npx @stoplight/spectral lint packages/api/openapi.yml
+        run: npx redocly lint api/openapi.yaml --config redocly.yaml
 
         # Paso 2: Volver a generar el paquete del API para ver si hay cambios
       - name: Regenerate API client and types
