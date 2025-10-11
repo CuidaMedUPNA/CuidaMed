@@ -102,46 +102,6 @@ paths:
                     type: string
                     example: "Internal Server Error"
 
-  /medicineTreatment:
-    post:
-      summary: Asociar medicamento a tratamiento
-      operationId: createMedicineTreatment
-      requestBody:
-        description: Datos del medicamento y tratamiento a asociar
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/MedicineTreatment"
-      responses:
-        "200":
-          description: Medicina asociada a tratamiento
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/MedicineTreatment"
-        "400":
-          description: Solicitud incorrecta
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: "Bad Request"
-        "500":
-          description: Error interno del servidor
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: "Internal Server Error"
-
-
 components:
   schemas:
     Treatment:
@@ -162,13 +122,3 @@ components:
         - userId
         - startDate
         - endDate
-    MedicineTreatment:
-      type: object
-      properties:
-        medicineId:
-          type: number
-        treatmentId:
-          type: number
-      required: 
-        - medicineId
-        - treatmentId

@@ -11,11 +11,6 @@ export type Treatment = {
     endDate: string;
 };
 
-export type MedicineTreatment = {
-    medicineId: number;
-    treatmentId: number;
-};
-
 export type HealthCheckData = {
     body?: never;
     path?: never;
@@ -107,39 +102,3 @@ export type CreateTreatmentResponses = {
 };
 
 export type CreateTreatmentResponse = CreateTreatmentResponses[keyof CreateTreatmentResponses];
-
-export type CreateMedicineTreatmentData = {
-    /**
-     * Datos del medicamento y tratamiento a asociar
-     */
-    body: MedicineTreatment;
-    path?: never;
-    query?: never;
-    url: '/medicineTreatment';
-};
-
-export type CreateMedicineTreatmentErrors = {
-    /**
-     * Solicitud incorrecta
-     */
-    400: {
-        error?: string;
-    };
-    /**
-     * Error interno del servidor
-     */
-    500: {
-        error?: string;
-    };
-};
-
-export type CreateMedicineTreatmentError = CreateMedicineTreatmentErrors[keyof CreateMedicineTreatmentErrors];
-
-export type CreateMedicineTreatmentResponses = {
-    /**
-     * Medicina asociada a tratamiento
-     */
-    200: MedicineTreatment;
-};
-
-export type CreateMedicineTreatmentResponse = CreateMedicineTreatmentResponses[keyof CreateMedicineTreatmentResponses];
