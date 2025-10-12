@@ -108,6 +108,50 @@ export type CreateTreatmentResponses = {
 
 export type CreateTreatmentResponse = CreateTreatmentResponses[keyof CreateTreatmentResponses];
 
+export type DeleteMedicineTreatmentData = {
+    /**
+     * IDs del medicamento y tratamiento a desasociar
+     */
+    body: MedicineTreatment;
+    path?: never;
+    query?: never;
+    url: '/medicine-treatments';
+};
+
+export type DeleteMedicineTreatmentErrors = {
+    /**
+     * Solicitud incorrecta
+     */
+    400: {
+        error?: string;
+    };
+    /**
+     * Medicina no encontrada en tratamiento
+     */
+    404: {
+        error?: string;
+    };
+    /**
+     * Error interno del servidor
+     */
+    500: {
+        error?: string;
+    };
+};
+
+export type DeleteMedicineTreatmentError = DeleteMedicineTreatmentErrors[keyof DeleteMedicineTreatmentErrors];
+
+export type DeleteMedicineTreatmentResponses = {
+    /**
+     * Medicina eliminada correctamente
+     */
+    200: {
+        message?: string;
+    };
+};
+
+export type DeleteMedicineTreatmentResponse = DeleteMedicineTreatmentResponses[keyof DeleteMedicineTreatmentResponses];
+
 export type CreateMedicineTreatmentData = {
     /**
      * Datos del medicamento y tratamiento a asociar
@@ -115,7 +159,7 @@ export type CreateMedicineTreatmentData = {
     body: MedicineTreatment;
     path?: never;
     query?: never;
-    url: '/medicineTreatment';
+    url: '/medicine-treatments';
 };
 
 export type CreateMedicineTreatmentErrors = {
