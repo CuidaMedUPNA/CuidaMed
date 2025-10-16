@@ -1,0 +1,47 @@
+name: API CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "api/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - "api/**"
+
+jobs:
+  validate-and-check-generation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 22.19
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.19"
+          cache: "npm"
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm install
+
+        # Paso 1: Validar que el archivo OpenAPI tiene la sintaxis correcta
+      - name: Lint OpenAPI spec
+        run: npx redocly lint api/openapi.yaml --config redocly.yaml
+
+        # Paso 2: Volver a generar el paquete del API para ver si hay cambios
+      - name: Regenerate API client and types
+        run: npm run build
+
+        # Paso 3: Fallar si alguien modificó el openapi.yml y no subió el código generado
+      - name: Check for uncommitted generated files
+        run: |
+          if [[ -n $(git status -s) ]]; then
+            echo "❌ Error: Generated files are not up-to-date. Please run 'npm run build' and commit the changes."
+            git status
+            exit 1
+          else
+            echo "✅ Generated code is up-to-date."
+          fi
