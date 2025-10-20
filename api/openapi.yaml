@@ -4,8 +4,10 @@ info:
   version: 1.0.0
   description: API para la aplicación CuidaMed
 servers:
+  - url: https://cuidamed.herokuapp.com
+    description: Servidor de producción
   - url: http://localhost:3000
-    description: Servidor de desarrollo
+    description: Servidor de desarrollo local
 
 paths:
   /health:
