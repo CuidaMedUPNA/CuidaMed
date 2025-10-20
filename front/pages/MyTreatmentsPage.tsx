@@ -19,8 +19,6 @@ export const MyTreatmentsPage = () => {
     })
   );
 
-  console.log("Treatments:", treatments);
-
   return (
     <>
       <ModalNewTreatment
