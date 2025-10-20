@@ -1,16 +1,19 @@
-import { View, Text, StyleSheet } from "react-native";
+import { Text, StyleSheet, Pressable } from "react-native";
+import { Icon } from "react-native-elements";
 
 interface Props {
   name: string;
   startDate: string;
   endDate: string;
+  onPress?: () => void;
 }
 
-export const Tratamiento = ({ name, startDate, endDate }: Props) => {
+export const Tratamiento = ({ name, startDate, endDate, onPress }: Props) => {
   return (
-    <View style={styles.container}>
+    <Pressable onPress={onPress} style={styles.container}>
       <Text>{name}</Text>
-    </View>
+      <Icon name="chevron-right" type="entypo" />
+    </Pressable>
   );
 };
 
