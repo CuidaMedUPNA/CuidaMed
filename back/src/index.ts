@@ -4,10 +4,15 @@ import { handlers } from "./handlers";
 import openapiGlue from "fastify-openapi-glue";
 import fastifyCors from "@fastify/cors";
 import fastifyStatic from "@fastify/static";
+import path from "path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const fastify = Fastify({ logger: true });
 
-const path = require("path");
 const options = {
   specification: path.resolve(__dirname, "../../api/openapi.yaml"),
   service: handlers,
@@ -22,7 +27,7 @@ fastify.get("/documentation", async (request, reply) => {
   return reply.type("text/html").sendFile("/api.html");
 });
 
-fastify.listen({ port: 3000 }, (err, address) => {
+fastify.listen({ port: 3000 }, (err) => {
   if (err) {
     fastify.log.error(err);
     process.exit(1);

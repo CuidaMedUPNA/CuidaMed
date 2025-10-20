@@ -1,6 +1,9 @@
 {
+  "type": "module",
   "scripts": {
-    "dev": "nodemon --watch src --ext ts --exec tsx src/index.ts"
+    "dev": "nodemon --watch src --ext ts --exec tsx src/index.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@fastify/cors": "^11.1.0",
@@ -14,9 +17,13 @@
   "devDependencies": {
     "@types/node": "^24.4.0",
     "@types/pg": "^8.15.5",
+    "@typescript-eslint/eslint-plugin": "^8.46.0",
+    "@typescript-eslint/parser": "^8.46.0",
+    "eslint": "^9.37.0",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
     "tsx": "^4.20.5",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.46.0"
   }
 }
