@@ -5,16 +5,13 @@ import { Tratamiento } from "@/components/Treatment";
 import { AntDesign } from "@expo/vector-icons";
 import { useState } from "react";
 import { View, ScrollView, TouchableOpacity, Text } from "react-native";
-import { getTreatmentsOptions } from "@cuidamed-api/client";
-import { Treatment } from "@cuidamed-api/client";
+import { getTreatmentsOptions, Treatment } from "@cuidamed-api/client";
 import { useQuery } from "@tanstack/react-query";
 import { t } from "i18next";
-import { useTranslation } from "react-i18next";
 import { subtitleStyle, titleStyle } from "@/app/styles/styles";
 
 export const MyTreatmentsPage = () => {
   const [modalVisible, setModalVisible] = useState(false);
-  const { t } = useTranslation();
 
   const { data: treatments } = useQuery(
     getTreatmentsOptions({
