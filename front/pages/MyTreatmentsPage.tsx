@@ -23,7 +23,7 @@ export const MyTreatmentsPage = () => {
             paddingBottom: 100,
           }}
         >
-          <PageTitle title="treatmentsTitle" />
+          <PageTitle title="treatments.treatmentsTitle" />
           <TreatmentsList />
         </ScrollView>
         <TouchableOpacity
