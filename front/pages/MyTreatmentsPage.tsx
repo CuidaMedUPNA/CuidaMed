@@ -7,17 +7,26 @@ import { useState } from "react";
 import { View, ScrollView, TouchableOpacity, Text } from "react-native";
 import { getTreatmentsOptions, Treatment } from "@cuidamed-api/client";
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "expo-router";
 import { t } from "i18next";
 import { subtitleStyle, titleStyle } from "@/app/styles/styles";
 
 export const MyTreatmentsPage = () => {
   const [modalVisible, setModalVisible] = useState(false);
+  const router = useRouter();
 
   const { data: treatments } = useQuery(
     getTreatmentsOptions({
       query: { userId: 1 },
     })
   );
+
+  const handleTreatmentPress = (treatmentName: string) => {
+    router.push({
+      pathname: "/treatments/[treatmentName]",
+      params: { treatmentName },
+    });
+  };
 
   return (
     <>
@@ -34,7 +43,10 @@ export const MyTreatmentsPage = () => {
           }}
         >
           <PageTitle title={t("treatments.treatmentsTitle")} />
-          <TreatmentsList treatments={treatments ?? []} />
+          <TreatmentsList 
+            treatments={treatments ?? []} 
+            onTreatmentPress={handleTreatmentPress}
+          />
         </ScrollView>
         <TouchableOpacity
           style={{
@@ -64,7 +76,13 @@ export const MyTreatmentsPage = () => {
   );
 };
 
-const TreatmentsList = ({ treatments }: { treatments: Treatment[] }) => {
+const TreatmentsList = ({ 
+  treatments, 
+  onTreatmentPress 
+}: { 
+  treatments: Treatment[];
+  onTreatmentPress: (treatmentName: string) => void;
+}) => {
   return (
     <View
       style={{
@@ -102,6 +120,7 @@ const TreatmentsList = ({ treatments }: { treatments: Treatment[] }) => {
                 name={treatment.name}
                 startDate={treatment.startDate}
                 endDate={treatment.endDate}
+                onPress={() => onTreatmentPress(treatment.name)}
               />
               {index < treatments.length - 1 && <Divider />}
             </View>
