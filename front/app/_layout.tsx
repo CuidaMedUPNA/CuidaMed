@@ -24,7 +24,7 @@ export default function RootLayout() {
           options={{ tabBarLabel: `${t("landingPageTitle")}` }}
         />
         <Tabs.Screen
-          name="tratamientos/MisTratamientos"
+          name="treatments"
           options={{
             tabBarLabel: `${t("treatments.treatmentsTitle")}`,
             headerShown: false,
