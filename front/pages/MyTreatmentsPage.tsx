@@ -35,7 +35,7 @@ export const MyTreatmentsPage = () => {
             paddingBottom: 100,
           }}
         >
-          <PageTitle title="treatmentsTitle" />
+          <PageTitle title={t("treatments.treatmentsTitle")} />
           <TreatmentsList treatments={treatments ?? []} />
         </ScrollView>
         <TouchableOpacity
