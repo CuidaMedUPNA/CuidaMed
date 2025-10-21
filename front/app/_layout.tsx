@@ -4,6 +4,12 @@ import "@/i18n";
 import { useTranslation } from "react-i18next";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
+import { client } from "@cuidamed-api/client";
+import { API_URL } from "@/config";
+
+client.setConfig({
+  baseUrl: API_URL,
+});
 
 const queryClient = new QueryClient();
 
