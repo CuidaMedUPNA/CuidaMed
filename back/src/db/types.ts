@@ -47,22 +47,13 @@ export type Treatment = Selectable<TreatmentTable>;
 export type NewTreatment = Insertable<TreatmentTable>;
 export type TreatmentUpdate = Updateable<TreatmentTable>;
 
-export interface MedicineTreatmentTable {
-  medicine_id: number;
-  treatment_id: number;
-}
-
-export type MedicineTreatment = Selectable<MedicineTreatmentTable>;
-export type NewMedicineTreatment = Insertable<MedicineTreatmentTable>;
-export type MedicineTreatmentUpdate = Updateable<MedicineTreatmentTable>;
-
 export interface IntakeTable {
   id: Generated<number>;
   start_date: Date;
   end_date: Date | null;
   frequency: string;
   medicine_id: number;
-  user_id: number;
+  treatment_id: number;
   dose_intake: string | null;
   hour: string | null;
 }
