@@ -7,6 +7,9 @@
     "outDir": "dist",
     "strict": true,
     "esModuleInterop": true,
+    "skipLibCheck": true,
+    "types": ["node"],
+    "lib": ["ES2020"],
     "paths": {
       "@cuidamed-api/server": ["../api/server/dist/index"]
     }
