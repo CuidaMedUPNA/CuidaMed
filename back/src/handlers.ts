@@ -30,4 +30,5 @@ export const handlers: RouteHandlers = {
 
     await reply.status(200).send(treatments);
   },
+  getIntakes: async (request, reply) => {},
 };
