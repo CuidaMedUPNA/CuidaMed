@@ -4,7 +4,6 @@ export interface Database {
   user: UserTable;
   medicine: MedicineTable;
   treatment: TreatmentTable;
-  medicine_treatment: MedicineTreatmentTable;
   intake: IntakeTable;
 }
 
