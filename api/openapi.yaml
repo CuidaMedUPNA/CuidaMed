@@ -163,9 +163,7 @@ components:
     Intake:
       type: object
       properties:
-        treatmentId:
-          type: number
-        startDate:  
+        startDate:
           type: string
           format: date-time
         endDate:
@@ -175,18 +173,17 @@ components:
           type: string
         medicineId:
           type: number
-        userId:
+        treatmentId:
           type: number
         dose:
           type: string
         hour:
           type: string
       required:
-        - treatmentId
         - startDate
         - endDate
         - frequency
         - medicineId
-        - userId
+        - treatmentId
         - dose
         - hour

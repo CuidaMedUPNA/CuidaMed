@@ -12,12 +12,11 @@ export type Treatment = {
 };
 
 export type Intake = {
-    treatmentId: number;
     startDate: string;
     endDate: string;
     frequency: string;
     medicineId: number;
-    userId: number;
+    treatmentId: number;
     dose: string;
     hour: string;
 };
