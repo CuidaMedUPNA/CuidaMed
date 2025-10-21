@@ -3,8 +3,8 @@
 import { queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { createTreatment, getTreatments, healthCheck, type Options } from '../sdk.gen';
-import type { CreateTreatmentData, CreateTreatmentError, CreateTreatmentResponse, GetTreatmentsData, HealthCheckData } from '../types.gen';
+import { createTreatment, getIntakes, getTreatments, healthCheck, type Options } from '../sdk.gen';
+import type { CreateTreatmentData, CreateTreatmentError, CreateTreatmentResponse, GetIntakesData, GetTreatmentsData, HealthCheckData } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -58,6 +58,26 @@ export const healthCheckOptions = (options?: Options<HealthCheckData>) => {
             return data;
         },
         queryKey: healthCheckQueryKey(options)
+    });
+};
+
+export const getIntakesQueryKey = (options: Options<GetIntakesData>) => createQueryKey('getIntakes', options);
+
+/**
+ * Obtener todas las tomas asociadas a un tratamiento
+ */
+export const getIntakesOptions = (options: Options<GetIntakesData>) => {
+    return queryOptions({
+        queryFn: async ({ queryKey, signal }) => {
+            const { data } = await getIntakes({
+                ...options,
+                ...queryKey[0],
+                signal,
+                throwOnError: true
+            });
+            return data;
+        },
+        queryKey: getIntakesQueryKey(options)
     });
 };
 
