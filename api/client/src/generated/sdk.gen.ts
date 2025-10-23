@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { CreateTreatmentData, CreateTreatmentErrors, CreateTreatmentResponses, GetTreatmentsData, GetTreatmentsErrors, GetTreatmentsResponses, HealthCheckData, HealthCheckResponses } from './types.gen';
+import type { CreateTreatmentData, CreateTreatmentErrors, CreateTreatmentResponses, DeleteIntakeByIdData, DeleteIntakeByIdErrors, DeleteIntakeByIdResponses, GetTreatmentsData, GetTreatmentsErrors, GetTreatmentsResponses, HealthCheckData, HealthCheckResponses, RegisterIntakeData, RegisterIntakeErrors, RegisterIntakeResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -49,5 +49,29 @@ export const createTreatment = <ThrowOnError extends boolean = false>(options: O
             'Content-Type': 'application/json',
             ...options.headers
         }
+    });
+};
+
+/**
+ * Registrar toma de medicamento
+ */
+export const registerIntake = <ThrowOnError extends boolean = false>(options: Options<RegisterIntakeData, ThrowOnError>) => {
+    return (options.client ?? client).post<RegisterIntakeResponses, RegisterIntakeErrors, ThrowOnError>({
+        url: '/intakes',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+/**
+ * Eliminar toma de medicamento por id de toma
+ */
+export const deleteIntakeById = <ThrowOnError extends boolean = false>(options: Options<DeleteIntakeByIdData, ThrowOnError>) => {
+    return (options.client ?? client).delete<DeleteIntakeByIdResponses, DeleteIntakeByIdErrors, ThrowOnError>({
+        url: '/intakes/{intakeId}',
+        ...options
     });
 };
