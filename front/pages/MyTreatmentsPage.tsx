@@ -1,13 +1,23 @@
 import { Divider } from "@/components/Divider";
 import { ModalNewTreatment } from "@/components/ModalNewTreatment";
 import { PageTitle } from "@/components/PageTitle";
-import { Tratamiento } from "@/components/Tratamiento";
+import { Tratamiento } from "@/components/Treatment";
 import { AntDesign } from "@expo/vector-icons";
 import { useState } from "react";
-import { View, ScrollView, TouchableOpacity } from "react-native";
+import { View, ScrollView, TouchableOpacity, Text } from "react-native";
+import { getTreatmentsOptions, Treatment } from "@cuidamed-api/client";
+import { useQuery } from "@tanstack/react-query";
+import { t } from "i18next";
+import { subtitleStyle, titleStyle } from "@/app/styles/styles";
 
 export const MyTreatmentsPage = () => {
   const [modalVisible, setModalVisible] = useState(false);
+
+  const { data: treatments } = useQuery(
+    getTreatmentsOptions({
+      query: { userId: 1 },
+    })
+  );
 
   return (
     <>
@@ -23,8 +33,8 @@ export const MyTreatmentsPage = () => {
             paddingBottom: 100,
           }}
         >
-          <PageTitle title="treatmentsTitle" />
-          <TreatmentsList />
+          <PageTitle title={t("treatments.treatmentsTitle")} />
+          <TreatmentsList treatments={treatments ?? []} />
         </ScrollView>
         <TouchableOpacity
           style={{
@@ -54,7 +64,7 @@ export const MyTreatmentsPage = () => {
   );
 };
 
-const TreatmentsList = () => {
+const TreatmentsList = ({ treatments }: { treatments: Treatment[] }) => {
   return (
     <View
       style={{
@@ -74,19 +84,29 @@ const TreatmentsList = () => {
           padding: "5%",
         }}
       >
-        <Tratamiento />
-        <Divider
-          color="#000000ff"
-          thickness={2}
-          style={{ marginHorizontal: 12 }}
-        />
-        <Tratamiento />
-        <Divider
-          color="#000000ff"
-          thickness={2}
-          style={{ marginHorizontal: 12 }}
-        />
-        <Tratamiento />
+        {treatments.length === 0 ? (
+          <View>
+            <Text
+              style={{ ...titleStyle, fontWeight: "bold", textAlign: "center" }}
+            >
+              {t("treatments.noTreatments")}
+            </Text>
+            <Text style={{ ...subtitleStyle }}>
+              {t("treatments.noTreatmentsDescription")}
+            </Text>
+          </View>
+        ) : (
+          treatments.map((treatment, index) => (
+            <View key={treatment.name} style={{ width: "100%" }}>
+              <Tratamiento
+                name={treatment.name}
+                startDate={treatment.startDate}
+                endDate={treatment.endDate}
+              />
+              {index < treatments.length - 1 && <Divider />}
+            </View>
+          ))
+        )}
       </View>
     </View>
   );
