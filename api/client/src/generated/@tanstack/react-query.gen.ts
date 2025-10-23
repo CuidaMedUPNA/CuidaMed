@@ -3,8 +3,8 @@
 import { queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { createTreatment, getTreatments, healthCheck, type Options, registerIntake } from '../sdk.gen';
-import type { CreateTreatmentData, CreateTreatmentError, CreateTreatmentResponse, GetTreatmentsData, HealthCheckData, RegisterIntakeData, RegisterIntakeError, RegisterIntakeResponse } from '../types.gen';
+import { createTreatment, deleteIntakeById, getTreatments, healthCheck, type Options, registerIntake } from '../sdk.gen';
+import type { CreateTreatmentData, CreateTreatmentError, CreateTreatmentResponse, DeleteIntakeByIdData, DeleteIntakeByIdError, DeleteIntakeByIdResponse, GetTreatmentsData, HealthCheckData, RegisterIntakeData, RegisterIntakeError, RegisterIntakeResponse } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -105,6 +105,23 @@ export const registerIntakeMutation = (options?: Partial<Options<RegisterIntakeD
     const mutationOptions: UseMutationOptions<RegisterIntakeResponse, RegisterIntakeError, Options<RegisterIntakeData>> = {
         mutationFn: async (fnOptions) => {
             const { data } = await registerIntake({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Eliminar toma de medicamento por id de toma
+ */
+export const deleteIntakeByIdMutation = (options?: Partial<Options<DeleteIntakeByIdData>>): UseMutationOptions<DeleteIntakeByIdResponse, DeleteIntakeByIdError, Options<DeleteIntakeByIdData>> => {
+    const mutationOptions: UseMutationOptions<DeleteIntakeByIdResponse, DeleteIntakeByIdError, Options<DeleteIntakeByIdData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await deleteIntakeById({
                 ...options,
                 ...fnOptions,
                 throwOnError: true

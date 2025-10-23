@@ -34,5 +34,9 @@ export const handlers: RouteHandlers = {
 
   registerIntake: async (request, reply) => {
     await reply.status(200).send(request.body);
+  },
+
+  deleteIntakeById: async (request, reply) => {
+    await reply.status(204).send();
   }
 };
