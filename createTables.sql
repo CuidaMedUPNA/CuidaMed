@@ -32,18 +32,9 @@ CREATE TABLE intake (
     end_date DATE,
     frequency VARCHAR(100) NOT NULL,
     medicine_id INT NOT NULL,
-    user_id INT NOT NULL,
+    treatment_id INT NOT NULL,
     dose_intake VARCHAR(100),
     hour TIME,
     FOREIGN KEY (medicine_id) REFERENCES medicine(id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES "user"(id) ON DELETE CASCADE
-);
-
-CREATE TABLE intake_treatment (
-    intake_id INT NOT NULL,
-    treatment_id INT NOT NULL,
-    PRIMARY KEY (intake_id, treatment_id),
-    FOREIGN KEY (intake_id) REFERENCES intake(id) ON DELETE CASCADE,
     FOREIGN KEY (treatment_id) REFERENCES treatment(id) ON DELETE CASCADE
 );
-
