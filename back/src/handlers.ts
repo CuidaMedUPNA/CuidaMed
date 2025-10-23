@@ -1,9 +1,10 @@
 import { RouteHandlers } from "@cuidamed-api/server";
-import { NewTreatment } from "./db/types";
+import { NewIntake, NewTreatment } from "./db/types";
 import {
   insertTreatment,
   getTreatmentsByUserId,
 } from "./repository/treatmentRepository";
+import { insertIntake } from "./repository/intakeRepository";
 
 export const handlers: RouteHandlers = {
   healthCheck: async (request, reply) => {
@@ -29,5 +30,22 @@ export const handlers: RouteHandlers = {
     const treatments = await getTreatmentsByUserId(userId);
 
     await reply.status(200).send(treatments);
+  },
+
+  registerIntake: async (request, reply) => {
+    const intake = request.body;
+
+    const newIntake: NewIntake = {
+      start_date: new Date(intake.startDate),
+      end_date: new Date(intake.endDate),
+      frequency: intake.frequency,
+      medicine_id: Number(intake.medicineId),
+      treatment_id: Number(intake.treatmentId),
+      dose_intake: intake.dose,
+      hour: intake.hour,
+    };
+
+    await insertIntake(newIntake);
+    await reply.status(200).send(intake);
   },
 };
