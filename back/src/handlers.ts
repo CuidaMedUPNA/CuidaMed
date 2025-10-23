@@ -23,6 +23,7 @@ export const handlers: RouteHandlers = {
     await insertTreatment(newTreatment);
     await reply.status(200).send(treatment);
   },
+  
   getTreatments: async (request, reply) => {
     const userId = request.query.userId;
 
@@ -30,4 +31,8 @@ export const handlers: RouteHandlers = {
 
     await reply.status(200).send(treatments);
   },
+
+  registerIntake: async (request, reply) => {
+    await reply.status(200).send(request.body);
+  }
 };
