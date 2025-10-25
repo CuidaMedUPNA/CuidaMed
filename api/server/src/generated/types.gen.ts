@@ -11,6 +11,16 @@ export type Treatment = {
     endDate: string;
 };
 
+export type Intake = {
+    startDate: string;
+    endDate: string;
+    frequency: string;
+    medicineId: number;
+    treatmentId: number;
+    dose: string;
+    hour: string;
+};
+
 export type HealthCheckData = {
     body?: never;
     path?: never;
@@ -102,3 +112,39 @@ export type CreateTreatmentResponses = {
 };
 
 export type CreateTreatmentResponse = CreateTreatmentResponses[keyof CreateTreatmentResponses];
+
+export type RegisterIntakeData = {
+    /**
+     * Datos de la toma de medicamento
+     */
+    body: Intake;
+    path?: never;
+    query?: never;
+    url: '/intakes';
+};
+
+export type RegisterIntakeErrors = {
+    /**
+     * Solicitud incorrecta
+     */
+    400: {
+        error?: string;
+    };
+    /**
+     * Error interno del servidor
+     */
+    500: {
+        error?: string;
+    };
+};
+
+export type RegisterIntakeError = RegisterIntakeErrors[keyof RegisterIntakeErrors];
+
+export type RegisterIntakeResponses = {
+    /**
+     * Toma registrada exitosamente
+     */
+    200: Intake;
+};
+
+export type RegisterIntakeResponse = RegisterIntakeResponses[keyof RegisterIntakeResponses];
