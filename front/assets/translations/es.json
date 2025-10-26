@@ -15,6 +15,8 @@
       "placeholder": "Selecciona una fecha",
       "isPermanent": "Es permanente",
       "badFillFieldsAlert": "Por favor, rellena todos los campos correctamente. La fecha de inicio no puede ser posterior a la fecha de fin."
-    }
+    },
+    "noTreatments": "Aquí no hay nada",
+    "noTreatmentsDescription": "Parece que no tienes ningún tratamiento. ¡Añade uno nuevo!"
   }
 }

@@ -1,9 +1,15 @@
 import { View, Text, StyleSheet } from "react-native";
 
-export const Tratamiento = () => {
+interface Props {
+  name: string;
+  startDate: string;
+  endDate: string;
+}
+
+export const Tratamiento = ({ name, startDate, endDate }: Props) => {
   return (
     <View style={styles.container}>
-      <Text>Tratamiento Component</Text>
+      <Text>{name}</Text>
     </View>
   );
 };
