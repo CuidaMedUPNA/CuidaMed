@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CuidaMed - Tu app de gestión de tratamientos</title>
+    <link rel="icon" href="images/logo.png" type="image/png">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <header>
+        <nav class="container">
+            <div>
+                <img src="images/logo.png" alt="Logo de CuidaMed" class="logo-image">
+                <a href="#" class="logo">CuidaMed</a>
+            </div>
+            <a href="#final-cta" class="btn btn-primary">Descargar</a>
+        </nav>
+    </header>
+
+    <main>
+
+        <section id="hero">
+            <div class="container hero-content">
+                <div class="hero-text">
+                    <h1>Toma el control de tu tratamiento.</h1>
+                    <p>Simple, visual y siempre contigo. La app definitiva para gestionar tus medicamentos y programar recordatorios.</p>
+                    <div class="store-buttons">
+                        <button class="store-btn open-notify-modal">
+                            <i class="fa-brands fa-apple"></i>
+                            <div>
+                                <span>Proximamente en</span>
+                                <strong>App Store</strong>
+                            </div>
+                        </button>
+                        <button class="store-btn open-notify-modal">
+                            <i class="fa-brands fa-google-play"></i>
+                            <div>
+                                <span>Proximamente en</span>
+                                <strong>Google Play</strong>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <img src="images/app-detalle.png" alt="Vista de la app CuidaMed mostrando un tratamiento">
+                </div>
+            </div>
+            <a href="#problem" class="hero-scroll-btn" aria-label="Ir a la siguiente sección">
+                <i class="fa-solid fa-chevron-down"></i>
+            </a>
+        </section>
+
+        <section id="problem" class="section">
+            <div class="container text-center">
+                <h2>¿Qué problemas resuelve CuidaMed?</h2>
+
+                <div class="carousel" aria-label="Problemas que soluciona la app">
+                    <button class="carousel-btn carousel-btn-prev" aria-label="Problema anterior">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+
+                    <div class="carousel-track">
+                        <div class="carousel-slide">
+                            <i class="fa-solid fa-pills"></i>
+                            <h4>Olvidos frecuentes</h4>
+                            <p>Recordatorios programables para no perder ninguna toma.</p>
+                        </div>
+
+                        <div class="carousel-slide">
+                            <i class="fa-solid fa-clock"></i>
+                            <h4>Horarios complejos</h4>
+                            <p>Gestiona dosis con horarios múltiple y reglas personalizadas.</p>
+                        </div>
+
+                        <div class="carousel-slide">
+                            <i class="fa-solid fa-calendar-check"></i>
+                            <h4>Control de duración</h4>
+                            <p>Lleva un seguimiento claro de cuánto tiempo dura cada tratamiento.</p>
+                        </div>
+
+                        <div class="carousel-slide">
+                            <i class="fa-solid fa-user-group"></i>
+                            <h4>Cuidadores y perfiles</h4>
+                            <p>Gestiona medicaciones de familiares desde un único lugar.</p>
+                        </div>
+
+                        <div class="carousel-slide">
+                            <i class="fa-solid fa-file-medical"></i>
+                            <h4>Historial clínico</h4>
+                            <p>Registro de tomas y notas para compartir con tu médico.</p>
+                        </div>
+
+                        <div class="carousel-slide">
+                            <i class="fa-solid fa-bell"></i>
+                            <h4>Alarmas confiables</h4>
+                            <p>Notificaciones persistentes y opciones de repetición hasta confirmar.</p>
+                        </div>
+                    </div>
+
+                    <button class="carousel-btn carousel-btn-next" aria-label="Problema siguiente">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+
+                    <div class="carousel-dots" role="tablist" aria-label="Navegación del carrusel">
+                        <button class="carousel-dot" aria-label="Mostrar problema 1" aria-selected="true"></button>
+                        <button class="carousel-dot" aria-label="Mostrar problema 2" aria-selected="false"></button>
+                        <button class="carousel-dot" aria-label="Mostrar problema 3" aria-selected="false"></button>
+                        <button class="carousel-dot" aria-label="Mostrar problema 4" aria-selected="false"></button>
+                        <button class="carousel-dot" aria-label="Mostrar problema 5" aria-selected="false"></button>
+                        <button class="carousel-dot" aria-label="Mostrar problema 6" aria-selected="false"></button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="features" class="section">
+            <div class="container">
+                <h2 class="text-center">Tu bienestar, perfectamente organizado</h2>
+
+                <div class="feature-row">
+                    <div class="feature-image-wrapper">
+                        <img src="images/app-detalle.png" alt="Pantalla de detalle del tratamiento">
+                    </div>
+                    <div class="feature-text">
+                        <h3>Tratamientos claros, de un vistazo</h3>
+                        <p>Añade todos tus medicamentos, especifica la dosis, frecuencia y duración. Ve toda la información de tu tratamiento en una sola pantalla limpia y fácil de entender.</p>
+                    </div>
+                </div>
+
+                <div class="feature-row reverse">
+                    <div class="feature-image-wrapper">
+                         <img src="images/app-calendario.png" alt="Pantalla de calendario de la app">
+                    </div>
+                    <div class="feature-text">
+                        <h3>Recordatorios que no puedes ignorar</h3>
+                        <p>Nuestro sistema de agenda y notificaciones te avisa en el momento exacto. Configura alarmas personalizadas y relájate sabiendo que te cubrimos.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="testimonials" class="section">
+            <div class="container">
+                <h2 class="text-center">Lo que dicen nuestros usuarios</h2>
+                <div class="testimonial-grid">
+                    <div class="testimonial-card">
+                        <div class="testimonial-header">
+                            <img src="images/avatar-1.png" alt="Foto de Carlos G." class="testimonial-avatar">
+                            <div class="testimonial-info">
+                                <p class="author-name">Carlos G.</p>
+                                <p class="author-role">Paciente crónico</p>
+                            </div>
+                        </div>
+                        <div class="stars">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        </div>
+                        <p class="quote">"Por fin una app que es fácil de usar. Llevo un tratamiento crónico y esto me ha dado una tranquilidad inmensa."</p>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="testimonial-header">
+                            <img src="images/avatar-2.png" alt="Foto de Lucía M." class="testimonial-avatar">
+                            <div class="testimonial-info">
+                                <p class="author-name">Lucía M.</p>
+                                <p class="author-role">Cuidadora</p>
+                            </div>
+                        </div>
+                        <div class="stars">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        </div>
+                        <p class="quote">"Uso la app para organizar la medicación de mi madre. La función de perfiles es fantástica. Totalmente recomendada."</p>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="testimonial-header">
+                            <img src="images/avatar-3.png" alt="Foto de María P." class="testimonial-avatar">
+                            <div class="testimonial-info">
+                                <p class="author-name">María P.</p>
+                                <p class="author-role">Profesional de salud</p>
+                            </div>
+                        </div>
+                        <div class="stars">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+                        </div>
+                        <p class="quote">"Muy intuitiva y el diseño es muy limpio. Me ayuda a no perderme con mis vitaminas y medicamentos."</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="faq" class="section">
+            <div class="container">
+                <h2 class="text-center">Preguntas Frecuentes</h2>
+                <p class="text-center" style="color: var(--text-light); margin-bottom: 50px; max-width: 600px; margin-left: auto; margin-right: auto;">Resolvemos tus dudas sobre CuidaMed para que tomes la mejor decisión</p>
+
+                <div class="faq-container">
+                    <div class="faq-item">
+                        <button class="faq-header" aria-expanded="false">
+                            <span class="faq-title">¿CuidaMed es gratuita?</span>
+                            <i class="fa-solid fa-chevron-down faq-icon"></i>
+                        </button>
+                        <div class="faq-content">
+                            <p>Sí, CuidaMed es completamente gratuita. Puedes descargarla desde la App Store o Google Play sin costo alguno. Estamos comprometidos a hacer la gestión de tu medicación accesible para todos.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-header" aria-expanded="false">
+                            <span class="faq-title">¿Qué información personal necesita CuidaMed?</span>
+                            <i class="fa-solid fa-chevron-down faq-icon"></i>
+                        </button>
+                        <div class="faq-content">
+                            <p>Solo pedimos información básica como nombre, edad y email para crear tu cuenta. Los detalles de tu medicación son completamente privados y no los compartimos con terceros. Tú tienes total control sobre tus datos.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-header" aria-expanded="false">
+                            <span class="faq-title">¿Es segura mi información médica?</span>
+                            <i class="fa-solid fa-chevron-down faq-icon"></i>
+                        </button>
+                        <div class="faq-content">
+                            <p>Absolutamente. Utilizamos encriptación de nivel médico para proteger toda tu información. CuidaMed cumple con RGPD y HIPAA, los estándares internacionales más exigentes en protección de datos sanitarios. Tu privacidad es nuestra prioridad.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-header" aria-expanded="false">
+                            <span class="faq-title">¿En qué dispositivos funciona CuidaMed?</span>
+                            <i class="fa-solid fa-chevron-down faq-icon"></i>
+                        </button>
+                        <div class="faq-content">
+                            <p>CuidaMed está disponible en iOS (iPhone, iPad) y Android. Recomendamos usar la versión más reciente de tu sistema operativo para una experiencia óptima. La app sincroniza automáticamente entre tus dispositivos.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-header" aria-expanded="false">
+                            <span class="faq-title">¿Puedo compartir mis medicamentos con mi médico?</span>
+                            <i class="fa-solid fa-chevron-down faq-icon"></i>
+                        </button>
+                        <div class="faq-content">
+                            <p>Sí, puedes exportar tu historial completo de medicamentos en PDF y compartirlo con tu médico. Esto facilita que tengas conversaciones informadas sobre tu tratamiento en tus citas médicas.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-header" aria-expanded="false">
+                            <span class="faq-title">¿Cómo funcionan los recordatorios?</span>
+                            <i class="fa-solid fa-chevron-down faq-icon"></i>
+                        </button>
+                        <div class="faq-content">
+                            <p>Configurar recordatorios es muy simple. Solo establece la hora, la frecuencia (diaria, semanal, etc.) y el medicamento. CuidaMed te enviará notificaciones en el momento exacto. Puedes personalizar sonidos y repeticiones hasta confirmar que tomaste la medicación.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="final-cta" class="section">
+            <div class="container text-center">
+                <h2>Recupera la tranquilidad hoy mismo</h2>
+                <p>Descarga la app gratis y únete a miles de personas que ya tienen el control de su bienestar.</p>
+                <div class="store-buttons">
+                    <button class="store-btn open-notify-modal">
+                        <i class="fa-brands fa-apple"></i>
+                        <div>
+                            <span>Descargar en</span>
+                            <strong>App Store</strong>
+                        </div>
+                    </button>
+                    <button class="store-btn open-notify-modal">
+                        <i class="fa-brands fa-google-play"></i>
+                        <div>
+                            <span>Disponible en</span>
+                            <strong>Google Play</strong>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-links">
+                <a href="#">Política de Privacidad</a>
+                <a href="#">Términos de Servicio</a>
+                <a href="#">Contacto</a>
+            </div>
+            <p class="disclaimer">
+                <strong>Aviso legal:</strong> Esta aplicación es una herramienta de apoyo y no sustituye el consejo, diagnóstico o tratamiento de un profesional médico. Consulta siempre a tu médico ante cualquier duda sobre tu salud.
+            </p>
+            <p class="copyright">&copy; 2025 CuidaMed. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Modal de Notificación -->
+    <div id="notify-modal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" aria-label="Cerrar modal">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="modal-header">
+                <i class="fa-solid fa-bell modal-icon"></i>
+                <h2>¡Próximamente disponible!</h2>
+            </div>
+            <p class="modal-description">CuidaMed estará disponible muy pronto en tu app store favorita. Déjanos tu email para notificarte cuando esté listo.</p>
+            <form id="notify-form" class="modal-form">
+                <div class="form-group">
+                    <input 
+                        type="email" 
+                        placeholder="tu@email.com" 
+                        required 
+                        aria-label="Tu dirección de correo electrónico"
+                    >
+                </div>
+                <button type="submit" class="btn btn-primary modal-btn">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    Notifícame
+                </button>
+                <p class="form-notice">No compartiremos tu email con nadie. Solo para notificaciones.</p>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
