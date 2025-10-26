@@ -9,7 +9,6 @@ export const PageTitle = ({ title }: { title: string }) => {
   return (
     <View
       style={{
-        marginBottom: 20,
         justifyContent: "flex-start",
         width: "100%",
         marginLeft: "5%",
