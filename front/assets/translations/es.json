@@ -2,6 +2,7 @@
   "landingPageTitle": "Pantalla principal",
   "welcome": "🚀 Bienvenido a la app",
   "error": "¡Error!",
+  "success": "¡Éxito!",
   "treatments": {
     "treatmentsTitle": "Mis Tratamientos",
     "addTreatment": "Añadir nuevo tratamiento",
@@ -10,6 +11,7 @@
     "treatmentNamePlaceholder": "Nombre del tratamiento",
     "startDate": "Fecha de inicio",
     "endDate": "Fecha de fin",
+    "successCreateTreatment": "Tratamiento creado con éxito",
     "datePicker": {
       "locale": "es",
       "placeholder": "Selecciona una fecha",
