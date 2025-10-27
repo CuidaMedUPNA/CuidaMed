@@ -10,11 +10,8 @@ CREATE TABLE "user" (
 
 CREATE TABLE medicine (
     id SERIAL PRIMARY KEY,
-    pactive VARCHAR(200) NOT NULL,
-    picture TEXT,
     trade_name VARCHAR(200) NOT NULL,
-    dose VARCHAR(100),
-    unit VARCHAR(50)
+    picture TEXT
 );
 
 CREATE TABLE treatment (
@@ -23,18 +20,38 @@ CREATE TABLE treatment (
     user_id INT NOT NULL,
     start_date DATE,
     end_date DATE,
+
     FOREIGN KEY (user_id) REFERENCES "user"(id) ON DELETE CASCADE
 );
 
-CREATE TABLE intake (
+CREATE TABLE medicine_ingredient (
     id SERIAL PRIMARY KEY,
-    start_date DATE NOT NULL,
-    end_date DATE,
-    frequency VARCHAR(100) NOT NULL,
+    medicine_id INT NOT NULL,
+    ingredient_name VARCHAR(200) NOT NULL,
+    concentration_amount NUMERIC(8, 2) NOT NULL,
+    concentration_unit VARCHAR(50) NOT NULL,
+
+    FOREIGN KEY (medicine_id) REFERENCES medicine(id) ON DELETE CASCADE
+);
+
+CREATE TABLE dosing_schedule (
+    id SERIAL PRIMARY KEY,
     medicine_id INT NOT NULL,
     treatment_id INT NOT NULL,
-    dose_intake VARCHAR(100),
-    hour TIME,
+    start_date DATE NOT NULL,
+    end_date DATE,
+    dose_amount NUMERIC(5, 2) NOT NULL,
+    dose_unit VARCHAR(50) NOT NULL,
+    
     FOREIGN KEY (medicine_id) REFERENCES medicine(id) ON DELETE CASCADE,
     FOREIGN KEY (treatment_id) REFERENCES treatment(id) ON DELETE CASCADE
+);
+
+CREATE TABLE dosing_time (
+    id SERIAL PRIMARY KEY,
+    dosing_schedule_id INT NOT NULL,
+    scheduled_time TIME NOT NULL, 
+    day_of_week INT, -- 1=Lunes, 7=Domingo. NULL para tomas diarias.
+    
+    FOREIGN KEY (dosing_schedule_id) REFERENCES dosing_schedule(id) ON DELETE CASCADE
 );
