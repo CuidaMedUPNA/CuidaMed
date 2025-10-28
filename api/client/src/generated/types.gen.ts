@@ -11,14 +11,100 @@ export type Treatment = {
     endDate: string;
 };
 
-export type Intake = {
-    startDate: string;
-    endDate: string;
-    frequency: string;
+export type NewDosingSchedule = {
+    /**
+     * ID del medicamento
+     */
     medicineId: number;
+    /**
+     * ID del tratamiento
+     */
     treatmentId: number;
-    dose: string;
-    hour: string;
+    /**
+     * Fecha de inicio de la toma
+     */
+    startDate: string;
+    /**
+     * Fecha de fin de la toma (opcional)
+     */
+    endDate?: string;
+    /**
+     * Cantidad de dosis
+     */
+    doseAmount: number;
+    /**
+     * Unidad de dosis (comprimidos, ml, etc)
+     */
+    doseUnit: string;
+    /**
+     * Horarios de toma
+     */
+    dosingTimes: Array<NewDosingTime>;
+};
+
+export type NewDosingTime = {
+    /**
+     * Hora de la toma (HH:mm:ss)
+     */
+    scheduledTime: string;
+    /**
+     * Día de la semana (1=Lunes, 7=Domingo). NULL para tomas diarias.
+     */
+    dayOfWeek?: number | null;
+};
+
+export type DosingSchedule = {
+    /**
+     * ID de la toma
+     */
+    id: number;
+    /**
+     * ID del medicamento
+     */
+    medicineId: number;
+    /**
+     * ID del tratamiento
+     */
+    treatmentId: number;
+    /**
+     * Fecha de inicio de la toma
+     */
+    startDate: string;
+    /**
+     * Fecha de fin de la toma (opcional)
+     */
+    endDate?: string;
+    /**
+     * Cantidad de dosis
+     */
+    doseAmount: number;
+    /**
+     * Unidad de dosis (comprimidos, ml, etc)
+     */
+    doseUnit: string;
+    /**
+     * Horarios de toma
+     */
+    dosingTimes: Array<DosingTime>;
+};
+
+export type DosingTime = {
+    /**
+     * ID de la toma
+     */
+    id: number;
+    /**
+     * ID del schedule de dosificación
+     */
+    dosingScheduleId: number;
+    /**
+     * Hora de la toma (HH:mm:ss)
+     */
+    scheduledTime: string;
+    /**
+     * Día de la semana (1=Lunes, 7=Domingo). NULL para tomas diarias.
+     */
+    dayOfWeek?: number | null;
 };
 
 export type HealthCheckData = {
@@ -113,17 +199,22 @@ export type CreateTreatmentResponses = {
 
 export type CreateTreatmentResponse = CreateTreatmentResponses[keyof CreateTreatmentResponses];
 
-export type RegisterIntakeData = {
+export type CreateIntakeData = {
     /**
-     * Datos de la toma de medicamento
+     * Datos de la toma
      */
-    body: Intake;
-    path?: never;
+    body: NewDosingSchedule;
+    path: {
+        /**
+         * ID del tratamiento
+         */
+        treatmentId: number;
+    };
     query?: never;
-    url: '/intakes';
+    url: '/treatments/{treatmentId}/intakes';
 };
 
-export type RegisterIntakeErrors = {
+export type CreateIntakeErrors = {
     /**
      * Solicitud incorrecta
      */
@@ -138,13 +229,13 @@ export type RegisterIntakeErrors = {
     };
 };
 
-export type RegisterIntakeError = RegisterIntakeErrors[keyof RegisterIntakeErrors];
+export type CreateIntakeError = CreateIntakeErrors[keyof CreateIntakeErrors];
 
-export type RegisterIntakeResponses = {
+export type CreateIntakeResponses = {
     /**
-     * Toma registrada exitosamente
+     * Toma creada exitosamente
      */
-    200: Intake;
+    201: DosingSchedule;
 };
 
-export type RegisterIntakeResponse = RegisterIntakeResponses[keyof RegisterIntakeResponses];
+export type CreateIntakeResponse = CreateIntakeResponses[keyof CreateIntakeResponses];
