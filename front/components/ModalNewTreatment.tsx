@@ -1,4 +1,4 @@
-import { useTranslation } from "react-i18next";
+import React, { useState, useEffect } from "react";
 import {
   Modal,
   View,
@@ -10,11 +10,16 @@ import {
   ScrollView,
   Pressable,
 } from "react-native";
-import { CustomDatePicker } from "./CustomDatePicker";
-import React, { useState, useEffect } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { createTreatmentMutation } from "@cuidamed-api/client/src/generated/@tanstack/react-query.gen";
+import { t } from "i18next";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Icon from "react-native-vector-icons/Ionicons";
+
+import {
+  createTreatmentMutation,
+  getTreatmentsQueryKey,
+} from "@cuidamed-api/client";
+
+import { CustomDatePicker } from "./CustomDatePicker";
 
 const COLORS = {
   primary: "#f23728",
@@ -34,8 +39,9 @@ export interface Props {
 }
 
 export const ModalNewTreatment = ({ visible, onClose }: Props) => {
-  const { t } = useTranslation();
   const userId = 1;
+
+  const queryClient = useQueryClient();
 
   const [treatmentName, setTreatmentName] = useState("");
   const [startDate, setStartDate] = useState<string | null>(null);
@@ -44,13 +50,16 @@ export const ModalNewTreatment = ({ visible, onClose }: Props) => {
 
   const mutation = useMutation({
     ...createTreatmentMutation(),
-    onSuccess: (data) => {
-      Alert.alert(t("success"), t("treatments.successCreateTreatment"));
+    onSuccess: () => {
+      console.log("✅ Tratamiento creado con éxito.");
+      queryClient.invalidateQueries({
+        queryKey: getTreatmentsQueryKey({ query: { userId } }),
+      });
       onClose();
     },
     onError: (error) => {
-      console.error("❌ DETAILED server error:", JSON.stringify(error));
-      Alert.alert(t("error"), t("treatments.addErrorAlert"));
+      console.error("❌ Error al crear tratamiento:", error);
+      Alert.alert(t("error"), t("treatments.create.errorAlert"));
     },
   });
 
@@ -62,12 +71,13 @@ export const ModalNewTreatment = ({ visible, onClose }: Props) => {
       setIsPermanent(false);
       mutation.reset();
     }
-  }, [visible]);
+  }, [visible, mutation.reset]);
 
   const handleAddTreatment = () => {
     const isEndDateInvalid =
       !isPermanent &&
       (!endDate || (startDate && new Date(startDate) > new Date(endDate)));
+
     if (!treatmentName || !startDate || isEndDateInvalid) {
       Alert.alert(t("error"), t("treatments.datePicker.badFillFieldsAlert"));
       return;
@@ -77,18 +87,16 @@ export const ModalNewTreatment = ({ visible, onClose }: Props) => {
       return new Date(dateString).toISOString().split("T")[0];
     };
 
-    const finalEndDateString = isPermanent ? startDate! : endDate!;
+    const finalEndDate = isPermanent ? startDate! : endDate!;
 
     const treatmentData = {
       name: treatmentName,
       userId: userId,
       startDate: formatDate(startDate!),
-      endDate: formatDate(finalEndDateString),
+      endDate: formatDate(finalEndDate),
     };
 
-    console.log("➡️ Sending this payload:", { body: treatmentData });
-
-    mutation.mutate(treatmentData as any);
+    mutation.mutate({ body: treatmentData });
   };
 
   return (
@@ -159,7 +167,7 @@ export const ModalNewTreatment = ({ visible, onClose }: Props) => {
             >
               <Text style={styles.addButtonText}>
                 {mutation.isPending
-                  ? t("common.saving")
+                  ? t("saving")
                   : t("treatments.addMedicationButton", "Añadir Tratamiento")}
               </Text>
             </Pressable>
@@ -170,7 +178,6 @@ export const ModalNewTreatment = ({ visible, onClose }: Props) => {
   );
 };
 
-// Styles remain the same...
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
