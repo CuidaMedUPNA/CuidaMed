@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { CreateTreatmentData, CreateTreatmentErrors, CreateTreatmentResponses, GetTreatmentsData, GetTreatmentsErrors, GetTreatmentsResponses, HealthCheckData, HealthCheckResponses } from './types.gen';
+import type { CreateIntakeData, CreateIntakeErrors, CreateIntakeResponses, CreateTreatmentData, CreateTreatmentErrors, CreateTreatmentResponses, GetTreatmentsData, GetTreatmentsErrors, GetTreatmentsResponses, HealthCheckData, HealthCheckResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -44,6 +44,20 @@ export const getTreatments = <ThrowOnError extends boolean = false>(options: Opt
 export const createTreatment = <ThrowOnError extends boolean = false>(options: Options<CreateTreatmentData, ThrowOnError>) => {
     return (options.client ?? client).post<CreateTreatmentResponses, CreateTreatmentErrors, ThrowOnError>({
         url: '/treatments',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+/**
+ * Añadir una toma de medicamento a un tratamiento
+ */
+export const createIntake = <ThrowOnError extends boolean = false>(options: Options<CreateIntakeData, ThrowOnError>) => {
+    return (options.client ?? client).post<CreateIntakeResponses, CreateIntakeErrors, ThrowOnError>({
+        url: '/treatments/{treatmentId}/intakes',
         ...options,
         headers: {
             'Content-Type': 'application/json',

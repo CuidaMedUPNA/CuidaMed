@@ -101,6 +101,51 @@ paths:
                   error:
                     type: string
                     example: "Internal Server Error"
+  /treatments/{treatmentId}/intakes:
+    post:
+      summary: Añadir una toma de medicamento a un tratamiento
+      operationId: createIntake
+      parameters:
+        - in: path
+          name: treatmentId
+          schema:
+            type: number
+          required: true
+          description: ID del tratamiento
+      requestBody:
+        description: Datos de la toma
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewDosingSchedule"
+      responses:
+        "201":
+          description: Toma creada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DosingSchedule"
+        "400":
+          description: Solicitud incorrecta
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Bad Request"
+        "500":
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Internal Server Error"
 
 components:
   schemas:
@@ -122,3 +167,123 @@ components:
         - userId
         - startDate
         - endDate
+
+    NewDosingSchedule:
+      type: object
+      properties:
+        medicineId:
+          type: number
+          description: ID del medicamento
+        treatmentId:
+          type: number
+          description: ID del tratamiento
+        startDate:
+          type: string
+          format: date
+          description: Fecha de inicio de la toma
+        endDate:
+          type: string
+          format: date
+          description: Fecha de fin de la toma (opcional)
+        doseAmount:
+          type: number
+          format: double
+          description: Cantidad de dosis
+        doseUnit:
+          type: string
+          description: Unidad de dosis (comprimidos, ml, etc)
+        dosingTimes:
+          type: array
+          description: Horarios de toma
+          items:
+            $ref: "#/components/schemas/NewDosingTime"
+      required:
+        - medicineId
+        - treatmentId
+        - startDate
+        - doseAmount
+        - doseUnit
+        - dosingTimes
+
+    NewDosingTime:
+      type: object
+      properties:
+        scheduledTime:
+          type: string
+          format: time
+          description: Hora de la toma (HH:mm:ss)
+        dayOfWeek:
+          oneOf:
+            - type: integer
+              minimum: 1
+              maximum: 7
+            - type: "null"
+          description: Día de la semana (1=Lunes, 7=Domingo). NULL para tomas diarias.
+      required:
+        - scheduledTime
+
+    DosingSchedule:
+      type: object
+      properties:
+        id:
+          type: number
+          description: ID de la toma
+        medicineId:
+          type: number
+          description: ID del medicamento
+        treatmentId:
+          type: number
+          description: ID del tratamiento
+        startDate:
+          type: string
+          format: date
+          description: Fecha de inicio de la toma
+        endDate:
+          type: string
+          format: date
+          description: Fecha de fin de la toma (opcional)
+        doseAmount:
+          type: number
+          format: double
+          description: Cantidad de dosis
+        doseUnit:
+          type: string
+          description: Unidad de dosis (comprimidos, ml, etc)
+        dosingTimes:
+          type: array
+          description: Horarios de toma
+          items:
+            $ref: "#/components/schemas/DosingTime"
+      required:
+        - id
+        - medicineId
+        - treatmentId
+        - startDate
+        - doseAmount
+        - doseUnit
+        - dosingTimes
+
+    DosingTime:
+      type: object
+      properties:
+        id:
+          type: number
+          description: ID de la toma
+        dosingScheduleId:
+          type: number
+          description: ID del schedule de dosificación
+        scheduledTime:
+          type: string
+          format: time
+          description: Hora de la toma (HH:mm:ss)
+        dayOfWeek:
+          oneOf:
+            - type: integer
+              minimum: 1
+              maximum: 7
+            - type: "null"
+          description: Día de la semana (1=Lunes, 7=Domingo). NULL para tomas diarias.
+      required:
+        - id
+        - dosingScheduleId
+        - scheduledTime
