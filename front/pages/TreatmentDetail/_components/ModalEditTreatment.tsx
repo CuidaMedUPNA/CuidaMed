@@ -36,11 +36,11 @@ export const ModalEditTreatment = ({
   treatmentName,
   treatmentId,
 }: Props) => {
-  const userId = treatmentId;
+  // const userId = treatmentId;
 
   const [newTreatmentName, setNewTreatmentName] = useState("");
-  const [startDate, setStartDate] = useState<string | null>(null);
-  const [endDate, setEndDate] = useState<string | null>(null);
+  // const [startDate, setStartDate] = useState<string | null>(null);
+  // const [endDate, setEndDate] = useState<string | null>(null);
 
   return (
     <Modal

@@ -1,4 +1,4 @@
-import { ModalEditTreatment } from "@/components/ModalEditTreatment";
+import { ModalEditTreatment } from "@/pages/TreatmentDetail/_components/ModalEditTreatment";
 import { AntDesign } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useState } from "react";
