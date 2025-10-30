@@ -3,8 +3,8 @@
 import { queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { createIntake, createTreatment, getTreatments, healthCheck, type Options } from '../sdk.gen';
-import type { CreateIntakeData, CreateIntakeError, CreateIntakeResponse, CreateTreatmentData, CreateTreatmentError, CreateTreatmentResponse, GetTreatmentsData, HealthCheckData } from '../types.gen';
+import { createIntake, createTreatment, getIntakesByTreatment, getTreatments, healthCheck, type Options } from '../sdk.gen';
+import type { CreateIntakeData, CreateIntakeError, CreateIntakeResponse, CreateTreatmentData, CreateTreatmentError, CreateTreatmentResponse, GetIntakesByTreatmentData, GetTreatmentsData, HealthCheckData } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -96,6 +96,26 @@ export const createTreatmentMutation = (options?: Partial<Options<CreateTreatmen
         }
     };
     return mutationOptions;
+};
+
+export const getIntakesByTreatmentQueryKey = (options: Options<GetIntakesByTreatmentData>) => createQueryKey('getIntakesByTreatment', options);
+
+/**
+ * Obtener tomas de un tratamiento
+ */
+export const getIntakesByTreatmentOptions = (options: Options<GetIntakesByTreatmentData>) => {
+    return queryOptions({
+        queryFn: async ({ queryKey, signal }) => {
+            const { data } = await getIntakesByTreatment({
+                ...options,
+                ...queryKey[0],
+                signal,
+                throwOnError: true
+            });
+            return data;
+        },
+        queryKey: getIntakesByTreatmentQueryKey(options)
+    });
 };
 
 /**
