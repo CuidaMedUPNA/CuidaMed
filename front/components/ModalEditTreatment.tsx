@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import { t } from "i18next";
 import Icon from "react-native-vector-icons/Ionicons";
-import { CustomDatePicker } from "./CustomDatePicker";
 
 const COLORS = {
   primary: "#f23728",
@@ -69,7 +68,7 @@ export const ModalEditTreatment = ({
               onChangeText={setNewTreatmentName}
             />
 
-            <CustomDatePicker
+            {/* <CustomDatePicker
               label={t("treatments.startDate")}
               value={startDate}
               onDateChange={setStartDate}
@@ -78,7 +77,7 @@ export const ModalEditTreatment = ({
               label={t("treatments.endDate")}
               value={endDate}
               onDateChange={setEndDate}
-            />
+            /> */}
           </View>
 
           <View style={styles.footer}>
