@@ -40,7 +40,6 @@ export const handlers: RouteHandlers = {
     // TODO: Insertar dosing_schedule en BD
     // TODO: Insertar dosing_times en BD
     // TODO: Retornar el DosingSchedule creado con ID
-
     interface DosingTimeInput {
       scheduledTime: string;
       dayOfWeek?: number | null;
@@ -66,4 +65,5 @@ export const handlers: RouteHandlers = {
 
     await reply.status(201).send(response);
   },
+  getIntakesByTreatment: async (request, reply) => {},
 };
