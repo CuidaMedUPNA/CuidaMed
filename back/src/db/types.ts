@@ -49,8 +49,8 @@ export interface MedicineIngredientTable {
   id: Generated<number>;
   medicine_id: number;
   ingredient_name: string;
-  concentration_amount: string | null;
-  concentration_unit: string | null;
+  concentration_amount: string;
+  concentration_unit: string;
 }
 
 export type MedicineIngredient = Selectable<MedicineIngredientTable>;
@@ -74,7 +74,7 @@ export interface DosingTimeTable {
   id: Generated<number>;
   dosing_schedule_id: number;
   schedule_time: string;
-  schedule_days: number | null; // 1-7
+  schedule_days: number | null;
 }
 export type DosingTime = Selectable<DosingTimeTable>;
 export type NewDosingTime = Insertable<DosingTimeTable>;
