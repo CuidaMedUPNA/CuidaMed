@@ -65,5 +65,8 @@ export const handlers: RouteHandlers = {
 
     await reply.status(201).send(response);
   },
-  getIntakesByTreatment: async (request, reply) => {},
+  getIntakesByTreatment: async (request, reply) => {
+    const treatmentId = Number(request.params.treatmentId);
+    reply.status(200).send([]);
+  },
 };
