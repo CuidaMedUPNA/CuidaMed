@@ -4,7 +4,9 @@ export interface Database {
   user: UserTable;
   medicine: MedicineTable;
   treatment: TreatmentTable;
-  intake: IntakeTable;
+  medicine_ingredient: MedicineIngredientTable;
+  dosing_schedule: DosingScheduleTable;
+  dosing_time: DosingTimeTable;
 }
 
 export interface UserTable {
@@ -23,11 +25,8 @@ export type UserUpdate = Updateable<UserTable>;
 
 export interface MedicineTable {
   id: Generated<number>;
-  pactive: string;
-  picture: string | null;
   trade_name: string;
-  dose: string | null;
-  unit: string | null;
+  picture: string | null;
 }
 
 export type Medicine = Selectable<MedicineTable>;
@@ -46,17 +45,37 @@ export type Treatment = Selectable<TreatmentTable>;
 export type NewTreatment = Insertable<TreatmentTable>;
 export type TreatmentUpdate = Updateable<TreatmentTable>;
 
-export interface IntakeTable {
+export interface MedicineIngredientTable {
   id: Generated<number>;
-  start_date: Date;
-  end_date: Date | null;
-  frequency: string;
   medicine_id: number;
-  treatment_id: number;
-  dose_intake: string | null;
-  hour: string | null;
+  ingredient_name: string;
+  concentration_amount: string;
+  concentration_unit: string;
 }
 
-export type Intake = Selectable<IntakeTable>;
-export type NewIntake = Insertable<IntakeTable>;
-export type IntakeUpdate = Updateable<IntakeTable>;
+export type MedicineIngredient = Selectable<MedicineIngredientTable>;
+export type NewMedicineIngredient = Insertable<MedicineIngredientTable>;
+export type MedicineIngredientUpdate = Updateable<MedicineIngredientTable>;
+
+export interface DosingScheduleTable {
+  id: Generated<number>;
+  medicine_id: number;
+  treatment_id: number;
+  start_date: Date;
+  end_date: Date | null;
+  dose_amount: string;
+  dose_unit: string;
+}
+export type DosingSchedule = Selectable<DosingScheduleTable>;
+export type NewDosingSchedule = Insertable<DosingScheduleTable>;
+export type DosingScheduleUpdate = Updateable<DosingScheduleTable>;
+
+export interface DosingTimeTable {
+  id: Generated<number>;
+  dosing_schedule_id: number;
+  schedule_time: string;
+  schedule_days: number | null;
+}
+export type DosingTime = Selectable<DosingTimeTable>;
+export type NewDosingTime = Insertable<DosingTimeTable>;
+export type DosingTimeUpdate = Updateable<DosingTimeTable>;
