@@ -35,17 +35,24 @@ const COLORS = {
 
 export interface Props {
   visible: boolean;
+  initialStartDate: Date;
+  initialEndDate: Date;
   onClose: () => void;
 }
 
-export const ModalNewTreatment = ({ visible, onClose }: Props) => {
+export const ModalNewTreatment = ({
+  visible,
+  onClose,
+  initialStartDate,
+  initialEndDate,
+}: Props) => {
   const userId = 1;
 
   const queryClient = useQueryClient();
 
   const [treatmentName, setTreatmentName] = useState("");
-  const [startDate, setStartDate] = useState<string | null>(null);
-  const [endDate, setEndDate] = useState<string | null>(null);
+  const [startDate, setStartDate] = useState(initialStartDate);
+  const [endDate, setEndDate] = useState(initialEndDate);
   const [isPermanent, setIsPermanent] = useState(false);
 
   const mutation = useMutation({
@@ -66,8 +73,8 @@ export const ModalNewTreatment = ({ visible, onClose }: Props) => {
   useEffect(() => {
     if (!visible) {
       setTreatmentName("");
-      setStartDate(null);
-      setEndDate(null);
+      setStartDate(initialStartDate);
+      setEndDate(initialEndDate);
       setIsPermanent(false);
       mutation.reset();
     }
@@ -88,12 +95,14 @@ export const ModalNewTreatment = ({ visible, onClose }: Props) => {
     };
 
     const finalEndDate = isPermanent ? startDate! : endDate!;
+    const stringStartDate = startDate.toISOString();
+    const stringFinalEndDate = finalEndDate.toISOString();
 
     const treatmentData = {
       name: treatmentName,
       userId: userId,
-      startDate: formatDate(startDate!),
-      endDate: formatDate(finalEndDate),
+      startDate: formatDate(stringStartDate!),
+      endDate: formatDate(stringFinalEndDate),
     };
 
     mutation.mutate({ body: treatmentData });
@@ -126,12 +135,14 @@ export const ModalNewTreatment = ({ visible, onClose }: Props) => {
             <CustomDatePicker
               label={t("treatments.startDate")}
               value={startDate}
+              date={startDate}
               onDateChange={setStartDate}
             />
             {!isPermanent && (
               <CustomDatePicker
                 label={t("treatments.endDate")}
                 value={endDate}
+                date={endDate}
                 onDateChange={setEndDate}
               />
             )}

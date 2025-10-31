@@ -44,8 +44,6 @@ export const CustomDatePicker = ({
     }
   };
 
-  console.log("CustomDatePicker value:", date);
-
   const displayValue = value
     ? new Date(value).toLocaleDateString(
         t("treatments.datePicker.locale") || "es-ES"
