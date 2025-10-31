@@ -41,6 +41,7 @@ export default function RootLayout() {
         <Tabs.Screen
           name="index"
           options={{
+            headerShown: false,
             tabBarLabel: `${t("tabs.home")}`,
             tabBarIcon: ({ color, size }: { color: string; size: number }) => (
               <MaterialIcons name="home" size={size} color={color} />
