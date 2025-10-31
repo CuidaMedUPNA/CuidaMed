@@ -199,6 +199,44 @@ export type CreateTreatmentResponses = {
 
 export type CreateTreatmentResponse = CreateTreatmentResponses[keyof CreateTreatmentResponses];
 
+export type GetIntakesByTreatmentData = {
+    body?: never;
+    path: {
+        /**
+         * ID del tratamiento
+         */
+        treatmentId: number;
+    };
+    query?: never;
+    url: '/treatments/{treatmentId}/intakes';
+};
+
+export type GetIntakesByTreatmentErrors = {
+    /**
+     * Solicitud incorrecta
+     */
+    400: {
+        error?: string;
+    };
+    /**
+     * Error interno del servidor
+     */
+    500: {
+        error?: string;
+    };
+};
+
+export type GetIntakesByTreatmentError = GetIntakesByTreatmentErrors[keyof GetIntakesByTreatmentErrors];
+
+export type GetIntakesByTreatmentResponses = {
+    /**
+     * Lista de tomas del tratamiento
+     */
+    200: Array<DosingSchedule>;
+};
+
+export type GetIntakesByTreatmentResponse = GetIntakesByTreatmentResponses[keyof GetIntakesByTreatmentResponses];
+
 export type CreateIntakeData = {
     /**
      * Datos de la toma
