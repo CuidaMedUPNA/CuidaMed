@@ -4,6 +4,8 @@ import { TreatmentDetailHeader } from "./_components/TreatmentDetailHeader";
 import { TreatmentDetailDates } from "./_components/TreatmentDetailDates";
 import { TreatmentDetailMedicines } from "./_components/TreatmentDetailMedicines";
 import { AssociatedMedicineProps } from "./_components/AssociatedMedicine";
+import { ModalEditTreatment } from "./_components/ModalEditTreatment";
+import { useState } from "react";
 
 export const TreatmentDetailPage = ({
   treatmentName,
@@ -11,6 +13,7 @@ export const TreatmentDetailPage = ({
   treatmentName: string;
 }) => {
   const router = useRouter();
+  const [modalVisible, setModalVisible] = useState(false);
 
   const initialDate = new Date("2025-09-01");
   const endDate = new Date("2025-12-31");
@@ -57,9 +60,21 @@ export const TreatmentDetailPage = ({
         borderRadius: 24,
       }}
     >
-      <TreatmentDetailHeader treatmentName={treatmentName} router={router} />
+      <TreatmentDetailHeader
+        treatmentName={treatmentName}
+        router={router}
+        handleEditTreatment={() => setModalVisible(true)}
+      />
       <TreatmentDetailDates initialDate={initialDate} endDate={endDate} />
       <TreatmentDetailMedicines medicines={medicinesData} />
+      <ModalEditTreatment
+        visible={modalVisible}
+        treatmentName={treatmentName}
+        treatmentId={1}
+        treatmentInitialDate={initialDate}
+        treatmentEndDate={endDate}
+        onClose={() => setModalVisible(false)}
+      />
     </View>
   );
 };

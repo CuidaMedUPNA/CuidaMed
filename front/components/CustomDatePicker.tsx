@@ -15,13 +15,15 @@ import { useTranslation } from "react-i18next";
 
 export interface CustomDatePickerProps {
   label: string;
-  value: string | null;
-  onDateChange: (date: string) => void;
+  value: Date;
+  date: Date;
+  onDateChange: (date: Date) => void;
 }
 
 export const CustomDatePicker = ({
   label,
   value,
+  date,
   onDateChange,
 }: CustomDatePickerProps) => {
   const { t } = useTranslation();
@@ -38,10 +40,11 @@ export const CustomDatePicker = ({
     }
 
     if (event.type === "set" && selectedDate) {
-      const formattedDate = selectedDate.toISOString().split("T")[0];
-      onDateChange(formattedDate);
+      onDateChange(selectedDate);
     }
   };
+
+  console.log("CustomDatePicker value:", date);
 
   const displayValue = value
     ? new Date(value).toLocaleDateString(
