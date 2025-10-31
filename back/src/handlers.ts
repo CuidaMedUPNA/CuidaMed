@@ -69,4 +69,9 @@ export const handlers: RouteHandlers = {
     Number(request.params.treatmentId);
     reply.status(200).send([]);
   },
+  deleteIntake: async (request, reply) => {
+    Number(request.params.treatmentId);
+    Number(request.params.intakeId);
+    reply.status(204).send();
+  },
 };

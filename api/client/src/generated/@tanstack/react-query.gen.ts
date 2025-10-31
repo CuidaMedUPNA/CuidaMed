@@ -3,8 +3,8 @@
 import { queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { createIntake, createTreatment, getIntakesByTreatment, getTreatments, healthCheck, type Options } from '../sdk.gen';
-import type { CreateIntakeData, CreateIntakeError, CreateIntakeResponse, CreateTreatmentData, CreateTreatmentError, CreateTreatmentResponse, GetIntakesByTreatmentData, GetTreatmentsData, HealthCheckData } from '../types.gen';
+import { createIntake, createTreatment, deleteIntake, getIntakesByTreatment, getTreatments, healthCheck, type Options } from '../sdk.gen';
+import type { CreateIntakeData, CreateIntakeError, CreateIntakeResponse, CreateTreatmentData, CreateTreatmentError, CreateTreatmentResponse, DeleteIntakeData, DeleteIntakeError, DeleteIntakeResponse, GetIntakesByTreatmentData, GetTreatmentsData, HealthCheckData } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -125,6 +125,23 @@ export const createIntakeMutation = (options?: Partial<Options<CreateIntakeData>
     const mutationOptions: UseMutationOptions<CreateIntakeResponse, CreateIntakeError, Options<CreateIntakeData>> = {
         mutationFn: async (fnOptions) => {
             const { data } = await createIntake({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Eliminar una toma de medicamento de un tratamiento
+ */
+export const deleteIntakeMutation = (options?: Partial<Options<DeleteIntakeData>>): UseMutationOptions<DeleteIntakeResponse, DeleteIntakeError, Options<DeleteIntakeData>> => {
+    const mutationOptions: UseMutationOptions<DeleteIntakeResponse, DeleteIntakeError, Options<DeleteIntakeData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await deleteIntake({
                 ...options,
                 ...fnOptions,
                 throwOnError: true
