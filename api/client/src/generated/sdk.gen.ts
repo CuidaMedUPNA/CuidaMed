@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { CreateIntakeData, CreateIntakeErrors, CreateIntakeResponses, CreateTreatmentData, CreateTreatmentErrors, CreateTreatmentResponses, GetIntakesByTreatmentData, GetIntakesByTreatmentErrors, GetIntakesByTreatmentResponses, GetTreatmentsData, GetTreatmentsErrors, GetTreatmentsResponses, HealthCheckData, HealthCheckResponses } from './types.gen';
+import type { CreateIntakeData, CreateIntakeErrors, CreateIntakeResponses, CreateTreatmentData, CreateTreatmentErrors, CreateTreatmentResponses, DeleteIntakeData, DeleteIntakeErrors, DeleteIntakeResponses, GetIntakesByTreatmentData, GetIntakesByTreatmentErrors, GetIntakesByTreatmentResponses, GetTreatmentsData, GetTreatmentsErrors, GetTreatmentsResponses, HealthCheckData, HealthCheckResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -57,7 +57,7 @@ export const createTreatment = <ThrowOnError extends boolean = false>(options: O
  */
 export const getIntakesByTreatment = <ThrowOnError extends boolean = false>(options: Options<GetIntakesByTreatmentData, ThrowOnError>) => {
     return (options.client ?? client).get<GetIntakesByTreatmentResponses, GetIntakesByTreatmentErrors, ThrowOnError>({
-        url: '/treatments/{treatmentId}/intakes',
+        url: '/treatments/{treatmentId}',
         ...options
     });
 };
@@ -67,11 +67,21 @@ export const getIntakesByTreatment = <ThrowOnError extends boolean = false>(opti
  */
 export const createIntake = <ThrowOnError extends boolean = false>(options: Options<CreateIntakeData, ThrowOnError>) => {
     return (options.client ?? client).post<CreateIntakeResponses, CreateIntakeErrors, ThrowOnError>({
-        url: '/treatments/{treatmentId}/intakes',
+        url: '/treatments/{treatmentId}',
         ...options,
         headers: {
             'Content-Type': 'application/json',
             ...options.headers
         }
+    });
+};
+
+/**
+ * Eliminar una toma de medicamento de un tratamiento
+ */
+export const deleteIntake = <ThrowOnError extends boolean = false>(options: Options<DeleteIntakeData, ThrowOnError>) => {
+    return (options.client ?? client).delete<DeleteIntakeResponses, DeleteIntakeErrors, ThrowOnError>({
+        url: '/treatments/{treatmentId}/intakes/{intakeId}',
+        ...options
     });
 };

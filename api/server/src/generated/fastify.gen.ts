@@ -2,7 +2,7 @@
 
 import type { RouteHandler } from 'fastify';
 
-import type { CreateIntakeData, CreateIntakeErrors, CreateIntakeResponses, CreateTreatmentData, CreateTreatmentErrors, CreateTreatmentResponses, GetIntakesByTreatmentData, GetIntakesByTreatmentErrors, GetIntakesByTreatmentResponses, GetTreatmentsData, GetTreatmentsErrors, GetTreatmentsResponses, HealthCheckResponses } from './types.gen';
+import type { CreateIntakeData, CreateIntakeErrors, CreateIntakeResponses, CreateTreatmentData, CreateTreatmentErrors, CreateTreatmentResponses, DeleteIntakeData, DeleteIntakeErrors, DeleteIntakeResponses, GetIntakesByTreatmentData, GetIntakesByTreatmentErrors, GetIntakesByTreatmentResponses, GetTreatmentsData, GetTreatmentsErrors, GetTreatmentsResponses, HealthCheckResponses } from './types.gen';
 
 export type RouteHandlers = {
     healthCheck: RouteHandler<{
@@ -24,5 +24,9 @@ export type RouteHandlers = {
         Body: CreateIntakeData['body'];
         Params: CreateIntakeData['path'];
         Reply: CreateIntakeErrors & CreateIntakeResponses;
+    }>;
+    deleteIntake: RouteHandler<{
+        Params: DeleteIntakeData['path'];
+        Reply: DeleteIntakeErrors & DeleteIntakeResponses;
     }>;
 };

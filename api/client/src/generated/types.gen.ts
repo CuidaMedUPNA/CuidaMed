@@ -208,7 +208,7 @@ export type GetIntakesByTreatmentData = {
         treatmentId: number;
     };
     query?: never;
-    url: '/treatments/{treatmentId}/intakes';
+    url: '/treatments/{treatmentId}';
 };
 
 export type GetIntakesByTreatmentErrors = {
@@ -249,7 +249,7 @@ export type CreateIntakeData = {
         treatmentId: number;
     };
     query?: never;
-    url: '/treatments/{treatmentId}/intakes';
+    url: '/treatments/{treatmentId}';
 };
 
 export type CreateIntakeErrors = {
@@ -277,3 +277,45 @@ export type CreateIntakeResponses = {
 };
 
 export type CreateIntakeResponse = CreateIntakeResponses[keyof CreateIntakeResponses];
+
+export type DeleteIntakeData = {
+    body?: never;
+    path: {
+        /**
+         * ID del tratamiento
+         */
+        treatmentId: number;
+        /**
+         * ID de la toma
+         */
+        intakeId: number;
+    };
+    query?: never;
+    url: '/treatments/{treatmentId}/intakes/{intakeId}';
+};
+
+export type DeleteIntakeErrors = {
+    /**
+     * Solicitud incorrecta
+     */
+    400: {
+        error?: string;
+    };
+    /**
+     * Error interno del servidor
+     */
+    500: {
+        error?: string;
+    };
+};
+
+export type DeleteIntakeError = DeleteIntakeErrors[keyof DeleteIntakeErrors];
+
+export type DeleteIntakeResponses = {
+    /**
+     * Toma eliminada exitosamente
+     */
+    204: void;
+};
+
+export type DeleteIntakeResponse = DeleteIntakeResponses[keyof DeleteIntakeResponses];
