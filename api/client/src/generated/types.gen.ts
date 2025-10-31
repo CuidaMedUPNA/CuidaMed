@@ -8,7 +8,7 @@ export type Treatment = {
     name: string;
     userId: number;
     startDate: string;
-    endDate: string;
+    endDate?: string;
 };
 
 export type NewDosingSchedule = {

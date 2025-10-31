@@ -247,7 +247,6 @@ components:
         - name
         - userId
         - startDate
-        - endDate
 
     NewDosingSchedule:
       type: object

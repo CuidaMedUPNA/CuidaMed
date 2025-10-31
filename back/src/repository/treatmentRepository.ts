@@ -1,6 +1,6 @@
 import { db } from "../db/database";
 import { NewTreatment } from "../db/types";
-import { Treatment } from "@cuidamed-api/server";
+import { NewDosingSchedule, Treatment } from "@cuidamed-api/server";
 
 export async function insertTreatment(treatment: NewTreatment) {
   return await db
@@ -30,4 +30,31 @@ export async function getTreatmentsByUserId(userId: number) {
   }));
 
   return treatmentsWithDates;
+}
+
+export async function insertIntakeToTreatment(
+  dosingSchedule: NewDosingSchedule
+) {
+  const insertedSchedule = await db
+    .insertInto("dosing_schedule")
+    .values({
+      medicine_id: dosingSchedule.medicineId,
+      treatment_id: dosingSchedule.treatmentId,
+      start_date: dosingSchedule.startDate,
+      end_date: dosingSchedule.endDate ?? null,
+      dose_amount: dosingSchedule.doseAmount,
+      dose_unit: dosingSchedule.doseUnit,
+    })
+    .returningAll()
+    .executeTakeFirstOrThrow();
+
+  const dbDosingTimes = dosingSchedule.dosingTimes.map((time) => ({
+    dosing_schedule_id: insertedSchedule.id,
+    scheduled_time: time.scheduledTime,
+    day_of_week: (time.dayOfWeek ?? null) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | null,
+  }));
+
+  await db.insertInto("dosing_time").values(dbDosingTimes).execute();
+
+  return insertedSchedule;
 }
