@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
 import { client } from "@cuidamed-api/client";
 import { API_URL } from "@/config";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 client.setConfig({
   baseUrl: API_URL,
@@ -15,6 +16,7 @@ const queryClient = new QueryClient();
 
 export default function RootLayout() {
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -26,8 +28,8 @@ export default function RootLayout() {
             backgroundColor: "#fff",
             borderTopWidth: 1,
             borderTopColor: "#e0e0e0",
-            height: 60,
-            paddingBottom: 8,
+            height: 60 + insets.bottom,
+            paddingBottom: insets.bottom,
             paddingTop: 8,
           },
           tabBarLabelStyle: {
