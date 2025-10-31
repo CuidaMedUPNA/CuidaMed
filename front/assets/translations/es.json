@@ -3,10 +3,13 @@
   "welcome": "🚀 Bienvenido a la app",
   "error": "¡Error!",
   "saving": "Guardando...",
+  "edit": "Editar",
   "success": "¡Éxito!",
   "treatments": {
     "treatmentsTitle": "Mis Tratamientos",
+    "treatmentName": "Nombre del tratamiento",
     "addTreatment": "Añadir nuevo tratamiento",
+    "editTreatment": "Editar tratamiento",
     "addMedicationButton": "Añadir",
     "closeButton": "Cerrar",
     "treatmentNamePlaceholder": "Nombre del tratamiento",
