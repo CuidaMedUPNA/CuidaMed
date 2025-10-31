@@ -32,7 +32,7 @@ export const MyTreatmentsPage = () => {
     <>
       <ModalNewTreatment
         initialStartDate={new Date()}
-        initialEndDate={new Date(new Date().setDate(new Date().getDate() + 30))}
+        initialEndDate={undefined}
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
       />

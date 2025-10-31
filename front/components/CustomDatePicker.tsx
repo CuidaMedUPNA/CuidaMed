@@ -15,8 +15,8 @@ import { useTranslation } from "react-i18next";
 
 export interface CustomDatePickerProps {
   label: string;
-  value: Date;
-  date: Date;
+  value: Date | undefined;
+  date: Date | undefined;
   onDateChange: (date: Date) => void;
 }
 

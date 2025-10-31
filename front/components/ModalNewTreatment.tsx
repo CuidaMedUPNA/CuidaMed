@@ -36,7 +36,7 @@ const COLORS = {
 export interface Props {
   visible: boolean;
   initialStartDate: Date;
-  initialEndDate: Date;
+  initialEndDate: Date | undefined;
   onClose: () => void;
 }
 
@@ -52,7 +52,7 @@ export const ModalNewTreatment = ({
 
   const [treatmentName, setTreatmentName] = useState("");
   const [startDate, setStartDate] = useState(initialStartDate);
-  const [endDate, setEndDate] = useState(initialEndDate);
+  const [endDate, setEndDate] = useState<Date | undefined>(initialEndDate);
   const [isPermanent, setIsPermanent] = useState(false);
 
   const mutation = useMutation({
