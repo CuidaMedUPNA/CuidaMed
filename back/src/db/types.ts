@@ -1,4 +1,10 @@
-import { Generated, Insertable, Selectable, Updateable } from "kysely";
+import {
+  ColumnType,
+  Generated,
+  Insertable,
+  Selectable,
+  Updateable,
+} from "kysely";
 
 export interface Database {
   user: UserTable;
@@ -14,7 +20,7 @@ export interface UserTable {
   name: string;
   email: string;
   password: string;
-  birthdate: Date | null;
+  birthdate: string | null;
   profile_picture: string | null;
   gender: string | null;
 }
@@ -37,8 +43,8 @@ export interface TreatmentTable {
   id: Generated<number>;
   name: string;
   user_id: number;
-  start_date: Date | null;
-  end_date: Date | null;
+  start_date: ColumnType<Date, string, never>;
+  end_date: ColumnType<Date | null, string | null, never>;
 }
 
 export type Treatment = Selectable<TreatmentTable>;
@@ -49,7 +55,7 @@ export interface MedicineIngredientTable {
   id: Generated<number>;
   medicine_id: number;
   ingredient_name: string;
-  concentration_amount: string;
+  concentration_amount: number;
   concentration_unit: string;
 }
 
@@ -61,9 +67,9 @@ export interface DosingScheduleTable {
   id: Generated<number>;
   medicine_id: number;
   treatment_id: number;
-  start_date: Date;
-  end_date: Date | null;
-  dose_amount: string;
+  start_date: ColumnType<Date, string, never>;
+  end_date: ColumnType<Date | null, string | null, never>;
+  dose_amount: number;
   dose_unit: string;
 }
 export type DosingSchedule = Selectable<DosingScheduleTable>;
@@ -73,8 +79,8 @@ export type DosingScheduleUpdate = Updateable<DosingScheduleTable>;
 export interface DosingTimeTable {
   id: Generated<number>;
   dosing_schedule_id: number;
-  schedule_time: string;
-  schedule_days: number | null;
+  scheduled_time: string;
+  day_of_week: 1 | 2 | 3 | 4 | 5 | 6 | 7 | null;
 }
 export type DosingTime = Selectable<DosingTimeTable>;
 export type NewDosingTime = Insertable<DosingTimeTable>;

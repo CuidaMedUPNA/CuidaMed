@@ -18,7 +18,7 @@ CREATE TABLE treatment (
     id SERIAL PRIMARY KEY,
     name VARCHAR(200) NOT NULL,
     user_id INT NOT NULL,
-    start_date DATE,
+    start_date DATE NOT NULL,
     end_date DATE,
 
     FOREIGN KEY (user_id) REFERENCES "user"(id) ON DELETE CASCADE
@@ -51,7 +51,7 @@ CREATE TABLE dosing_time (
     id SERIAL PRIMARY KEY,
     dosing_schedule_id INT NOT NULL,
     scheduled_time TIME NOT NULL, 
-    day_of_week INT, -- 1=Lunes, 7=Domingo. NULL para tomas diarias.
-    
+    day_of_week INT CHECK (day_of_week IS NULL OR (day_of_week >= 1 AND day_of_week <= 7)),
+
     FOREIGN KEY (dosing_schedule_id) REFERENCES dosing_schedule(id) ON DELETE CASCADE
 );
