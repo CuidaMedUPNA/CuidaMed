@@ -46,7 +46,7 @@ export const handlers: RouteHandlers = {
       endDate: insertedSchedule.end_date?.toISOString().split("T")[0],
       doseAmount: insertedSchedule.dose_amount,
       doseUnit: insertedSchedule.dose_unit,
-      dosingTimes: [],
+      dosingTimes: dosingSchedule.dosingTimes,
     };
 
     await reply.status(201).send(response);
