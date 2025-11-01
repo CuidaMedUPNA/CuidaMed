@@ -1,5 +1,6 @@
 import { RouteHandlers } from "@cuidamed-api/server";
 import { NewTreatment } from "./db/types";
+import { db } from "./db/database";
 import {
   insertTreatment,
   getTreatmentsByUserId,
@@ -38,6 +39,13 @@ export const handlers: RouteHandlers = {
 
     const insertedSchedule = await insertIntakeToTreatment(dosingSchedule);
 
+    // Obtener los dosing_times creados
+    const insertedTimes = await db
+      .selectFrom("dosing_time")
+      .selectAll()
+      .where("dosing_schedule_id", "=", insertedSchedule.id)
+      .execute();
+
     const response = {
       id: insertedSchedule.id,
       medicineId: insertedSchedule.medicine_id,
@@ -46,7 +54,12 @@ export const handlers: RouteHandlers = {
       endDate: insertedSchedule.end_date?.toISOString().split("T")[0],
       doseAmount: insertedSchedule.dose_amount,
       doseUnit: insertedSchedule.dose_unit,
-      dosingTimes: dosingSchedule.dosingTimes,
+      dosingTimes: insertedTimes.map((time) => ({
+        id: time.id,
+        dosingScheduleId: time.dosing_schedule_id,
+        scheduledTime: time.scheduled_time,
+        dayOfWeek: time.day_of_week,
+      })),
     };
 
     await reply.status(201).send(response);
