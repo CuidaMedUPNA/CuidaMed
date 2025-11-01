@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Icon } from "react-native-elements";
 
 export interface AssociatedMedicineProps {
@@ -70,15 +70,14 @@ export const AssociatedMedicine = ({
       </View>
       <Icon name="chevron-right" type="entypo" />
       <View style={styles.papelera}>
-        <Icon
-          name="trash"
-          type="font-awesome"
-          color="#F23728"
+        <TouchableOpacity
           onPress={() => {
             console.log("Eliminar medicamento: ", nombre);
           }}
-          className="papelera"
-        />
+          accessibilityRole="button"
+        >
+          <Icon name="trash" type="font-awesome" color="#F23728" />
+        </TouchableOpacity>
       </View>
     </View>
   );
