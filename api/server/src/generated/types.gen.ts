@@ -199,6 +199,44 @@ export type CreateTreatmentResponses = {
 
 export type CreateTreatmentResponse = CreateTreatmentResponses[keyof CreateTreatmentResponses];
 
+export type DeleteTreatmentData = {
+    body?: never;
+    path: {
+        /**
+         * ID del tratamiento
+         */
+        treatmentId: number;
+    };
+    query?: never;
+    url: '/treatments/{treatmentId}';
+};
+
+export type DeleteTreatmentErrors = {
+    /**
+     * Tratamiento no encontrado
+     */
+    404: {
+        error?: string;
+    };
+    /**
+     * Error interno del servidor
+     */
+    500: {
+        error?: string;
+    };
+};
+
+export type DeleteTreatmentError = DeleteTreatmentErrors[keyof DeleteTreatmentErrors];
+
+export type DeleteTreatmentResponses = {
+    /**
+     * Tratamiento eliminado exitosamente
+     */
+    204: void;
+};
+
+export type DeleteTreatmentResponse = DeleteTreatmentResponses[keyof DeleteTreatmentResponses];
+
 export type GetIntakesByTreatmentData = {
     body?: never;
     path: {
