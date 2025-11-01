@@ -32,6 +32,14 @@ export async function getTreatmentsByUserId(userId: number) {
   return treatmentsWithDates;
 }
 
+const normalizeTime = (time: string): string => {
+  const parts = time.split(":");
+  if (parts.length === 2) {
+    return `${time}:00`;
+  }
+  return time;
+};
+
 export async function insertIntakeToTreatment(
   dosingSchedule: NewDosingSchedule
 ) {
@@ -50,7 +58,7 @@ export async function insertIntakeToTreatment(
 
   const dbDosingTimes = dosingSchedule.dosingTimes.map((time) => ({
     dosing_schedule_id: insertedSchedule.id,
-    scheduled_time: time.scheduledTime,
+    scheduled_time: normalizeTime(time.scheduledTime),
     day_of_week: (time.dayOfWeek ?? null) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | null,
   }));
 

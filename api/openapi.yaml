@@ -290,8 +290,8 @@ components:
       properties:
         scheduledTime:
           type: string
-          format: time
-          description: Hora de la toma (HH:mm:ss)
+          pattern: "^([01]?[0-9]|2[0-3]):[0-5][0-9]$"
+          description: Hora de la toma (HH:mm)
         dayOfWeek:
           oneOf:
             - type: integer
@@ -354,8 +354,8 @@ components:
           description: ID del schedule de dosificación
         scheduledTime:
           type: string
-          format: time
-          description: Hora de la toma (HH:mm:ss)
+          pattern: "^([01]?[0-9]|2[0-3]):[0-5][0-9]$"
+          description: Hora de la toma (HH:mm)
         dayOfWeek:
           oneOf:
             - type: integer

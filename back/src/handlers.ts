@@ -39,7 +39,6 @@ export const handlers: RouteHandlers = {
 
     const insertedSchedule = await insertIntakeToTreatment(dosingSchedule);
 
-    // Obtener los dosing_times creados
     const insertedTimes = await db
       .selectFrom("dosing_time")
       .selectAll()
@@ -54,12 +53,15 @@ export const handlers: RouteHandlers = {
       endDate: insertedSchedule.end_date?.toISOString().split("T")[0],
       doseAmount: insertedSchedule.dose_amount,
       doseUnit: insertedSchedule.dose_unit,
-      dosingTimes: insertedTimes.map((time) => ({
-        id: time.id,
-        dosingScheduleId: time.dosing_schedule_id,
-        scheduledTime: time.scheduled_time,
-        dayOfWeek: time.day_of_week,
-      })),
+      dosingTimes: insertedTimes.map((time) => {
+        const [hours, minutes] = time.scheduled_time.split(":");
+        return {
+          id: time.id,
+          dosingScheduleId: time.dosing_schedule_id,
+          scheduledTime: `${hours}:${minutes}`,
+          dayOfWeek: time.day_of_week,
+        };
+      }),
     };
 
     await reply.status(201).send(response);
