@@ -66,3 +66,16 @@ export async function insertIntakeToTreatment(
 
   return insertedSchedule;
 }
+
+export async function deleteIntakeFromTreatment(
+  treatmentId: number,
+  intakeId: number
+) {
+  const result = await db
+    .deleteFrom("dosing_schedule")
+    .where("treatment_id", "=", treatmentId)
+    .where("id", "=", intakeId)
+    .executeTakeFirst();
+
+  return result.numDeletedRows || 0;
+}
