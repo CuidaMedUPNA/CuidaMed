@@ -5,6 +5,7 @@ import {
   insertTreatment,
   getTreatmentsByUserId,
   insertIntakeToTreatment,
+  deleteIntakeFromTreatment,
 } from "./repository/treatmentRepository";
 
 export const handlers: RouteHandlers = {
@@ -71,8 +72,14 @@ export const handlers: RouteHandlers = {
     reply.status(200).send([]);
   },
   deleteIntake: async (request, reply) => {
-    Number(request.params.treatmentId);
-    Number(request.params.intakeId);
+    const rowsDeleted = await deleteIntakeFromTreatment(
+      request.params.treatmentId,
+      request.params.intakeId
+    );
+
+    if (rowsDeleted === 0) {
+      return reply.status(404).send({ error: "Intake not found" });
+    }
     reply.status(204).send();
   },
 };
