@@ -1,6 +1,10 @@
 import { db } from "../db/database";
 import { NewTreatment } from "../db/types";
-import { NewDosingSchedule, Treatment } from "@cuidamed-api/server";
+import {
+  DosingSchedule,
+  NewDosingSchedule,
+  Treatment,
+} from "@cuidamed-api/server";
 
 export async function insertTreatment(treatment: NewTreatment) {
   const insertedTreatment = await db
@@ -86,4 +90,48 @@ export async function deleteIntakeFromTreatment(
     .executeTakeFirst();
 
   return result.numDeletedRows || 0;
+}
+
+export async function getIntakesByTreatmentId(treatmentId: number) {
+  const dosingSchedules = await db
+    .selectFrom("dosing_schedule")
+    .selectAll()
+    .where("treatment_id", "=", treatmentId)
+    .execute();
+
+  const intakes: DosingSchedule[] = await Promise.all(
+    dosingSchedules.map(async (schedule) => {
+      const dosingTimes = await getDosingTimesByScheduleId(schedule.id);
+      return {
+        id: schedule.id,
+        medicineId: schedule.medicine_id,
+        treatmentId: schedule.treatment_id,
+        startDate: schedule.start_date.toISOString().split("T")[0],
+        endDate: schedule.end_date?.toISOString().split("T")[0],
+        doseAmount: schedule.dose_amount,
+        doseUnit: schedule.dose_unit,
+        dosingTimes: dosingTimes,
+      };
+    })
+  );
+
+  return intakes;
+}
+
+async function getDosingTimesByScheduleId(scheduleId: number) {
+  const dosingTimes = await db
+    .selectFrom("dosing_time")
+    .selectAll()
+    .where("dosing_schedule_id", "=", scheduleId)
+    .execute();
+
+  return dosingTimes.map((time) => {
+    const [hours, minutes] = time.scheduled_time.split(":");
+    return {
+      id: time.id,
+      dosingScheduleId: time.dosing_schedule_id,
+      scheduledTime: `${hours}:${minutes}`,
+      dayOfWeek: time.day_of_week,
+    };
+  });
 }
