@@ -6,6 +6,7 @@ import {
   getTreatmentsByUserId,
   insertIntakeToTreatment,
   deleteIntakeFromTreatment,
+  getIntakesByTreatmentId,
 } from "./repository/treatmentRepository";
 
 export const handlers: RouteHandlers = {
@@ -68,8 +69,9 @@ export const handlers: RouteHandlers = {
     await reply.status(201).send(response);
   },
   getIntakesByTreatment: async (request, reply) => {
-    Number(request.params.treatmentId);
-    reply.status(200).send([]);
+    const treatmentId = request.params.treatmentId;
+    const intakes = await getIntakesByTreatmentId(treatmentId);
+    reply.status(200).send(intakes);
   },
   deleteIntake: async (request, reply) => {
     const rowsDeleted = await deleteIntakeFromTreatment(
