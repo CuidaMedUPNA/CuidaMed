@@ -1,17 +1,16 @@
-import { ModalEditTreatment } from "@/pages/TreatmentDetail/_components/ModalEditTreatment";
 import { AntDesign } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useState } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 
 export const TreatmentDetailHeader = ({
   treatmentName,
   router,
+  handleEditTreatment,
 }: {
   treatmentName: string;
   router: ReturnType<typeof useRouter>;
+  handleEditTreatment: () => void;
 }) => {
-  const [modalVisible, setModalVisible] = useState(false);
   return (
     <View
       style={{
@@ -43,15 +42,9 @@ export const TreatmentDetailHeader = ({
           </Text>
         </View>
       </View>
-      <TouchableOpacity onPress={() => setModalVisible(true)}>
+      <TouchableOpacity onPress={handleEditTreatment}>
         <AntDesign name="edit" size={24} />
       </TouchableOpacity>
-      <ModalEditTreatment
-        visible={modalVisible}
-        treatmentName={treatmentName}
-        treatmentId={1}
-        onClose={() => setModalVisible(false)}
-      />
     </View>
   );
 };
