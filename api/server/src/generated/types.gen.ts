@@ -302,6 +302,12 @@ export type DeleteIntakeErrors = {
         error?: string;
     };
     /**
+     * Toma no encontrada
+     */
+    404: {
+        error?: string;
+    };
+    /**
      * Error interno del servidor
      */
     500: {
