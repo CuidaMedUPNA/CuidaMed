@@ -1,8 +1,14 @@
 import { Stack } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function TreatmentsLayout() {
+  const insets = useSafeAreaInsets();
   return (
-    <Stack>
+    <Stack
+      screenOptions={{
+        contentStyle: { paddingTop: insets.top, paddingBottom: insets.bottom },
+      }}
+    >
       <Stack.Screen
         name="index"
         options={{
@@ -12,7 +18,7 @@ export default function TreatmentsLayout() {
       <Stack.Screen
         name="[treatmentName]"
         options={{
-          headerShown: true,
+          headerShown: false,
           title: "Detalle del Tratamiento",
         }}
       />
