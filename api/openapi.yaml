@@ -73,7 +73,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Treatment"
+              $ref: "#/components/schemas/NewTreatment"
       responses:
         "200":
           description: Tratamiento creado
@@ -240,7 +240,7 @@ paths:
 
 components:
   schemas:
-    Treatment:
+    NewTreatment:
       type: object
       properties:
         name:
@@ -254,6 +254,28 @@ components:
           type: string
           format: date
       required:
+        - name
+        - userId
+        - startDate
+
+    Treatment:
+      type: object
+      properties:
+        id:
+          type: number
+          description: ID del tratamiento
+        name:
+          type: string
+        userId:
+          type: number
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+      required:
+        - id
         - name
         - userId
         - startDate

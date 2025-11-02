@@ -23,8 +23,8 @@ export const handlers: RouteHandlers = {
       end_date: treatment.endDate,
     };
 
-    await insertTreatment(newTreatment);
-    await reply.status(200).send(treatment);
+    const insertedTreatment = await insertTreatment(newTreatment);
+    await reply.status(200).send(insertedTreatment);
   },
 
   getTreatments: async (request, reply) => {
