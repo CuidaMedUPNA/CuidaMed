@@ -7,6 +7,7 @@ import {
   insertIntakeToTreatment,
   deleteIntakeFromTreatment,
   getIntakesByTreatmentId,
+  getTreatmentById,
 } from "./repository/treatmentRepository";
 
 export const handlers: RouteHandlers = {
@@ -34,6 +35,12 @@ export const handlers: RouteHandlers = {
     const treatments = await getTreatmentsByUserId(userId);
 
     await reply.status(200).send(treatments);
+  },
+
+  getTreatmentById: async (request, reply) => {
+    const treatmentId = request.params.treatmentId;
+    const treatment = await getTreatmentById(treatmentId);
+    reply.status(200).send(treatment);
   },
 
   createIntake: async (request, reply) => {

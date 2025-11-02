@@ -44,6 +44,22 @@ export async function getTreatmentsByUserId(userId: number) {
   return treatmentsWithDates;
 }
 
+export async function getTreatmentById(treatmentId: number) {
+  const treatment = await db
+    .selectFrom("treatment")
+    .selectAll()
+    .where("id", "=", treatmentId)
+    .executeTakeFirstOrThrow();
+
+  return {
+    id: treatment.id,
+    name: treatment.name,
+    userId: treatment.user_id,
+    startDate: treatment.start_date.toISOString().split("T")[0],
+    endDate: treatment.end_date?.toISOString().split("T")[0],
+  };
+}
+
 const normalizeTime = (time: string): string => {
   const parts = time.split(":");
   if (parts.length === 2) {
