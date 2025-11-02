@@ -8,6 +8,7 @@ import {
 import { AssociatedMedicine } from "./AssociatedMedicine";
 import { DosingSchedule } from "@cuidamed-api/client";
 import { useRouter } from "expo-router";
+
 export interface TreatmentDetailMedicinesProps {
   medicines: DosingSchedule[];
 }
@@ -22,8 +23,17 @@ export const TreatmentDetailMedicines = ({
       dose={item.doseAmount}
       unit={item.doseUnit}
       schedule={item.dosingTimes}
+      onPress={() => {
+        handleEliminateMedicine(item.id);
+      }}
     />
   );
+
+  function handleEliminateMedicine(id: number) {
+    console.log("Eliminar medicamento con id: ", id);
+
+    // Lógica para eliminar el medicamento
+  }
 
   return (
     <View style={styles.container}>

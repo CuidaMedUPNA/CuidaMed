@@ -14,6 +14,7 @@ export interface AssociatedMedicineProps {
   dose: number;
   unit: string;
   schedule: DosingTime[];
+  onPress: () => void;
 }
 
 const diasSemana = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sab", "Dom"];
@@ -24,6 +25,7 @@ export const AssociatedMedicine = ({
   dose,
   unit,
   schedule,
+  onPress,
 }: AssociatedMedicineProps) => {
   const { horariosPorDia, isDiario } = mapScheduleToHorarios(schedule);
 
@@ -75,6 +77,7 @@ export const AssociatedMedicine = ({
         <TouchableOpacity
           onPress={() => {
             console.log("Eliminar medicamento: ", name);
+            onPress();
           }}
           accessibilityRole="button"
         >
