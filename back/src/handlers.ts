@@ -40,6 +40,11 @@ export const handlers: RouteHandlers = {
   getTreatmentById: async (request, reply) => {
     const treatmentId = request.params.treatmentId;
     const treatment = await getTreatmentById(treatmentId);
+
+    if (!treatment) {
+      return reply.status(404).send({ error: "Treatment not found" });
+    }
+
     reply.status(200).send(treatment);
   },
 

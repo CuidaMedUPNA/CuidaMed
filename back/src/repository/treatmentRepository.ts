@@ -49,7 +49,11 @@ export async function getTreatmentById(treatmentId: number) {
     .selectFrom("treatment")
     .selectAll()
     .where("id", "=", treatmentId)
-    .executeTakeFirstOrThrow();
+    .executeTakeFirst();
+
+  if (!treatment) {
+    return null;
+  }
 
   return {
     id: treatment.id,
