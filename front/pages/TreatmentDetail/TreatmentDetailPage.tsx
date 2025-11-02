@@ -48,7 +48,7 @@ export const TreatmentDetailPage = ({
       }}
     >
       <TreatmentDetailHeader
-        treatmentName={"Manolito"}
+        treatmentName={treatment?.name ?? ""}
         router={router}
         handleEditTreatment={() => setModalVisible(true)}
       />
