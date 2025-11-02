@@ -9,7 +9,7 @@ import {
   AssociatedMedicine,
   AssociatedMedicineProps,
 } from "./AssociatedMedicine";
-
+import { useRouter } from "expo-router";
 export interface TreatmentDetailMedicinesProps {
   medicines: AssociatedMedicineProps[];
 }
@@ -17,6 +17,7 @@ export interface TreatmentDetailMedicinesProps {
 export const TreatmentDetailMedicines = ({
   medicines,
 }: TreatmentDetailMedicinesProps) => {
+  const router = useRouter();
   const renderMedicine = ({ item }: { item: AssociatedMedicineProps }) => (
     <AssociatedMedicine
       nombre={item.nombre}
@@ -33,7 +34,7 @@ export const TreatmentDetailMedicines = ({
         <TouchableOpacity
           style={styles.addMedicineButton}
           onPress={() => {
-            // Lógica para agregar un nuevo medicamento
+            router.push("/medicines/addMedicine");
           }}
           accessibilityLabel="Agregar medicamento"
         >
