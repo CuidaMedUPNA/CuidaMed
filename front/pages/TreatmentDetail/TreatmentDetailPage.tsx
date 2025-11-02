@@ -5,7 +5,10 @@ import { TreatmentDetailDates } from "./_components/TreatmentDetailDates";
 import { TreatmentDetailMedicines } from "./_components/TreatmentDetailMedicines";
 import { ModalEditTreatment } from "./_components/ModalEditTreatment";
 import { useState } from "react";
-import { getIntakesByTreatmentOptions } from "@cuidamed-api/client";
+import {
+  getIntakesByTreatmentOptions,
+  getTreatmentsOptions,
+} from "@cuidamed-api/client";
 import { useQuery } from "@tanstack/react-query";
 
 export const TreatmentDetailPage = ({
@@ -16,8 +19,16 @@ export const TreatmentDetailPage = ({
   const router = useRouter();
   const [modalVisible, setModalVisible] = useState(false);
 
-  const initialDate = new Date("2025-09-01");
-  const endDate = new Date("2025-12-31");
+  const { data: treatments } = useQuery(
+    getTreatmentsOptions({
+      query: { userId: 1 },
+    })
+  );
+
+  const treatment = treatments?.find((t) => t.id === treatmentId);
+
+  const initialDate = treatment ? new Date(treatment.startDate) : new Date();
+  const endDate = treatment?.endDate ? new Date(treatment.endDate) : undefined;
 
   const { data: intakes } = useQuery(
     getIntakesByTreatmentOptions({
@@ -41,14 +52,17 @@ export const TreatmentDetailPage = ({
         router={router}
         handleEditTreatment={() => setModalVisible(true)}
       />
-      <TreatmentDetailDates initialDate={initialDate} endDate={endDate} />
+      <TreatmentDetailDates
+        initialDate={initialDate}
+        endDate={endDate ?? new Date()}
+      />
       <TreatmentDetailMedicines medicines={intakes ?? []} />
       <ModalEditTreatment
         visible={modalVisible}
         treatmentName={"Manolito"}
         treatmentId={1}
         treatmentInitialDate={initialDate}
-        treatmentEndDate={endDate}
+        treatmentEndDate={endDate ?? new Date()}
         onClose={() => setModalVisible(false)}
       />
     </View>
