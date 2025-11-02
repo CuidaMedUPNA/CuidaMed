@@ -3,11 +3,19 @@ import { NewTreatment } from "../db/types";
 import { NewDosingSchedule, Treatment } from "@cuidamed-api/server";
 
 export async function insertTreatment(treatment: NewTreatment) {
-  return await db
+  const insertedTreatment = await db
     .insertInto("treatment")
     .values(treatment)
     .returningAll()
     .executeTakeFirstOrThrow();
+
+  return {
+    id: insertedTreatment.id,
+    name: insertedTreatment.name,
+    userId: insertedTreatment.user_id,
+    startDate: insertedTreatment.start_date.toISOString().split("T")[0],
+    endDate: insertedTreatment.end_date?.toISOString().split("T")[0],
+  };
 }
 
 export async function getTreatmentsByUserId(userId: number) {
@@ -65,4 +73,17 @@ export async function insertIntakeToTreatment(
   await db.insertInto("dosing_time").values(dbDosingTimes).execute();
 
   return insertedSchedule;
+}
+
+export async function deleteIntakeFromTreatment(
+  treatmentId: number,
+  intakeId: number
+) {
+  const result = await db
+    .deleteFrom("dosing_schedule")
+    .where("treatment_id", "=", treatmentId)
+    .where("id", "=", intakeId)
+    .executeTakeFirst();
+
+  return result.numDeletedRows || 0;
 }
