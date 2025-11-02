@@ -8,7 +8,7 @@ export type Treatment = {
     name: string;
     userId: number;
     startDate: string;
-    endDate: string;
+    endDate?: string;
 };
 
 export type NewDosingSchedule = {
@@ -44,7 +44,7 @@ export type NewDosingSchedule = {
 
 export type NewDosingTime = {
     /**
-     * Hora de la toma (HH:mm:ss)
+     * Hora de la toma (HH:mm)
      */
     scheduledTime: string;
     /**
@@ -98,7 +98,7 @@ export type DosingTime = {
      */
     dosingScheduleId: number;
     /**
-     * Hora de la toma (HH:mm:ss)
+     * Hora de la toma (HH:mm)
      */
     scheduledTime: string;
     /**

@@ -1,8 +1,10 @@
 import { RouteHandlers } from "@cuidamed-api/server";
 import { NewTreatment } from "./db/types";
+import { db } from "./db/database";
 import {
   insertTreatment,
   getTreatmentsByUserId,
+  insertIntakeToTreatment,
 } from "./repository/treatmentRepository";
 
 export const handlers: RouteHandlers = {
@@ -16,8 +18,8 @@ export const handlers: RouteHandlers = {
     const newTreatment: NewTreatment = {
       name: treatment.name,
       user_id: Number(treatment.userId),
-      start_date: new Date(treatment.startDate),
-      end_date: new Date(treatment.endDate),
+      start_date: treatment.startDate,
+      end_date: treatment.endDate,
     };
 
     await insertTreatment(newTreatment);
@@ -33,34 +35,33 @@ export const handlers: RouteHandlers = {
   },
 
   createIntake: async (request, reply) => {
-    const treatmentId = Number(request.params.treatmentId);
     const dosingSchedule = request.body;
 
-    // TODO: Validar que el tratamiento existe
-    // TODO: Insertar dosing_schedule en BD
-    // TODO: Insertar dosing_times en BD
-    // TODO: Retornar el DosingSchedule creado con ID
-    interface DosingTimeInput {
-      scheduledTime: string;
-      dayOfWeek?: number | null;
-    }
+    const insertedSchedule = await insertIntakeToTreatment(dosingSchedule);
+
+    const insertedTimes = await db
+      .selectFrom("dosing_time")
+      .selectAll()
+      .where("dosing_schedule_id", "=", insertedSchedule.id)
+      .execute();
 
     const response = {
-      id: 1,
-      medicineId: dosingSchedule.medicineId,
-      treatmentId: treatmentId,
-      startDate: dosingSchedule.startDate,
-      endDate: dosingSchedule.endDate,
-      doseAmount: dosingSchedule.doseAmount,
-      doseUnit: dosingSchedule.doseUnit,
-      dosingTimes: (dosingSchedule.dosingTimes as DosingTimeInput[]).map(
-        (time: DosingTimeInput, index: number) => ({
-          id: index + 1,
-          dosingScheduleId: 1,
-          scheduledTime: time.scheduledTime,
-          dayOfWeek: time.dayOfWeek,
-        })
-      ),
+      id: insertedSchedule.id,
+      medicineId: insertedSchedule.medicine_id,
+      treatmentId: insertedSchedule.treatment_id,
+      startDate: insertedSchedule.start_date.toISOString().split("T")[0],
+      endDate: insertedSchedule.end_date?.toISOString().split("T")[0],
+      doseAmount: insertedSchedule.dose_amount,
+      doseUnit: insertedSchedule.dose_unit,
+      dosingTimes: insertedTimes.map((time) => {
+        const [hours, minutes] = time.scheduled_time.split(":");
+        return {
+          id: time.id,
+          dosingScheduleId: time.dosing_schedule_id,
+          scheduledTime: `${hours}:${minutes}`,
+          dayOfWeek: time.day_of_week,
+        };
+      }),
     };
 
     await reply.status(201).send(response);

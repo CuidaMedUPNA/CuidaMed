@@ -121,7 +121,7 @@ const TreatmentsList = ({
               <Tratamiento
                 name={treatment.name}
                 startDate={treatment.startDate}
-                endDate={treatment.endDate}
+                endDate={treatment.endDate ?? "hasta morir"}
                 onPress={() => onTreatmentPress(treatment.name)}
               />
               {index < treatments.length - 1 && <Divider />}
