@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Icon } from "react-native-elements";
 
 export interface AssociatedMedicineProps {
@@ -41,6 +41,8 @@ export const AssociatedMedicine = ({
         <Text style={styles.medicineDetails}>
           {dosis} • {frecuencia}
         </Text>
+      </View>
+      <View style={styles.horarios}>
         <View style={styles.horariosContainer}>
           {horarios.map((horario, index) => (
             <Text key={index} style={styles.horario}>
@@ -48,32 +50,41 @@ export const AssociatedMedicine = ({
             </Text>
           ))}
         </View>
-      </View>
-      <View style={styles.circlesContainer}>
-        {momentos.map((momento) => (
-          <View
-            key={momento.key}
-            style={[
-              styles.circle,
-              {
-                backgroundColor: activeMomentos.includes(momento.key)
-                  ? "#F23728"
-                  : "#bdbdbd",
-              },
-            ]}
-          >
-            <Text style={styles.circleText}>{momento.label}</Text>
-          </View>
-        ))}
+        <View style={styles.circlesContainer}>
+          {momentos.map((momento) => (
+            <View
+              key={momento.key}
+              style={[
+                styles.circle,
+                {
+                  backgroundColor: activeMomentos.includes(momento.key)
+                    ? "#F23728"
+                    : "#bdbdbd",
+                },
+              ]}
+            >
+              <Text style={styles.circleText}>{momento.label}</Text>
+            </View>
+          ))}
+        </View>
       </View>
       <Icon name="chevron-right" type="entypo" />
+      <View style={styles.papelera}>
+        <TouchableOpacity
+          onPress={() => {
+            console.log("Eliminar medicamento: ", nombre);
+          }}
+          accessibilityRole="button"
+        >
+          <Icon name="trash" type="font-awesome" color="#F23728" />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    display: "flex",
     gap: 12,
     backgroundColor: "#fff",
     flexDirection: "row",
@@ -105,11 +116,6 @@ const styles = StyleSheet.create({
     color: "#666",
     marginBottom: 8,
   },
-  horariosContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
   horario: {
     fontSize: 12,
     color: "#888",
@@ -118,8 +124,20 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: 8,
   },
-  circlesContainer: {
+  horarios: {
     flexDirection: "row",
+    gap: 16,
+  },
+  horariosContainer: {
+    display: "flex",
+    flexDirection: "column",
+    flexWrap: "wrap",
+    gap: 26,
+    height: "100%",
+  },
+  circlesContainer: {
+    display: "flex",
+    flexDirection: "column",
     gap: 12,
   },
   circle: {
@@ -138,5 +156,11 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 14,
     fontWeight: "600",
+  },
+  papelera: {
+    position: "absolute",
+
+    top: 10,
+    right: 10,
   },
 });
