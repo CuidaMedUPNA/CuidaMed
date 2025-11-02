@@ -13,11 +13,11 @@ import {
 } from "react-native";
 import * as Location from "expo-location";
 import MapView, { Marker } from "./MapComponents/Map";
+import { useTranslation } from "react-i18next";
 
 const { width, height } = Dimensions.get("window");
 const isMobile = width < 768;
 
-// Interfaces para TypeScript
 interface FarmaciaData {
   id: number;
   nombre: string;
@@ -38,14 +38,13 @@ interface LocationData {
   longitudeDelta: number;
 }
 
-// Función para calcular distancia entre dos puntos
 const calcularDistancia = (
   lat1: number,
   lon1: number,
   lat2: number,
   lon2: number
 ): number => {
-  const R = 6371; // Radio de la Tierra en km
+  const R = 6371;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLon = ((lon2 - lon1) * Math.PI) / 180;
   const a =
@@ -58,7 +57,6 @@ const calcularDistancia = (
   return R * c;
 };
 
-// Función para parsear horarios de OpenStreetMap
 const parseOpeningHours = (
   openingHours: string | undefined
 ): { texto: string; abierto: boolean; es24h: boolean } => {
@@ -74,14 +72,11 @@ const parseOpeningHours = (
     return { texto: "Abierto 24 horas", abierto: true, es24h: true };
   }
 
-  // Formato común: "Mo-Fr 09:00-20:00; Sa 10:00-14:00"
   const horaActual = new Date().getHours();
-  const diaActual = new Date().getDay(); // 0 = Domingo, 1 = Lunes, etc.
+  const diaActual = new Date().getDay();
 
-  // Simplificación para la demo
   const formatoSimple = openingHours.replace(/Mo-Fr|Mo-Sa|Mo-Su/gi, "L-V");
 
-  // Intentar extraer horario típico
   const match = openingHours.match(/(\d{1,2}):(\d{2})-(\d{1,2}):(\d{2})/);
   if (match) {
     const horaApertura = parseInt(match[1]);
@@ -112,6 +107,8 @@ export default function TuFarmaciaPage() {
   const [nombreFiltro, setNombreFiltro] = useState("");
   const [errorLocation, setErrorLocation] = useState(false);
 
+  const { t } = useTranslation();
+
   const obtenerFarmacias = async () => {
     try {
       setLoading(true);
@@ -119,7 +116,7 @@ export default function TuFarmaciaPage() {
 
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
-        alert("Permiso de ubicación denegado");
+        alert(t("maps.location_permission_denied"));
         setErrorLocation(true);
         setLoading(false);
         return;
@@ -171,7 +168,7 @@ export default function TuFarmaciaPage() {
                     ? " " + el.tags["addr:housenumber"]
                     : ""
                 }`
-              : el.tags?.["addr:city"] || "Dirección no disponible",
+              : el.tags?.["addr:city"] || t("maps.unknown_address"),
             abierto: horarioInfo.abierto,
             horario24h: horarioInfo.es24h,
             telefono: el.tags?.phone || null,
@@ -181,11 +178,11 @@ export default function TuFarmaciaPage() {
         })
         .filter((f: any) => f !== null)
         .sort((a: FarmaciaData, b: FarmaciaData) => a.distancia - b.distancia)
-        .slice(0, 20); // Solo las 20 más cercanas
+        .slice(0, 21);
 
       setFarmacias(farmaciasMapeadas);
     } catch (err) {
-      console.log("Error al obtener farmacias:", err);
+      console.log(t("maps.error"), err);
       setErrorLocation(true);
     } finally {
       setLoading(false);
@@ -201,10 +198,10 @@ export default function TuFarmaciaPage() {
       nombreFiltro === "" ||
       f.nombre.toLowerCase().includes(nombreFiltro.toLowerCase());
     const coincideDisponibilidad =
-      disponibilidadFiltro === "todos" ||
-      (disponibilidadFiltro === "abierto" && f.abierto) ||
-      (disponibilidadFiltro === "cerrado" && !f.abierto) ||
-      (disponibilidadFiltro === "24h" && f.horario24h);
+      disponibilidadFiltro === t("maps.filters.all") ||
+      (disponibilidadFiltro === t("maps.filters.open") && f.abierto) ||
+      (disponibilidadFiltro === t("maps.filters.closed") && !f.abierto) ||
+      (disponibilidadFiltro === t("maps.filters.24h") && f.horario24h);
     return coincideNombre && coincideDisponibilidad;
   });
 
@@ -243,22 +240,20 @@ export default function TuFarmaciaPage() {
 
   return (
     <View style={styles.container}>
-      {/* Header con gradiente */}
       <View style={styles.header}>
         <View style={styles.headerGradient}>
           <View style={styles.headerTitleContainer}>
-            <Text style={styles.headerText}>TuFarmacia</Text>
+            <Text style={styles.headerText}>Mapa Farmacias</Text>
           </View>
         </View>
       </View>
 
-      {/* Filtro con glassmorphism */}
       <View style={styles.filterContainer}>
         <View style={styles.searchContainer}>
           <View style={styles.searchInputWrapper}>
             <Text style={styles.searchIcon}>🔍</Text>
             <TextInput
-              placeholder="Buscar por nombre..."
+              placeholder={t("maps.search_placeholder")}
               placeholderTextColor="#999"
               style={styles.input}
               value={nombreFiltro}
@@ -274,8 +269,8 @@ export default function TuFarmaciaPage() {
           </TouchableOpacity>
         </View>
 
-        {/* Chips de filtros activos */}
-        {(radioFiltro !== 3000 || disponibilidadFiltro !== "todos") && (
+        {(radioFiltro !== 3000 ||
+          disponibilidadFiltro !== t("maps.filters.all")) && (
           <View style={styles.activeFiltersContainer}>
             {radioFiltro !== 3000 && (
               <View style={styles.filterChip}>
@@ -287,17 +282,17 @@ export default function TuFarmaciaPage() {
                 </TouchableOpacity>
               </View>
             )}
-            {disponibilidadFiltro !== "todos" && (
+            {disponibilidadFiltro !== t("maps.filters.all") && (
               <View style={styles.filterChip}>
                 <Text style={styles.filterChipText}>
-                  {disponibilidadFiltro === "abierto"
-                    ? "✅ Abiertas"
-                    : disponibilidadFiltro === "cerrado"
-                    ? "❌ Cerradas"
-                    : "⏰ 24h"}
+                  {disponibilidadFiltro === t("maps.filters.open")
+                    ? t("maps.filters.open_emoji")
+                    : disponibilidadFiltro === t("maps.filters.closed")
+                    ? t("maps.filters.closed_emoji")
+                    : t("maps.filters.24h_emoji")}
                 </Text>
                 <TouchableOpacity
-                  onPress={() => setDisponibilidadFiltro("todos")}
+                  onPress={() => setDisponibilidadFiltro(t("maps.filters.all"))}
                 >
                   <Text style={styles.filterChipClose}>✕</Text>
                 </TouchableOpacity>
@@ -307,28 +302,27 @@ export default function TuFarmaciaPage() {
         )}
       </View>
 
-      {/* Contenido Principal */}
       <View style={styles.content}>
         {loading ? (
           <View style={styles.loadingContainer}>
-            <Animated.View
+            {/* <Animated.View
               style={[
                 styles.pharmacyLoaderContainer,
                 { transform: [{ scale: pulseAnim }, { rotate: spin }] },
               ]}
             >
               <Text style={styles.pharmacyLoader}>💊</Text>
-            </Animated.View>
+            </Animated.View> */}
             <ActivityIndicator
               size="large"
               color="#ED3729"
               style={styles.spinner}
             />
             <Text style={styles.loadingText}>
-              Buscando las 20 farmacias más cercanas...
+              {t("maps.loading_farmacies")}
             </Text>
             <Text style={styles.loadingSubtext}>
-              Esto puede tomar unos segundos
+              {t("maps.loading_farmacies_subtext")}
             </Text>
           </View>
         ) : location ? (
@@ -342,8 +336,8 @@ export default function TuFarmaciaPage() {
               >
                 <Marker
                   coordinate={location}
-                  title="Tú estás aquí"
-                  pinColor="#ED3729"
+                  title={t("maps.your_location")}
+                  pinColor="#474d8bff"
                 />
                 {filtrados.map((f) => (
                   <Marker
@@ -354,13 +348,12 @@ export default function TuFarmaciaPage() {
                     }}
                     title={f.nombre}
                     description={f.direccion}
-                    pinColor={f.abierto ? "#10b981" : "#64748b"}
+                    pinColor={f.abierto ? "#00ffaaff" : "#8b6464ff"}
                   />
                 ))}
               </MapView>
             </View>
 
-            {/* Lista de farmacias */}
             <ScrollView
               style={styles.pharmacyList}
               showsVerticalScrollIndicator={false}
@@ -369,11 +362,10 @@ export default function TuFarmaciaPage() {
                 <Text style={styles.listHeaderEmoji}>📍</Text>
                 <Text style={styles.listHeaderText}>
                   {filtrados.length}{" "}
-                  {filtrados.length === 1 ? "farmacia" : "farmacias"}
+                  {filtrados.length === 1
+                    ? t("maps.pharmacy")
+                    : t("maps.pharmacies")}
                 </Text>
-                <View style={styles.listHeaderBadge}>
-                  <Text style={styles.listHeaderBadgeText}>Top 20</Text>
-                </View>
               </View>
 
               {filtrados.map((f, index) => (
@@ -418,7 +410,7 @@ export default function TuFarmaciaPage() {
                             : styles.statusTextClosed,
                         ]}
                       >
-                        {f.abierto ? "Abierto" : "Cerrado"}
+                        {f.abierto ? t("maps.open") : t("maps.closed")}
                       </Text>
                     </View>
                   </View>
@@ -455,21 +447,20 @@ export default function TuFarmaciaPage() {
             <View style={styles.errorIconContainer}>
               <Text style={styles.errorIcon}>📍</Text>
             </View>
-            <Text style={styles.errorTitle}>Ubicación no disponible</Text>
+            <Text style={styles.errorTitle}>{t("maps.unknown_address")}</Text>
             <Text style={styles.errorText}>
-              Necesitamos tu ubicación para encontrar las farmacias más cercanas
+              {t("maps.location_permission_denied")}
             </Text>
             <TouchableOpacity
               style={styles.retryButton}
               onPress={obtenerFarmacias}
             >
-              <Text style={styles.retryButtonText}>🔄 Reintentar</Text>
+              <Text style={styles.retryButtonText}>{t("maps.retry")}</Text>
             </TouchableOpacity>
           </View>
         ) : null}
       </View>
 
-      {/* MODAL FILTRO */}
       <Modal
         visible={!!modalFiltro}
         transparent
@@ -487,9 +478,9 @@ export default function TuFarmaciaPage() {
           >
             <View style={styles.modalHeader}>
               <View style={styles.modalTitleContainer}>
-                <Text style={styles.modalTitle}>Filtros</Text>
+                <Text style={styles.modalTitle}>{t("maps.filters.title")}</Text>
                 <Text style={styles.modalSubtitle}>
-                  Personaliza tu búsqueda
+                  {t("maps.filters.customize_search")}
                 </Text>
               </View>
               <TouchableOpacity
@@ -504,12 +495,12 @@ export default function TuFarmaciaPage() {
               {/* Filtro por Farmacia */}
               <View style={styles.filterSection}>
                 <Text style={styles.filterSectionTitle}>
-                  🏥 Buscar Farmacia
+                  {t("maps.filters.pharmacy_name")}
                 </Text>
                 <View style={styles.modalInputWrapper}>
                   <Text style={styles.modalInputIcon}>🔍</Text>
                   <TextInput
-                    placeholder="Nombre de farmacia..."
+                    placeholder={t("maps.search_placeholder")}
                     placeholderTextColor="#999"
                     style={styles.modalInput}
                     value={nombreFiltro}
@@ -521,7 +512,7 @@ export default function TuFarmaciaPage() {
               {/* Filtro por Distancia */}
               <View style={styles.filterSection}>
                 <Text style={styles.filterSectionTitle}>
-                  📍 Distancia máxima
+                  {t("maps.filters.distance")}
                 </Text>
                 <View style={styles.optionsGrid}>
                   {[1, 2, 3, 5].map((km) => (
@@ -541,22 +532,31 @@ export default function TuFarmaciaPage() {
                           radioFiltro === km * 1000 && styles.optionTextActive,
                         ]}
                       >
-                        kilómetros
+                        {t("maps.filters.km")}
                       </Text>
                     </TouchableOpacity>
                   ))}
                 </View>
               </View>
 
-              {/* Filtro por Disponibilidad */}
               <View style={styles.filterSection}>
-                <Text style={styles.filterSectionTitle}>⏰ Disponibilidad</Text>
+                <Text style={styles.filterSectionTitle}>
+                  {t("maps.filters.availability")}
+                </Text>
                 <View style={styles.optionsGrid}>
                   {[
-                    { key: "todos", label: "Todas", icon: "🏥" },
-                    { key: "abierto", label: "Abiertas", icon: "✅" },
-                    { key: "cerrado", label: "Cerradas", icon: "❌" },
-                    { key: "24h", label: "24 Horas", icon: "⏰" },
+                    { key: "todos", label: t("maps.filters.all"), icon: "🏥" },
+                    {
+                      key: "abierto",
+                      label: t("maps.filters.open"),
+                      icon: "✅",
+                    },
+                    {
+                      key: "cerrado",
+                      label: t("maps.filters.closed"),
+                      icon: "❌",
+                    },
+                    { key: "24h", label: t("maps.filters.24h"), icon: "⏰" },
                   ].map((disp) => (
                     <TouchableOpacity
                       key={disp.key}
@@ -588,7 +588,9 @@ export default function TuFarmaciaPage() {
                 onPress={() => setModalFiltro(null)}
                 activeOpacity={0.8}
               >
-                <Text style={styles.applyButtonText}>✨ Aplicar Filtros</Text>
+                <Text style={styles.applyButtonText}>
+                  {t("maps.filters.apply_filters")}
+                </Text>
               </TouchableOpacity>
             </ScrollView>
           </View>
