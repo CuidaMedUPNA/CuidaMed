@@ -9,8 +9,11 @@ import {
 import { deleteIntakeMutation, DosingSchedule } from "@cuidamed-api/client";
 import { AssociatedMedicine } from "./AssociatedMedicine";
 import { useRouter } from "expo-router";
+<<<<<<< HEAD
 import { useMutation } from "@tanstack/react-query";
 import { t } from "i18next";
+=======
+>>>>>>> 09a9774 ([#152] - Añadido handle de eliminar toma, falta implementar la llamada)
 
 export interface TreatmentDetailMedicinesProps {
   medicines: DosingSchedule[];
@@ -22,16 +25,25 @@ export const TreatmentDetailMedicines = ({
   const router = useRouter();
   const renderMedicine = ({ item }: { item: DosingSchedule }) => (
     <AssociatedMedicine
+<<<<<<< HEAD
       name={item.medicineName}
       dose={item.doseAmount}
       unit={item.doseUnit}
       schedule={item.dosingTimes}
+=======
+      id={0}
+      nombre={item.nombre}
+      dosis={item.dosis}
+      frecuencia={item.frecuencia}
+      horarios={item.horarios}
+>>>>>>> 09a9774 ([#152] - Añadido handle de eliminar toma, falta implementar la llamada)
       onPress={() => {
         handleEliminateMedicine(item.id);
       }}
     />
   );
 
+<<<<<<< HEAD
   const mutation = useMutation({
     ...deleteIntakeMutation(),
     onSuccess: () => {
@@ -54,6 +66,12 @@ export const TreatmentDetailMedicines = ({
         intakeId: 1,
       },
     });
+=======
+  function handleEliminateMedicine(id: number) {
+    console.log("Eliminar medicamento con id: ", id);
+
+    // Lógica para eliminar el medicamento
+>>>>>>> 09a9774 ([#152] - Añadido handle de eliminar toma, falta implementar la llamada)
   }
 
   return (
