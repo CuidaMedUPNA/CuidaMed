@@ -54,16 +54,10 @@ export const Tratamiento = ({ name, startDate, endDate, onPress }: Props) => {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#ffffff",
     width: "100%",
     paddingVertical: 16,
     paddingHorizontal: 18,
-    borderRadius: 16,
     marginVertical: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
     elevation: 4,
   },
   row: {
