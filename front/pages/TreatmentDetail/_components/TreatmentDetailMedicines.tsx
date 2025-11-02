@@ -63,7 +63,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "600",
     color: "#333",
-    marginBottom: 16,
     marginHorizontal: 16,
   },
   list: {
