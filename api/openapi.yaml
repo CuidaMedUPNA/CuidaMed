@@ -425,6 +425,9 @@ components:
         medicineId:
           type: number
           description: ID del medicamento
+        medicineName:
+          type: string
+          description: Nombre del medicamento
         treatmentId:
           type: number
           description: ID del tratamiento
@@ -451,6 +454,7 @@ components:
       required:
         - id
         - medicineId
+        - medicineName
         - treatmentId
         - startDate
         - doseAmount

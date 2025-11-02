@@ -54,9 +54,16 @@ export const handlers: RouteHandlers = {
       .where("dosing_schedule_id", "=", insertedSchedule.id)
       .execute();
 
+    const medicine = await db
+      .selectFrom("medicine")
+      .select("trade_name")
+      .where("id", "=", insertedSchedule.medicine_id)
+      .executeTakeFirstOrThrow();
+
     const response = {
       id: insertedSchedule.id,
       medicineId: insertedSchedule.medicine_id,
+      medicineName: medicine.trade_name,
       treatmentId: insertedSchedule.treatment_id,
       startDate: insertedSchedule.start_date.toISOString().split("T")[0],
       endDate: insertedSchedule.end_date?.toISOString().split("T")[0],
