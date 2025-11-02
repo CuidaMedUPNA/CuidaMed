@@ -12,7 +12,7 @@ import {
   Dimensions,
 } from "react-native";
 import * as Location from "expo-location";
-import MapView, { Marker } from "./MapComponents/Map";
+import MapView, { Marker } from "../../components/MapComponents/Map";
 import { useTranslation } from "react-i18next";
 
 const { width, height } = Dimensions.get("window");

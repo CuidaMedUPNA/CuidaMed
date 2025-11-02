@@ -8,7 +8,8 @@
   "tabs": {
     "home": "Inicio",
     "treatments": "Tratamientos",
-    "profile": "Perfil"
+    "profile": "Perfil",
+    "maps": "Mapa"
   },
   "treatments": {
     "treatmentsTitle": "Mis Tratamientos",

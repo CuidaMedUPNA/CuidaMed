@@ -70,6 +70,7 @@ export default function RootLayout() {
         <Tabs.Screen
           name="maps/index"
           options={{
+            tabBarLabel: `${t("tabs.maps")}`,
             headerShown: false,
             tabBarIcon: ({ color, size }: { color: string; size: number }) => (
               <MaterialIcons name="map" size={size} color={color} />
