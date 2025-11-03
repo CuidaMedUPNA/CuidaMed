@@ -84,4 +84,8 @@ export const handlers: RouteHandlers = {
     }
     reply.status(204).send();
   },
+  deleteTreatment: async (request, reply) => {
+    Number(request.params.treatmentId);
+    reply.status(204).send();
+  },
 };
