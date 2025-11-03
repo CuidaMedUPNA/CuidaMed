@@ -375,6 +375,53 @@ export type CreateIntakeResponses = {
 
 export type CreateIntakeResponse = CreateIntakeResponses[keyof CreateIntakeResponses];
 
+export type UpdateTreatmentData = {
+    /**
+     * Datos del tratamiento a actualizar
+     */
+    body: NewTreatment;
+    path: {
+        /**
+         * ID del tratamiento
+         */
+        treatmentId: number;
+    };
+    query?: never;
+    url: '/treatments/{treatmentId}';
+};
+
+export type UpdateTreatmentErrors = {
+    /**
+     * Solicitud incorrecta
+     */
+    400: {
+        error?: string;
+    };
+    /**
+     * Tratamiento no encontrado
+     */
+    404: {
+        error?: string;
+    };
+    /**
+     * Error interno del servidor
+     */
+    500: {
+        error?: string;
+    };
+};
+
+export type UpdateTreatmentError = UpdateTreatmentErrors[keyof UpdateTreatmentErrors];
+
+export type UpdateTreatmentResponses = {
+    /**
+     * Tratamiento actualizado exitosamente
+     */
+    200: Treatment;
+};
+
+export type UpdateTreatmentResponse = UpdateTreatmentResponses[keyof UpdateTreatmentResponses];
+
 export type DeleteIntakeData = {
     body?: never;
     path: {
