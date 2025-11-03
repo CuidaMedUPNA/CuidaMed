@@ -1,5 +1,5 @@
 import { db } from "../db/database";
-import { NewTreatment } from "../db/types";
+import { NewTreatment, TreatmentUpdate } from "../db/types";
 import {
   DosingSchedule,
   NewDosingSchedule,
@@ -20,6 +20,29 @@ export async function insertTreatment(treatment: NewTreatment) {
     startDate: insertedTreatment.start_date.toISOString().split("T")[0],
     endDate: insertedTreatment.end_date?.toISOString().split("T")[0],
   };
+}
+
+export async function updateTreatmentById(
+  treatmentId: number,
+  treatmentData: Partial<NewTreatment>
+) {
+  const newData: TreatmentUpdate = {
+    name: treatmentData.name,
+    start_date: treatmentData.start_date
+      ? new Date(treatmentData.start_date)
+      : undefined,
+    end_date: treatmentData.end_date
+      ? new Date(treatmentData.end_date)
+      : undefined,
+  };
+
+  const result = await db
+    .updateTable("treatment")
+    .set(newData)
+    .where("id", "=", treatmentId)
+    .executeTakeFirst();
+
+  return result.numUpdatedRows;
 }
 
 export async function getTreatmentsByUserId(userId: number) {

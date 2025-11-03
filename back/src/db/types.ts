@@ -43,8 +43,8 @@ export interface TreatmentTable {
   id: Generated<number>;
   name: string;
   user_id: number;
-  start_date: ColumnType<Date, string, never>;
-  end_date: ColumnType<Date | null, string | null, never>;
+  start_date: ColumnType<Date, string>;
+  end_date: ColumnType<Date | null, string | null>;
 }
 
 export type Treatment = Selectable<TreatmentTable>;
@@ -67,8 +67,8 @@ export interface DosingScheduleTable {
   id: Generated<number>;
   medicine_id: number;
   treatment_id: number;
-  start_date: ColumnType<Date, string, never>;
-  end_date: ColumnType<Date | null, string | null, never>;
+  start_date: ColumnType<Date, string>;
+  end_date: ColumnType<Date | null, string | null>;
   dose_amount: number;
   dose_unit: string;
 }

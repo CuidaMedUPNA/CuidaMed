@@ -8,6 +8,7 @@ import {
   deleteIntakeFromTreatment,
   getIntakesByTreatmentId,
   getTreatmentById,
+  updateTreatmentById,
 } from "./repository/treatmentRepository";
 
 export const handlers: RouteHandlers = {
@@ -87,11 +88,13 @@ export const handlers: RouteHandlers = {
 
     await reply.status(201).send(response);
   },
+
   getIntakesByTreatment: async (request, reply) => {
     const treatmentId = request.params.treatmentId;
     const intakes = await getIntakesByTreatmentId(treatmentId);
     reply.status(200).send(intakes);
   },
+
   deleteIntake: async (request, reply) => {
     const rowsDeleted = await deleteIntakeFromTreatment(
       request.params.treatmentId,
@@ -103,12 +106,30 @@ export const handlers: RouteHandlers = {
     }
     reply.status(204).send();
   },
+
   deleteTreatment: async (request, reply) => {
     Number(request.params.treatmentId);
     reply.status(204).send();
   },
+
   updateTreatment: async (request, reply) => {
-    Number(request.params.treatmentId);
-    reply.status(200).send();
+    console.log("\n\n\n");
+    console.log("Request params:", request.params);
+    const treatmentId = Number(request.params.treatmentId);
+    const treatmentData = request.body;
+
+    console.log("\n\n\n");
+    console.log("Updating treatment:", treatmentId, treatmentData);
+
+    const updatedTreatment = await updateTreatmentById(
+      treatmentId,
+      treatmentData
+    );
+
+    if (updatedTreatment === 0n) {
+      return reply.status(404).send({ error: "Treatment not found" });
+    }
+
+    await reply.status(200).send();
   },
 };
