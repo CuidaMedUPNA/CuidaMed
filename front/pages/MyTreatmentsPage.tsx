@@ -31,6 +31,8 @@ export const MyTreatmentsPage = () => {
   return (
     <>
       <ModalNewTreatment
+        initialStartDate={new Date()}
+        initialEndDate={undefined}
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
       />
@@ -43,8 +45,8 @@ export const MyTreatmentsPage = () => {
           }}
         >
           <PageTitle title={t("treatments.treatmentsTitle")} />
-          <TreatmentsList 
-            treatments={treatments ?? []} 
+          <TreatmentsList
+            treatments={treatments ?? []}
             onTreatmentPress={handleTreatmentPress}
           />
         </ScrollView>
@@ -76,10 +78,10 @@ export const MyTreatmentsPage = () => {
   );
 };
 
-const TreatmentsList = ({ 
-  treatments, 
-  onTreatmentPress 
-}: { 
+const TreatmentsList = ({
+  treatments,
+  onTreatmentPress,
+}: {
   treatments: Treatment[];
   onTreatmentPress: (treatmentName: string) => void;
 }) => {
@@ -119,7 +121,7 @@ const TreatmentsList = ({
               <Tratamiento
                 name={treatment.name}
                 startDate={treatment.startDate}
-                endDate={treatment.endDate}
+                endDate={treatment.endDate ?? "hasta morir"}
                 onPress={() => onTreatmentPress(treatment.name)}
               />
               {index < treatments.length - 1 && <Divider />}

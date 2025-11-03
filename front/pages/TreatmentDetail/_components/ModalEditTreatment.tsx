@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { t } from "i18next";
 import Icon from "react-native-vector-icons/Ionicons";
+import { CustomDatePicker } from "@/components/CustomDatePicker";
 
 const COLORS = {
   primary: "#f23728",
@@ -27,6 +28,8 @@ export interface Props {
   visible: boolean;
   treatmentName: string;
   treatmentId: number;
+  treatmentInitialDate: Date;
+  treatmentEndDate: Date;
   onClose: () => void;
 }
 
@@ -34,13 +37,15 @@ export const ModalEditTreatment = ({
   visible,
   onClose,
   treatmentName,
+  treatmentInitialDate,
+  treatmentEndDate,
   treatmentId,
 }: Props) => {
   // const userId = treatmentId;
 
   const [newTreatmentName, setNewTreatmentName] = useState("");
-  // const [startDate, setStartDate] = useState<string | null>(null);
-  // const [endDate, setEndDate] = useState<string | null>(null);
+  const [startDate, setStartDate] = useState(treatmentInitialDate);
+  const [endDate, setEndDate] = useState(treatmentEndDate);
 
   return (
     <Modal
@@ -68,16 +73,18 @@ export const ModalEditTreatment = ({
               onChangeText={setNewTreatmentName}
             />
 
-            {/* <CustomDatePicker
+            <CustomDatePicker
               label={t("treatments.startDate")}
               value={startDate}
+              date={startDate}
               onDateChange={setStartDate}
             />
             <CustomDatePicker
               label={t("treatments.endDate")}
               value={endDate}
+              date={endDate}
               onDateChange={setEndDate}
-            /> */}
+            />
           </View>
 
           <View style={styles.footer}>

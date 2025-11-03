@@ -5,6 +5,11 @@
   "saving": "Guardando...",
   "edit": "Editar",
   "success": "¡Éxito!",
+  "tabs": {
+    "home": "Inicio",
+    "treatments": "Tratamientos",
+    "profile": "Perfil"
+  },
   "treatments": {
     "treatmentsTitle": "Mis Tratamientos",
     "treatmentName": "Nombre del tratamiento",

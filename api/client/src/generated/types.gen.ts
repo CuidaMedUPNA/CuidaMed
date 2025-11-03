@@ -4,11 +4,22 @@ export type ClientOptions = {
     baseUrl: 'http://localhost:3000' | (string & {});
 };
 
-export type Treatment = {
+export type NewTreatment = {
     name: string;
     userId: number;
     startDate: string;
-    endDate: string;
+    endDate?: string;
+};
+
+export type Treatment = {
+    /**
+     * ID del tratamiento
+     */
+    id: number;
+    name: string;
+    userId: number;
+    startDate: string;
+    endDate?: string;
 };
 
 export type NewDosingSchedule = {
@@ -44,7 +55,7 @@ export type NewDosingSchedule = {
 
 export type NewDosingTime = {
     /**
-     * Hora de la toma (HH:mm:ss)
+     * Hora de la toma (HH:mm)
      */
     scheduledTime: string;
     /**
@@ -98,7 +109,7 @@ export type DosingTime = {
      */
     dosingScheduleId: number;
     /**
-     * Hora de la toma (HH:mm:ss)
+     * Hora de la toma (HH:mm)
      */
     scheduledTime: string;
     /**
@@ -167,7 +178,7 @@ export type CreateTreatmentData = {
     /**
      * Datos del tratamiento a crear
      */
-    body: Treatment;
+    body: NewTreatment;
     path?: never;
     query?: never;
     url: '/treatments';
@@ -337,6 +348,12 @@ export type DeleteIntakeErrors = {
      * Solicitud incorrecta
      */
     400: {
+        error?: string;
+    };
+    /**
+     * Toma no encontrada
+     */
+    404: {
         error?: string;
     };
     /**
