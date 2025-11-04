@@ -74,6 +74,10 @@ export type DosingSchedule = {
      */
     medicineId: number;
     /**
+     * Nombre del medicamento
+     */
+    medicineName: string;
+    /**
      * ID del tratamiento
      */
     treatmentId: number;
@@ -210,7 +214,7 @@ export type CreateTreatmentResponses = {
 
 export type CreateTreatmentResponse = CreateTreatmentResponses[keyof CreateTreatmentResponses];
 
-export type DeleteTreatmentData = {
+export type GetTreatmentByIdData = {
     body?: never;
     path: {
         /**
@@ -220,6 +224,50 @@ export type DeleteTreatmentData = {
     };
     query?: never;
     url: '/treatments/{treatmentId}';
+};
+
+export type GetTreatmentByIdErrors = {
+    /**
+     * Solicitud incorrecta
+     */
+    400: {
+        error?: string;
+    };
+    /**
+     * Tratamiento no encontrado
+     */
+    404: {
+        error?: string;
+    };
+    /**
+     * Error interno del servidor
+     */
+    500: {
+        error?: string;
+    };
+};
+
+export type GetTreatmentByIdError = GetTreatmentByIdErrors[keyof GetTreatmentByIdErrors];
+
+export type GetTreatmentByIdResponses = {
+    /**
+     * Datos del tratamiento
+     */
+    200: Treatment;
+};
+
+export type GetTreatmentByIdResponse = GetTreatmentByIdResponses[keyof GetTreatmentByIdResponses];
+
+export type DeleteTreatmentData = {
+    body?: never;
+    path: {
+        /**
+         * ID del tratamiento
+         */
+        treatmentId: number;
+    };
+    query?: never;
+    url: '/treatments/{treatmentId}/intakes';
 };
 
 export type DeleteTreatmentErrors = {
@@ -257,7 +305,7 @@ export type GetIntakesByTreatmentData = {
         treatmentId: number;
     };
     query?: never;
-    url: '/treatments/{treatmentId}';
+    url: '/treatments/{treatmentId}/intakes';
 };
 
 export type GetIntakesByTreatmentErrors = {
@@ -298,7 +346,7 @@ export type CreateIntakeData = {
         treatmentId: number;
     };
     query?: never;
-    url: '/treatments/{treatmentId}';
+    url: '/treatments/{treatmentId}/intakes';
 };
 
 export type CreateIntakeErrors = {

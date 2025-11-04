@@ -44,6 +44,26 @@ export async function getTreatmentsByUserId(userId: number) {
   return treatmentsWithDates;
 }
 
+export async function getTreatmentById(treatmentId: number) {
+  const treatment = await db
+    .selectFrom("treatment")
+    .selectAll()
+    .where("id", "=", treatmentId)
+    .executeTakeFirst();
+
+  if (!treatment) {
+    return null;
+  }
+
+  return {
+    id: treatment.id,
+    name: treatment.name,
+    userId: treatment.user_id,
+    startDate: treatment.start_date.toISOString().split("T")[0],
+    endDate: treatment.end_date?.toISOString().split("T")[0],
+  };
+}
+
 const normalizeTime = (time: string): string => {
   const parts = time.split(":");
   if (parts.length === 2) {
@@ -95,8 +115,18 @@ export async function deleteIntakeFromTreatment(
 export async function getIntakesByTreatmentId(treatmentId: number) {
   const dosingSchedules = await db
     .selectFrom("dosing_schedule")
-    .selectAll()
-    .where("treatment_id", "=", treatmentId)
+    .innerJoin("medicine", "dosing_schedule.medicine_id", "medicine.id")
+    .select([
+      "dosing_schedule.id",
+      "dosing_schedule.medicine_id",
+      "dosing_schedule.treatment_id",
+      "dosing_schedule.start_date",
+      "dosing_schedule.end_date",
+      "dosing_schedule.dose_amount",
+      "dosing_schedule.dose_unit",
+      "medicine.trade_name",
+    ])
+    .where("dosing_schedule.treatment_id", "=", treatmentId)
     .execute();
 
   const intakes: DosingSchedule[] = await Promise.all(
@@ -105,6 +135,7 @@ export async function getIntakesByTreatmentId(treatmentId: number) {
       return {
         id: schedule.id,
         medicineId: schedule.medicine_id,
+        medicineName: schedule.trade_name,
         treatmentId: schedule.treatment_id,
         startDate: schedule.start_date.toISOString().split("T")[0],
         endDate: schedule.end_date?.toISOString().split("T")[0],

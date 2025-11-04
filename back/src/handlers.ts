@@ -7,6 +7,7 @@ import {
   insertIntakeToTreatment,
   deleteIntakeFromTreatment,
   getIntakesByTreatmentId,
+  getTreatmentById,
 } from "./repository/treatmentRepository";
 
 export const handlers: RouteHandlers = {
@@ -36,6 +37,17 @@ export const handlers: RouteHandlers = {
     await reply.status(200).send(treatments);
   },
 
+  getTreatmentById: async (request, reply) => {
+    const treatmentId = request.params.treatmentId;
+    const treatment = await getTreatmentById(treatmentId);
+
+    if (!treatment) {
+      return reply.status(404).send({ error: "Treatment not found" });
+    }
+
+    reply.status(200).send(treatment);
+  },
+
   createIntake: async (request, reply) => {
     const dosingSchedule = request.body;
 
@@ -47,9 +59,16 @@ export const handlers: RouteHandlers = {
       .where("dosing_schedule_id", "=", insertedSchedule.id)
       .execute();
 
+    const medicine = await db
+      .selectFrom("medicine")
+      .select("trade_name")
+      .where("id", "=", insertedSchedule.medicine_id)
+      .executeTakeFirstOrThrow();
+
     const response = {
       id: insertedSchedule.id,
       medicineId: insertedSchedule.medicine_id,
+      medicineName: medicine.trade_name,
       treatmentId: insertedSchedule.treatment_id,
       startDate: insertedSchedule.start_date.toISOString().split("T")[0],
       endDate: insertedSchedule.end_date?.toISOString().split("T")[0],

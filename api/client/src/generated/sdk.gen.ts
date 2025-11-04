@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { CreateIntakeData, CreateIntakeErrors, CreateIntakeResponses, CreateTreatmentData, CreateTreatmentErrors, CreateTreatmentResponses, DeleteIntakeData, DeleteIntakeErrors, DeleteIntakeResponses, DeleteTreatmentData, DeleteTreatmentErrors, DeleteTreatmentResponses, GetIntakesByTreatmentData, GetIntakesByTreatmentErrors, GetIntakesByTreatmentResponses, GetTreatmentsData, GetTreatmentsErrors, GetTreatmentsResponses, HealthCheckData, HealthCheckResponses } from './types.gen';
+import type { CreateIntakeData, CreateIntakeErrors, CreateIntakeResponses, CreateTreatmentData, CreateTreatmentErrors, CreateTreatmentResponses, DeleteIntakeData, DeleteIntakeErrors, DeleteIntakeResponses, DeleteTreatmentData, DeleteTreatmentErrors, DeleteTreatmentResponses, GetIntakesByTreatmentData, GetIntakesByTreatmentErrors, GetIntakesByTreatmentResponses, GetTreatmentByIdData, GetTreatmentByIdErrors, GetTreatmentByIdResponses, GetTreatmentsData, GetTreatmentsErrors, GetTreatmentsResponses, HealthCheckData, HealthCheckResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -53,21 +53,31 @@ export const createTreatment = <ThrowOnError extends boolean = false>(options: O
 };
 
 /**
- * Eliminar un tratamiento
+ * Obtener datos de un tratamiento específico
  */
-export const deleteTreatment = <ThrowOnError extends boolean = false>(options: Options<DeleteTreatmentData, ThrowOnError>) => {
-    return (options.client ?? client).delete<DeleteTreatmentResponses, DeleteTreatmentErrors, ThrowOnError>({
+export const getTreatmentById = <ThrowOnError extends boolean = false>(options: Options<GetTreatmentByIdData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetTreatmentByIdResponses, GetTreatmentByIdErrors, ThrowOnError>({
         url: '/treatments/{treatmentId}',
         ...options
     });
 };
 
 /**
- * Obtener tomas de un tratamiento
+ * Eliminar un tratamiento
+ */
+export const deleteTreatment = <ThrowOnError extends boolean = false>(options: Options<DeleteTreatmentData, ThrowOnError>) => {
+    return (options.client ?? client).delete<DeleteTreatmentResponses, DeleteTreatmentErrors, ThrowOnError>({
+        url: '/treatments/{treatmentId}/intakes',
+        ...options
+    });
+};
+
+/**
+ * Obtener todas las tomas de un tratamiento
  */
 export const getIntakesByTreatment = <ThrowOnError extends boolean = false>(options: Options<GetIntakesByTreatmentData, ThrowOnError>) => {
     return (options.client ?? client).get<GetIntakesByTreatmentResponses, GetIntakesByTreatmentErrors, ThrowOnError>({
-        url: '/treatments/{treatmentId}',
+        url: '/treatments/{treatmentId}/intakes',
         ...options
     });
 };
@@ -77,7 +87,7 @@ export const getIntakesByTreatment = <ThrowOnError extends boolean = false>(opti
  */
 export const createIntake = <ThrowOnError extends boolean = false>(options: Options<CreateIntakeData, ThrowOnError>) => {
     return (options.client ?? client).post<CreateIntakeResponses, CreateIntakeErrors, ThrowOnError>({
-        url: '/treatments/{treatmentId}',
+        url: '/treatments/{treatmentId}/intakes',
         ...options,
         headers: {
             'Content-Type': 'application/json',
