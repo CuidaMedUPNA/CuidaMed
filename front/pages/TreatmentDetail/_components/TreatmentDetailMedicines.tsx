@@ -51,7 +51,7 @@ export const TreatmentDetailMedicines = ({
     mutation.mutate({
       path: {
         treatmentId,
-        intakeId: 17,
+        intakeId: id,
       },
     });
   }
