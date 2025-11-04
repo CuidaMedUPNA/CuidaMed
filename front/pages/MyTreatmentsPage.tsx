@@ -41,22 +41,15 @@ export const MyTreatmentsPage = () => {
         onClose={() => setModalVisible(false)}
       />
       <View style={styles.container}>
-        <LinearGradient
-          colors={["#FF3B30", "#FF6B6B"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.header}
-        >
-          <View>
-            <Text style={styles.headerTitle}>
-              {t("treatments.treatmentsTitle")}
-            </Text>
-            <Text style={styles.headerSubtitle}>
-              {treatments?.length || 0}{" "}
-              {t("treatments.active", { defaultValue: "activos" })}
-            </Text>
-          </View>
-        </LinearGradient>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>
+            {t("treatments.treatmentsTitle")}
+          </Text>
+          <Text style={styles.headerSubtitle}>
+            {treatments?.length || 0}{" "}
+            {t("treatments.active", { defaultValue: "activos" })}
+          </Text>
+        </View>
 
         <TreatmentsList
           treatments={treatments ?? []}
@@ -177,15 +170,8 @@ const styles = StyleSheet.create({
   header: {
     paddingHorizontal: 24,
     paddingTop: 20,
-    paddingBottom: 20,
-    backgroundColor: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 2,
+    shadowColor: "#ff0000ff",
+    elevation: 500,
   },
   headerTitle: {
     fontSize: 32,

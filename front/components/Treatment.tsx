@@ -76,8 +76,8 @@ const styles = StyleSheet.create({
   percent: {
     fontSize: 13,
     fontWeight: "600",
-    color: "#065f46",
-    backgroundColor: "#d1fae5",
+    color: "#5f0606ff",
+    backgroundColor: "#fad1d1ff",
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,

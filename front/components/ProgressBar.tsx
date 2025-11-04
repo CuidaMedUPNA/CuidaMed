@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
   },
   fill: {
     height: "100%",
-    backgroundColor: "#34d399",
+    backgroundColor: "#ff0000ff",
     borderRadius: 8,
   },
 });
