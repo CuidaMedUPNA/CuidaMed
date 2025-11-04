@@ -96,7 +96,7 @@ export const TreatmentDetailMedicines = ({
     mutation.mutate({
       path: {
         treatmentId,
-        intakeId: 17,
+        intakeId: id,
       },
     });
 >>>>>>> e73a782 ([#152] - Implementado llamada a eliminar toma. Falta que elimine tomas reales)
