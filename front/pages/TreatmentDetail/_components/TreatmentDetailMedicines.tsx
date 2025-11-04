@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
+<<<<<<< HEAD
 import { deleteIntakeMutation, DosingSchedule } from "@cuidamed-api/client";
 import { AssociatedMedicine } from "./AssociatedMedicine";
 import { useRouter } from "expo-router";
@@ -14,6 +15,16 @@ import { useMutation } from "@tanstack/react-query";
 import { t } from "i18next";
 =======
 >>>>>>> 09a9774 ([#152] - Añadido handle de eliminar toma, falta implementar la llamada)
+=======
+import { deleteIntakeMutation } from "@cuidamed-api/client";
+import {
+  AssociatedMedicine,
+  AssociatedMedicineProps,
+} from "./AssociatedMedicine";
+import { useRouter } from "expo-router";
+import { useMutation } from "@tanstack/react-query";
+import { t } from "i18next";
+>>>>>>> e73a782 ([#152] - Implementado llamada a eliminar toma. Falta que elimine tomas reales)
 
 export interface TreatmentDetailMedicinesProps {
   medicines: DosingSchedule[];
@@ -44,6 +55,9 @@ export const TreatmentDetailMedicines = ({
   );
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> e73a782 ([#152] - Implementado llamada a eliminar toma. Falta que elimine tomas reales)
   const mutation = useMutation({
     ...deleteIntakeMutation(),
     onSuccess: () => {
@@ -55,6 +69,7 @@ export const TreatmentDetailMedicines = ({
     },
   });
 
+<<<<<<< HEAD
   function handleEliminateMedicine(id: number) {
     console.log("Eliminar medicamento con id: ", id);
 
@@ -72,6 +87,19 @@ export const TreatmentDetailMedicines = ({
 
     // Lógica para eliminar el medicamento
 >>>>>>> 09a9774 ([#152] - Añadido handle de eliminar toma, falta implementar la llamada)
+=======
+  function handleEliminateMedicine(id: number) {
+    console.log("Eliminar medicamento con id: ", id);
+
+    const treatmentId = 1;
+
+    mutation.mutate({
+      path: {
+        treatmentId,
+        intakeId: 17,
+      },
+    });
+>>>>>>> e73a782 ([#152] - Implementado llamada a eliminar toma. Falta que elimine tomas reales)
   }
 
   return (
