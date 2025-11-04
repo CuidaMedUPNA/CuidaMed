@@ -4,10 +4,13 @@ import {
   FlatList,
   StyleSheet,
   TouchableOpacity,
+  Alert,
 } from "react-native";
+import { deleteIntakeMutation, DosingSchedule } from "@cuidamed-api/client";
 import { AssociatedMedicine } from "./AssociatedMedicine";
-import { DosingSchedule } from "@cuidamed-api/client";
 import { useRouter } from "expo-router";
+import { useMutation } from "@tanstack/react-query";
+import { t } from "i18next";
 
 export interface TreatmentDetailMedicinesProps {
   medicines: DosingSchedule[];
@@ -29,10 +32,28 @@ export const TreatmentDetailMedicines = ({
     />
   );
 
+  const mutation = useMutation({
+    ...deleteIntakeMutation(),
+    onSuccess: () => {
+      console.log("✅ Tratamiento eliminado con éxito.");
+    },
+    onError: (error) => {
+      console.error("❌ Error al eliminar tratamiento:", error);
+      Alert.alert(t("error"), t("treatments.create.errorAlert"));
+    },
+  });
+
   function handleEliminateMedicine(id: number) {
     console.log("Eliminar medicamento con id: ", id);
 
-    // Lógica para eliminar el medicamento
+    const treatmentId = 1;
+
+    mutation.mutate({
+      path: {
+        treatmentId,
+        intakeId: 17,
+      },
+    });
   }
 
   return (
