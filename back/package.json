@@ -3,7 +3,8 @@
   "scripts": {
     "dev": "nodemon --watch src --ext ts --exec tsx src/index.ts",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "vitest run --dir test"
   },
   "dependencies": {
     "@fastify/cors": "^11.1.0",

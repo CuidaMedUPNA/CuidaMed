@@ -5,10 +5,10 @@ import tsconfigPaths from "vite-tsconfig-paths";
 export default defineConfig({
   plugins: [tsconfigPaths()],
   test: {
-    environment: "node",
-    include: ["test/*.test.ts"],
-    globals: true,
     setupFiles: ["./test/setup.ts"], 
+    environment: "node",
+    include: ["**/*.test.ts"],
+    globals: true,
     coverage: {
       provider: "v8",
       reportsDirectory: "./coverage",
