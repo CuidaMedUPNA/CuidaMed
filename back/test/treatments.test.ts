@@ -2,7 +2,7 @@ import { describe, it, expect, beforeAll, afterAll, vi } from "vitest";
 import { app, db } from "./setup";
 import * as treatmentRepo from "../src/repository/treatmentRepository";
 
-describe("GET /treatments/treatmentId", () => {
+describe("GET /treatments/{treatmentId}/intakes", () => {
 
   beforeAll(async () => {
     // Crear usuario
@@ -111,7 +111,7 @@ describe("GET /treatments/treatmentId", () => {
   it("Test codigo 200 para obtener las tomas de un tratamiento", async () => {
     const res = await app.inject({
       method: "GET",
-      url: "/treatments/1",
+      url: "/treatments/1/intakes",
     });
 
     expect(res.statusCode).toBe(200);
@@ -160,7 +160,7 @@ describe("GET /treatments/treatmentId", () => {
 
     const res = await app.inject({
       method: "GET",
-      url: `/treatments/${treatment.id}`,
+      url: `/treatments/${treatment.id}/intakes`,
     });
 
     expect(res.statusCode).toBe(200);
@@ -177,15 +177,15 @@ describe("GET /treatments/treatmentId", () => {
   });
 });
 
-describe("GET /treatments/:treatmentId - manejo de errores", () => {
-  it("debería devolver 500 si ocurre un error interno del servidor", async () => {
+describe("GET /treatments/{treatmentId}/intakes - manejo de errores", () => {
+  it("Test codigo 500 si ocurre un error interno del servidor", async () => {
     const spy = vi
       .spyOn(treatmentRepo, "getIntakesByTreatmentId")
       .mockRejectedValueOnce(new Error("DB connection failed"));
 
     const res = await app.inject({
       method: "GET",
-      url: "/treatments/999", 
+      url: "/treatments/999/intakes", 
     });
 
     spy.mockRestore();

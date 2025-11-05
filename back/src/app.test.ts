@@ -16,7 +16,7 @@ export async function buildTestApp() {
 
   const options = {
     specification: path.resolve(__dirname, "../../api/openapi.yaml"),
-    service: handlers,
+    serviceHandlers: handlers,
   };
 
   app.register(openapiGlue, options);
