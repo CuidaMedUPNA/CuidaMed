@@ -1,104 +1,54 @@
 import { describe, it, expect, beforeAll, afterAll, vi } from "vitest";
 import { app, db } from "./setup";
 import * as treatmentRepo from "../src/repository/treatmentRepository";
+import * as mockInsert from "./utils/seeders";
 
 describe("GET /treatments/{treatmentId}/intakes", () => {
 
   beforeAll(async () => {
-    const [user] = await db
-      .insertInto("user")
-      .values({
-        name: "Juan",
-        email: "juan@example.com",
-        password: "secret",
-      })
-      .returning(["id"])
-      .execute();
+    const user = await mockInsert.insertUser();
 
-    const [medicine] = await db
-      .insertInto("medicine")
-      .values({
-        trade_name: "Paracetamol",
-      })
-      .returning(["id"])
-      .execute();
+    const medicine = await mockInsert.insertMedicine();
 
-    const [medicine2] = await db
-      .insertInto("medicine")
-      .values({
-        trade_name: "Ibuprofeno",
-      })
-      .returning(["id"])
-      .execute();
+    const medicine2 = await mockInsert.insertMedicine();
 
-    const [treatment] = await db
-      .insertInto("treatment")
-      .values({
-        name: "Tratamiento fiebre",
-        user_id: user.id,
-        start_date: "2025-01-01",
-        end_date: null,
-      })
-      .returning(["id"])
-      .execute();
+    const treatment = await mockInsert.insertTreatment({ user_id: user.id });
 
-    const [schedule] = await db
-      .insertInto("dosing_schedule")
-      .values({
-        medicine_id: medicine.id,
-        treatment_id: treatment.id,
-        start_date: "2025-01-01",
-        end_date: null,
-        dose_amount: 1,
-        dose_unit: "comprimido",
-      })
-      .returning(["id"])
-      .execute();
+    const schedule = await mockInsert.insertDosingSchedule({
+      medicine_id: medicine.id,
+      treatment_id: treatment.id,
+    });
 
-    const [schedule2] = await db
-      .insertInto("dosing_schedule")
-      .values({
-        medicine_id: medicine2.id,
-        treatment_id: treatment.id,
-        start_date: "2025-01-01",
-        end_date: null,
-        dose_amount: 2,
-        dose_unit: "ml",
-      })
-      .returning(["id"])
-      .execute();
+    const schedule2 = await mockInsert.insertDosingSchedule({
+      medicine_id: medicine2.id,
+      treatment_id: treatment.id,
+      dose_amount: 2,
+      dose_unit: "ml",
+      });
 
-    await db
-      .insertInto("dosing_time")
-      .values([
-        {
-          dosing_schedule_id: schedule.id,
-          scheduled_time: "08:00",
-          day_of_week: 1,
-        },
-        {
-          dosing_schedule_id: schedule.id,
-          scheduled_time: "20:00",
-          day_of_week: 1,
-        },
-      ])
-      .execute();
+    await mockInsert.insertDosingTime({
+      dosing_schedule_id: schedule.id,
+      scheduled_time: "08:00",
+      day_of_week: 1,
+    });
 
-    await db
-      .insertInto("dosing_time")
-      .values([
-        {
-          dosing_schedule_id: schedule2.id,
-          scheduled_time: "09:00",
-          day_of_week: 1,
-        },
-        {
-          dosing_schedule_id: schedule2.id,
-          scheduled_time: "21:00",
-          day_of_week: 1,
-        },
-      ])
-      .execute();
+    await mockInsert.insertDosingTime({
+      dosing_schedule_id: schedule.id,
+      scheduled_time: "20:00",
+      day_of_week: 1,
+    });
+
+    await mockInsert.insertDosingTime({
+      dosing_schedule_id: schedule2.id,
+      scheduled_time: "09:00",
+      day_of_week: 1,
+    });
+
+    await mockInsert.insertDosingTime({
+      dosing_schedule_id: schedule2.id,
+      scheduled_time: "21:00",
+      day_of_week: 1,
+    });
   });
 
   it("returns all intakes for a treatment", async () => {
@@ -167,7 +117,6 @@ describe("GET /treatments/{treatmentId}/intakes", () => {
     await db.deleteFrom("medicine").execute();
     await db.deleteFrom("user").execute();
   });
-
 
 });
 
