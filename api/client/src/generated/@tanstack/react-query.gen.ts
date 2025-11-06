@@ -3,8 +3,8 @@
 import { queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { createIntake, createTreatment, deleteIntake, deleteTreatment, getIntakesByTreatment, getTreatmentById, getTreatments, healthCheck, type Options } from '../sdk.gen';
-import type { CreateIntakeData, CreateIntakeError, CreateIntakeResponse, CreateTreatmentData, CreateTreatmentError, CreateTreatmentResponse, DeleteIntakeData, DeleteIntakeError, DeleteIntakeResponse, DeleteTreatmentData, DeleteTreatmentError, DeleteTreatmentResponse, GetIntakesByTreatmentData, GetTreatmentByIdData, GetTreatmentsData, HealthCheckData } from '../types.gen';
+import { createIntake, createTreatment, deleteIntake, deleteTreatment, getIntakesByTreatment, getTreatmentById, getTreatments, healthCheck, type Options, updateTreatment } from '../sdk.gen';
+import type { CreateIntakeData, CreateIntakeError, CreateIntakeResponse, CreateTreatmentData, CreateTreatmentError, CreateTreatmentResponse, DeleteIntakeData, DeleteIntakeError, DeleteIntakeResponse, DeleteTreatmentData, DeleteTreatmentError, DeleteTreatmentResponse, GetIntakesByTreatmentData, GetTreatmentByIdData, GetTreatmentsData, HealthCheckData, UpdateTreatmentData, UpdateTreatmentError, UpdateTreatmentResponse } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -98,6 +98,23 @@ export const createTreatmentMutation = (options?: Partial<Options<CreateTreatmen
     return mutationOptions;
 };
 
+/**
+ * Eliminar un tratamiento
+ */
+export const deleteTreatmentMutation = (options?: Partial<Options<DeleteTreatmentData>>): UseMutationOptions<DeleteTreatmentResponse, DeleteTreatmentError, Options<DeleteTreatmentData>> => {
+    const mutationOptions: UseMutationOptions<DeleteTreatmentResponse, DeleteTreatmentError, Options<DeleteTreatmentData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await deleteTreatment({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
 export const getTreatmentByIdQueryKey = (options: Options<GetTreatmentByIdData>) => createQueryKey('getTreatmentById', options);
 
 /**
@@ -119,12 +136,12 @@ export const getTreatmentByIdOptions = (options: Options<GetTreatmentByIdData>) 
 };
 
 /**
- * Eliminar un tratamiento
+ * Actualizar un tratamiento
  */
-export const deleteTreatmentMutation = (options?: Partial<Options<DeleteTreatmentData>>): UseMutationOptions<DeleteTreatmentResponse, DeleteTreatmentError, Options<DeleteTreatmentData>> => {
-    const mutationOptions: UseMutationOptions<DeleteTreatmentResponse, DeleteTreatmentError, Options<DeleteTreatmentData>> = {
+export const updateTreatmentMutation = (options?: Partial<Options<UpdateTreatmentData>>): UseMutationOptions<UpdateTreatmentResponse, UpdateTreatmentError, Options<UpdateTreatmentData>> => {
+    const mutationOptions: UseMutationOptions<UpdateTreatmentResponse, UpdateTreatmentError, Options<UpdateTreatmentData>> = {
         mutationFn: async (fnOptions) => {
-            const { data } = await deleteTreatment({
+            const { data } = await updateTreatment({
                 ...options,
                 ...fnOptions,
                 throwOnError: true

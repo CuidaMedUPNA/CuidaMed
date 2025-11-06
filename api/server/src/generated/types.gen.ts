@@ -214,6 +214,44 @@ export type CreateTreatmentResponses = {
 
 export type CreateTreatmentResponse = CreateTreatmentResponses[keyof CreateTreatmentResponses];
 
+export type DeleteTreatmentData = {
+    body?: never;
+    path: {
+        /**
+         * ID del tratamiento
+         */
+        treatmentId: number;
+    };
+    query?: never;
+    url: '/treatments/{treatmentId}';
+};
+
+export type DeleteTreatmentErrors = {
+    /**
+     * Tratamiento no encontrado
+     */
+    404: {
+        error?: string;
+    };
+    /**
+     * Error interno del servidor
+     */
+    500: {
+        error?: string;
+    };
+};
+
+export type DeleteTreatmentError = DeleteTreatmentErrors[keyof DeleteTreatmentErrors];
+
+export type DeleteTreatmentResponses = {
+    /**
+     * Tratamiento eliminado exitosamente
+     */
+    204: void;
+};
+
+export type DeleteTreatmentResponse = DeleteTreatmentResponses[keyof DeleteTreatmentResponses];
+
 export type GetTreatmentByIdData = {
     body?: never;
     path: {
@@ -258,8 +296,11 @@ export type GetTreatmentByIdResponses = {
 
 export type GetTreatmentByIdResponse = GetTreatmentByIdResponses[keyof GetTreatmentByIdResponses];
 
-export type DeleteTreatmentData = {
-    body?: never;
+export type UpdateTreatmentData = {
+    /**
+     * Datos del tratamiento a actualizar
+     */
+    body: NewTreatment;
     path: {
         /**
          * ID del tratamiento
@@ -267,10 +308,16 @@ export type DeleteTreatmentData = {
         treatmentId: number;
     };
     query?: never;
-    url: '/treatments/{treatmentId}/intakes';
+    url: '/treatments/{treatmentId}';
 };
 
-export type DeleteTreatmentErrors = {
+export type UpdateTreatmentErrors = {
+    /**
+     * Solicitud incorrecta
+     */
+    400: {
+        error?: string;
+    };
     /**
      * Tratamiento no encontrado
      */
@@ -285,16 +332,16 @@ export type DeleteTreatmentErrors = {
     };
 };
 
-export type DeleteTreatmentError = DeleteTreatmentErrors[keyof DeleteTreatmentErrors];
+export type UpdateTreatmentError = UpdateTreatmentErrors[keyof UpdateTreatmentErrors];
 
-export type DeleteTreatmentResponses = {
+export type UpdateTreatmentResponses = {
     /**
-     * Tratamiento eliminado exitosamente
+     * Tratamiento actualizado exitosamente
      */
-    204: void;
+    200: Treatment;
 };
 
-export type DeleteTreatmentResponse = DeleteTreatmentResponses[keyof DeleteTreatmentResponses];
+export type UpdateTreatmentResponse = UpdateTreatmentResponses[keyof UpdateTreatmentResponses];
 
 export type GetIntakesByTreatmentData = {
     body?: never;

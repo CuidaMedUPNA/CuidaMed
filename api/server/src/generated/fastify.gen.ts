@@ -2,7 +2,7 @@
 
 import type { RouteHandler } from 'fastify';
 
-import type { CreateIntakeData, CreateIntakeErrors, CreateIntakeResponses, CreateTreatmentData, CreateTreatmentErrors, CreateTreatmentResponses, DeleteIntakeData, DeleteIntakeErrors, DeleteIntakeResponses, DeleteTreatmentData, DeleteTreatmentErrors, DeleteTreatmentResponses, GetIntakesByTreatmentData, GetIntakesByTreatmentErrors, GetIntakesByTreatmentResponses, GetTreatmentByIdData, GetTreatmentByIdErrors, GetTreatmentByIdResponses, GetTreatmentsData, GetTreatmentsErrors, GetTreatmentsResponses, HealthCheckResponses } from './types.gen';
+import type { CreateIntakeData, CreateIntakeErrors, CreateIntakeResponses, CreateTreatmentData, CreateTreatmentErrors, CreateTreatmentResponses, DeleteIntakeData, DeleteIntakeErrors, DeleteIntakeResponses, DeleteTreatmentData, DeleteTreatmentErrors, DeleteTreatmentResponses, GetIntakesByTreatmentData, GetIntakesByTreatmentErrors, GetIntakesByTreatmentResponses, GetTreatmentByIdData, GetTreatmentByIdErrors, GetTreatmentByIdResponses, GetTreatmentsData, GetTreatmentsErrors, GetTreatmentsResponses, HealthCheckResponses, UpdateTreatmentData, UpdateTreatmentErrors, UpdateTreatmentResponses } from './types.gen';
 
 export type RouteHandlers = {
     healthCheck: RouteHandler<{
@@ -16,13 +16,18 @@ export type RouteHandlers = {
         Body: CreateTreatmentData['body'];
         Reply: CreateTreatmentErrors & CreateTreatmentResponses;
     }>;
+    deleteTreatment: RouteHandler<{
+        Params: DeleteTreatmentData['path'];
+        Reply: DeleteTreatmentErrors & DeleteTreatmentResponses;
+    }>;
     getTreatmentById: RouteHandler<{
         Params: GetTreatmentByIdData['path'];
         Reply: GetTreatmentByIdErrors & GetTreatmentByIdResponses;
     }>;
-    deleteTreatment: RouteHandler<{
-        Params: DeleteTreatmentData['path'];
-        Reply: DeleteTreatmentErrors & DeleteTreatmentResponses;
+    updateTreatment: RouteHandler<{
+        Body: UpdateTreatmentData['body'];
+        Params: UpdateTreatmentData['path'];
+        Reply: UpdateTreatmentErrors & UpdateTreatmentResponses;
     }>;
     getIntakesByTreatment: RouteHandler<{
         Params: GetIntakesByTreatmentData['path'];

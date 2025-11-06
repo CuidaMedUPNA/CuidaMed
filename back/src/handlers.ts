@@ -107,4 +107,8 @@ export const handlers: RouteHandlers = {
     Number(request.params.treatmentId);
     reply.status(204).send();
   },
+  updateTreatment: async (request, reply) => {
+    Number(request.params.treatmentId);
+    reply.status(200).send();
+  },
 };
