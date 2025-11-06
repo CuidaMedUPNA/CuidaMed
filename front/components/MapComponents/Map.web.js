@@ -1,42 +1,49 @@
-//Leaflet es una librería JavaScript de mapas interactivos para la web.
-import {
-  MapContainer,
-  TileLayer,
-  Marker as LeafletMarker,
-} from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import L from "leaflet";
 import { View } from "react-native";
 
-//importar iconos
-import icon from "leaflet/dist/images/marker-icon.png";
-import iconShadow from "leaflet/dist/images/marker-shadow.png";
+let MapContainer = null;
+let TileLayer = null;
+let LeafletMarker = null;
+let L = null;
+let DefaultIcon = null;
 
-let DefaultIcon = L.icon({
-  iconUrl: icon,
-  shadowUrl: iconShadow,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-});
+if (typeof window !== "undefined") {
+  const leafletImports = require("react-leaflet");
+  MapContainer = leafletImports.MapContainer;
+  TileLayer = leafletImports.TileLayer;
+  LeafletMarker = leafletImports.Marker;
 
-// Forzar a Leaflet a usar este icono por defecto
-L.Marker.prototype.options.icon = DefaultIcon;
+  require("leaflet/dist/leaflet.css");
+  L = require("leaflet");
+
+  const icon = require("leaflet/dist/images/marker-icon.png");
+  const iconShadow = require("leaflet/dist/images/marker-shadow.png");
+
+  DefaultIcon = L.icon({
+    iconUrl: icon,
+    shadowUrl: iconShadow,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+  });
+
+  L.Marker.prototype.options.icon = DefaultIcon;
+}
 
 export default function MapView(props) {
+  if (typeof window === "undefined") {
+    return <View style={props.style} />;
+  }
+
   const { region, style, urlTemplate, children, ...rest } = props;
 
   const center = region ? [region.latitude, region.longitude] : [0, 0];
-  // Convertir delta de región a zoom de Leaflet (aproximado)
   const zoom =
     region && region.latitudeDelta
       ? Math.round(Math.log(360 / region.latitudeDelta) / Math.LN2)
       : 10;
 
-  // Usamos el urlTemplate de OpenStreetMap por defecto
   const tilesUrl =
     urlTemplate || "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 
-  // mapa ajustado
   return (
     <View style={style}>
       <MapContainer
@@ -53,15 +60,16 @@ export default function MapView(props) {
   );
 }
 
-// componente marker (lefleat Marker)
 export const Marker = ({ coordinate, pinColor, title, description }) => {
+  if (typeof window === "undefined" || !LeafletMarker) {
+    return null;
+  }
+
   if (!coordinate) return null;
 
   let leafletIcon;
 
-  // Si se proporciona pinColor, creamos un icono HTML DIV personalizado
   if (pinColor) {
-    // Creamos un simple círculo HTML estilizado
     leafletIcon = L.divIcon({
       className: "custom-pin",
       html: `<div style="
