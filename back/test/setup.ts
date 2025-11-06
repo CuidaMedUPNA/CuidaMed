@@ -1,100 +1,105 @@
 import { beforeAll, afterAll, vi } from "vitest";
-import { Kysely, SqliteDialect, sql } from "kysely";
-import DatabaseDriver from "better-sqlite3";
-import { Database } from "../src/db/types";
+import { Kysely, PostgresDialect } from "kysely";
+import { newDb } from "pg-mem";
 import type { FastifyInstance } from "fastify";
+import { Database } from "../src/db/types";
 
-// Configurar la base de datos en memoria y la aplicación Fastify antes de las pruebas
-const sqlite = new Kysely<Database>({
-  dialect: new SqliteDialect({
-    database: new DatabaseDriver(":memory:"),
+// Creamos una instancia de pg-mem para simular Postgres en memoria
+const mem = newDb({
+  autoCreateForeignKeyIndices: true,
+});
+const pgMem = mem.adapters.createPg();
+
+const db = new Kysely<Database>({
+  dialect: new PostgresDialect({
+    pool: new pgMem.Pool(),
   }),
 });
 
-vi.mock("../src/db/database", () => ({ db: sqlite }));
+// Mockeamos la importación original del db real para que use este
+vi.mock("../src/db/database", () => ({ db }));
 
 let app: FastifyInstance;
 
 beforeAll(async () => {
-
-  await sql`PRAGMA foreign_keys = ON;`.execute(sqlite);
   
-  await sqlite.schema
+  //tablas para las pruebas
+  await db.schema
     .createTable("user")
     .ifNotExists()
-    .addColumn("id", "integer", (col) => col.primaryKey().autoIncrement())
-    .addColumn("name", "text")
-    .addColumn("email", "text")
-    .addColumn("password", "text")
+    .addColumn("id", "serial", (col) => col.primaryKey())
+    .addColumn("name", "varchar")
+    .addColumn("email", "varchar")
+    .addColumn("password", "varchar")
     .execute();
 
-  await sqlite.schema
+  await db.schema
     .createTable("medicine")
     .ifNotExists()
-    .addColumn("id", "integer", (col) => col.primaryKey().autoIncrement())
-    .addColumn("trade_name", "text")
+    .addColumn("id", "serial", (col) => col.primaryKey())
+    .addColumn("trade_name", "varchar")
     .execute();
 
-  await sqlite.schema
+  await db.schema
     .createTable("treatment")
     .ifNotExists()
-    .addColumn("id", "integer", (col) => col.primaryKey().autoIncrement())
-    .addColumn("name", "text", (col) => col.notNull())
+    .addColumn("id", "serial", (col) => col.primaryKey())
+    .addColumn("name", "varchar", (col) => col.notNull())
     .addColumn("user_id", "integer", (col) =>
-      col.references("user.id").onDelete("cascade")
+      col.references("user.id").onDelete("cascade"),
     )
-    .addColumn("start_date", "text", (col) => col.notNull())
-    .addColumn("end_date", "text")
+    .addColumn("start_date", "varchar", (col) => col.notNull())
+    .addColumn("end_date", "varchar")
     .execute();
 
-  await sqlite.schema
+  await db.schema
     .createTable("medicine_ingredient")
     .ifNotExists()
-    .addColumn("id", "integer", (col) => col.primaryKey().autoIncrement())
+    .addColumn("id", "serial", (col) => col.primaryKey())
     .addColumn("medicine_id", "integer", (col) =>
-      col.references("medicine.id").onDelete("cascade")
+      col.references("medicine.id").onDelete("cascade"),
     )
-    .addColumn("ingredient_name", "text")
+    .addColumn("ingredient_name", "varchar")
     .addColumn("concentration_amount", "integer")
-    .addColumn("concentration_unit", "text")
+    .addColumn("concentration_unit", "varchar")
     .execute();
 
-  await sqlite.schema
+  await db.schema
     .createTable("dosing_schedule")
     .ifNotExists()
-    .addColumn("id", "integer", (col) => col.primaryKey().autoIncrement())
+    .addColumn("id", "serial", (col) => col.primaryKey())
     .addColumn("medicine_id", "integer", (col) =>
-      col.references("medicine.id").onDelete("cascade")
+      col.references("medicine.id").onDelete("cascade"),
     )
     .addColumn("treatment_id", "integer", (col) =>
-      col.references("treatment.id").onDelete("cascade")
+      col.references("treatment.id").onDelete("cascade"),
     )
-    .addColumn("start_date", "text")
-    .addColumn("end_date", "text")
+    .addColumn("start_date", "varchar")
+    .addColumn("end_date", "varchar")
     .addColumn("dose_amount", "integer")
-    .addColumn("dose_unit", "text")
+    .addColumn("dose_unit", "varchar")
     .execute();
 
-  await sqlite.schema
+  await db.schema
     .createTable("dosing_time")
     .ifNotExists()
-    .addColumn("id", "integer", (col) => col.primaryKey().autoIncrement())
+    .addColumn("id", "serial", (col) => col.primaryKey())
     .addColumn("dosing_schedule_id", "integer", (col) =>
-      col.references("dosing_schedule.id").onDelete("cascade")
+      col.references("dosing_schedule.id").onDelete("cascade"),
     )
-    .addColumn("scheduled_time", "text")
+    .addColumn("scheduled_time", "varchar")
     .addColumn("day_of_week", "integer")
     .execute();
 
-  const { buildTestApp } = await import("../src/app.test");
-  
+  const { buildTestApp } = await import("../src/app.test.js");
   app = await buildTestApp();
   await app.ready();
+
 });
 
 afterAll(async () => {
   await app.close();
-  await sqlite.destroy();
+  await db.destroy();
 });
 
-export { app, sqlite as db };
+export { app, db };

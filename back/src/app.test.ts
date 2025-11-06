@@ -1,3 +1,4 @@
+// src/app.test.ts
 import Fastify from "fastify";
 import { handlers } from "./handlers";
 import openapiGlue from "fastify-openapi-glue";
@@ -10,7 +11,9 @@ import { dirname } from "path";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Function to build and return a Fastify app instance for testing
+/**
+ * Construye una instancia de Fastify para pruebas sin iniciar el servidor.
+ */
 export async function buildTestApp() {
   const app = Fastify({ logger: false });
 
@@ -19,15 +22,15 @@ export async function buildTestApp() {
     serviceHandlers: handlers,
   };
 
-  app.register(openapiGlue, options);
-  app.register(fastifyCors, { origin: "*" });
-  app.register(fastifyStatic, {
+  await app.register(openapiGlue, options);
+  await app.register(fastifyCors, { origin: "*" });
+  await app.register(fastifyStatic, {
     root: path.join(__dirname, "../../docs"),
   });
 
-  app.get("/documentation", async (request, reply) => {
-    return reply.type("text/html").sendFile("/api.html");
-  });
+  app.get("/documentation", async (_, reply) =>
+    reply.type("text/html").sendFile("/api.html")
+  );
 
   return app;
 }
