@@ -30,13 +30,16 @@ export const TreatmentDetailPage = ({
   const initialDate = treatment ? new Date(treatment.startDate) : new Date();
   const endDate = treatment?.endDate ? new Date(treatment.endDate) : undefined;
 
-  const { data: intakes } = useQuery(
+  const { data: intakes, isLoading } = useQuery(
+    // 👇 ¡Usar la función que termina en "Options"!
     getIntakesByTreatmentOptions({
       path: {
         treatmentId,
       },
     })
   );
+
+  console.log("Intakes:", intakes);
 
   return (
     <View
