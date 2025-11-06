@@ -5,6 +5,14 @@
   "saving": "Guardando...",
   "edit": "Editar",
   "success": "¡Éxito!",
+  "errors": {
+    "required": "Campo requerido",
+    "fillAllFields": "Por favor, rellena todos los campos",
+    "invalid": "Inválido",
+    "invalidEmail": "Por favor, introduce un correo electrónico válido",
+    "loginFailed": "Error de inicio de sesión",
+    "checkCredentials": "Por favor, verifica tus credenciales e intenta de nuevo"
+  },
   "tabs": {
     "home": "Inicio",
     "treatments": "Tratamientos",
