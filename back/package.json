@@ -12,7 +12,6 @@
     "dotenv": "^17.2.2",
     "fastify": "^5.6.0",
     "fastify-openapi-glue": "^4.9.2",
-    "help": "^3.0.2",
     "kysely": "^0.28.7",
     "pg": "^8.16.3"
   },
@@ -24,6 +23,7 @@
     "@vitest/coverage-v8": "^3.2.4",
     "eslint": "^9.37.0",
     "nodemon": "^3.1.10",
+    "pg-mem": "^3.0.5",
     "ts-node": "^10.9.2",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2",

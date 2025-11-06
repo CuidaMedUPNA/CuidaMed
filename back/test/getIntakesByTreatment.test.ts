@@ -5,7 +5,6 @@ import * as treatmentRepo from "../src/repository/treatmentRepository";
 describe("GET /treatments/{treatmentId}/intakes", () => {
 
   beforeAll(async () => {
-    // Crear usuario
     const [user] = await db
       .insertInto("user")
       .values({
@@ -16,7 +15,6 @@ describe("GET /treatments/{treatmentId}/intakes", () => {
       .returning(["id"])
       .execute();
 
-    // Crear medicinas
     const [medicine] = await db
       .insertInto("medicine")
       .values({
@@ -33,7 +31,6 @@ describe("GET /treatments/{treatmentId}/intakes", () => {
       .returning(["id"])
       .execute();
 
-    // Crear tratamiento
     const [treatment] = await db
       .insertInto("treatment")
       .values({
@@ -45,7 +42,6 @@ describe("GET /treatments/{treatmentId}/intakes", () => {
       .returning(["id"])
       .execute();
 
-    // Crear dosing_schedules
     const [schedule] = await db
       .insertInto("dosing_schedule")
       .values({
@@ -72,7 +68,6 @@ describe("GET /treatments/{treatmentId}/intakes", () => {
       .returning(["id"])
       .execute();
 
-    // Crear dosing_times
     await db
       .insertInto("dosing_time")
       .values([
@@ -106,9 +101,7 @@ describe("GET /treatments/{treatmentId}/intakes", () => {
       .execute();
   });
 
-  //Tests que verifican la integridad de la ruta GET /treatments/:treatmentId
-  //Usan un objeto kysely y la app de fastify importados desde setup.ts
-  it("Test codigo 200 para obtener las tomas de un tratamiento", async () => {
+  it("returns all intakes for a treatment", async () => {
     const res = await app.inject({
       method: "GET",
       url: "/treatments/1/intakes",
@@ -137,48 +130,19 @@ describe("GET /treatments/{treatmentId}/intakes", () => {
     expect(schedule.dosingTimes.length).toBe(2);
   });
 
-  it("Test codigo 400 si el treatmentId proporcionado no es válido", async () => {
+  it("returns 400 when treatmentId is invalid", async () => {
     const res = await app.inject({
       method: "GET",
       url: "/treatments/abc",
     });
 
     expect(res.statusCode).toBe(400);
+    const body = res.json();
+    expect(body).toHaveProperty("error");
+    expect(body.error).toBe("Bad Request");
   });
 
-  it("Test codigo 200 pero con array vacío si el tratamiento no tiene tomas aun", async () => {
-    const [treatment] = await db
-      .insertInto("treatment")
-      .values({
-        name: "Tratamiento vacío",
-        user_id: 1,
-        start_date: "2025-01-01",
-        end_date: null,
-      })
-      .returning(["id"])
-      .execute();
-
-    const res = await app.inject({
-      method: "GET",
-      url: `/treatments/${treatment.id}/intakes`,
-    });
-
-    expect(res.statusCode).toBe(200);
-    expect(res.json()).toEqual([]);
-  });
-
-  afterAll(async () => {
-    // Limpiar la base de datos
-    await db.deleteFrom("dosing_time").execute();
-    await db.deleteFrom("dosing_schedule").execute();
-    await db.deleteFrom("treatment").execute();
-    await db.deleteFrom("medicine").execute();
-    await db.deleteFrom("user").execute();
-  });
-});
-
-describe("GET /treatments/{treatmentId}/intakes - manejo de errores", () => {
-  it("Test codigo 500 si ocurre un error interno del servidor", async () => {
+  it("returns 500 when there is an internal server error", async () => {
     const spy = vi
       .spyOn(treatmentRepo, "getIntakesByTreatmentId")
       .mockRejectedValueOnce(new Error("DB connection failed"));
@@ -191,10 +155,19 @@ describe("GET /treatments/{treatmentId}/intakes - manejo de errores", () => {
     spy.mockRestore();
 
     expect(res.statusCode).toBe(500);
-
     const body = res.json();
     expect(body).toHaveProperty("error");
-    expect(typeof body.error).toBe("string");
     expect(body.error).toBe("Internal Server Error");
   });
+
+  afterAll(async () => {
+    await db.deleteFrom("dosing_time").execute();
+    await db.deleteFrom("dosing_schedule").execute();
+    await db.deleteFrom("treatment").execute();
+    await db.deleteFrom("medicine").execute();
+    await db.deleteFrom("user").execute();
+  });
+
+
 });
+

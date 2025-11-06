@@ -4,7 +4,9 @@ import { newDb } from "pg-mem";
 import type { FastifyInstance } from "fastify";
 import { Database } from "../src/db/types";
 
-// Creamos una instancia de pg-mem para simular Postgres en memoria
+/*
+  Mock de DB en memoria
+*/
 const mem = newDb({
   autoCreateForeignKeyIndices: true,
 });
@@ -16,14 +18,12 @@ const db = new Kysely<Database>({
   }),
 });
 
-// Mockeamos la importación original del db real para que use este
 vi.mock("../src/db/database", () => ({ db }));
 
 let app: FastifyInstance;
 
 beforeAll(async () => {
   
-  //tablas para las pruebas
   await db.schema
     .createTable("user")
     .ifNotExists()
@@ -91,7 +91,7 @@ beforeAll(async () => {
     .addColumn("day_of_week", "integer")
     .execute();
 
-  const { buildTestApp } = await import("../src/app.test.js");
+  const { buildTestApp } = await import("./test-app.js");
   app = await buildTestApp();
   await app.ready();
 

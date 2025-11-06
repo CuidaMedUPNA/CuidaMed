@@ -1,6 +1,5 @@
-// src/app.test.ts
 import Fastify from "fastify";
-import { handlers } from "./handlers";
+import { handlers } from "../src/handlers";
 import openapiGlue from "fastify-openapi-glue";
 import fastifyCors from "@fastify/cors";
 import fastifyStatic from "@fastify/static";
@@ -12,7 +11,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 /**
- * Construye una instancia de Fastify para pruebas sin iniciar el servidor.
+ * Instancia de Fastify para pruebas sin iniciar el servidor.
  */
 export async function buildTestApp() {
   const app = Fastify({ logger: false });
