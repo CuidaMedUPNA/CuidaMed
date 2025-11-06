@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
 import { client } from "@cuidamed-api/client";
 import { API_URL } from "@/config";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import CustomNavBar from "@/components/CustomNavBar";
 
 client.setConfig({
   baseUrl: API_URL,
@@ -16,28 +16,10 @@ const queryClient = new QueryClient();
 
 export default function TabsLayout() {
   const { t } = useTranslation();
-  const insets = useSafeAreaInsets();
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Tabs
-        screenOptions={{
-          tabBarActiveTintColor: "#F23728",
-          tabBarInactiveTintColor: "#6b6b6bff",
-          tabBarStyle: {
-            backgroundColor: "#fff",
-            borderTopWidth: 1,
-            borderTopColor: "#e0e0e0",
-            height: 60 + insets.bottom,
-            paddingBottom: insets.bottom,
-            paddingTop: 8,
-          },
-          tabBarLabelStyle: {
-            fontSize: 12,
-            fontWeight: "600",
-          },
-        }}
-      >
+      <Tabs tabBar={(props) => <CustomNavBar {...props} />}>
         <Tabs.Screen
           name="index"
           options={{
@@ -59,22 +41,22 @@ export default function TabsLayout() {
           }}
         />
         <Tabs.Screen
-          name="profile"
-          options={{
-            tabBarLabel: `${t("tabs.profile")}`,
-            headerShown: false,
-            tabBarIcon: ({ color, size }: { color: string; size: number }) => (
-              <MaterialIcons name="person" size={size} color={color} />
-            ),
-          }}
-        />
-        <Tabs.Screen
           name="maps"
           options={{
             tabBarLabel: t("tabs.maps"),
             headerShown: false,
             tabBarIcon: ({ color, size }: { color: string; size: number }) => (
               <MaterialIcons name="location-on" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="profile"
+          options={{
+            tabBarLabel: `${t("tabs.profile")}`,
+            headerShown: false,
+            tabBarIcon: ({ color, size }: { color: string; size: number }) => (
+              <MaterialIcons name="person" size={size} color={color} />
             ),
           }}
         />
