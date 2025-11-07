@@ -3,8 +3,8 @@
 import { queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { createIntake, createTreatment, deleteIntake, deleteTreatment, getIntakesByTreatment, getTreatmentById, getTreatments, healthCheck, type Options, updateTreatment } from '../sdk.gen';
-import type { CreateIntakeData, CreateIntakeError, CreateIntakeResponse, CreateTreatmentData, CreateTreatmentError, CreateTreatmentResponse, DeleteIntakeData, DeleteIntakeError, DeleteIntakeResponse, DeleteTreatmentData, DeleteTreatmentError, DeleteTreatmentResponse, GetIntakesByTreatmentData, GetTreatmentByIdData, GetTreatmentsData, HealthCheckData, UpdateTreatmentData, UpdateTreatmentError, UpdateTreatmentResponse } from '../types.gen';
+import { createIntake, createTreatment, deleteIntake, deleteTreatment, getAllMedicines, getIntakesByTreatment, getTreatmentById, getTreatments, healthCheck, type Options, updateTreatment } from '../sdk.gen';
+import type { CreateIntakeData, CreateIntakeError, CreateIntakeResponse, CreateTreatmentData, CreateTreatmentError, CreateTreatmentResponse, DeleteIntakeData, DeleteIntakeError, DeleteIntakeResponse, DeleteTreatmentData, DeleteTreatmentError, DeleteTreatmentResponse, GetAllMedicinesData, GetIntakesByTreatmentData, GetTreatmentByIdData, GetTreatmentsData, HealthCheckData, UpdateTreatmentData, UpdateTreatmentError, UpdateTreatmentResponse } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -204,4 +204,24 @@ export const deleteIntakeMutation = (options?: Partial<Options<DeleteIntakeData>
         }
     };
     return mutationOptions;
+};
+
+export const getAllMedicinesQueryKey = (options?: Options<GetAllMedicinesData>) => createQueryKey('getAllMedicines', options);
+
+/**
+ * Obtener todas las medicinas disponibles en el sistema
+ */
+export const getAllMedicinesOptions = (options?: Options<GetAllMedicinesData>) => {
+    return queryOptions({
+        queryFn: async ({ queryKey, signal }) => {
+            const { data } = await getAllMedicines({
+                ...options,
+                ...queryKey[0],
+                signal,
+                throwOnError: true
+            });
+            return data;
+        },
+        queryKey: getAllMedicinesQueryKey(options)
+    });
 };
