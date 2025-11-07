@@ -24,18 +24,15 @@ export async function insertTreatment(treatment: NewTreatment) {
 
 export async function updateTreatmentById(
   treatmentId: number,
-  treatmentData: Partial<NewTreatment>
+  treatmentData: TreatmentUpdate
 ) {
   const newData: TreatmentUpdate = {
     name: treatmentData.name,
-    start_date: treatmentData.start_date
-      ? new Date(treatmentData.start_date)
-      : undefined,
-    end_date: treatmentData.end_date
-      ? new Date(treatmentData.end_date)
-      : undefined,
+    start_date: treatmentData.start_date,
+    end_date: treatmentData.end_date ?? null,
   };
 
+  console.log("New data for update:", newData);
   const result = await db
     .updateTable("treatment")
     .set(newData)

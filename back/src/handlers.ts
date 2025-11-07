@@ -1,5 +1,5 @@
 import { RouteHandlers } from "@cuidamed-api/server";
-import { NewTreatment } from "./db/types";
+import { NewTreatment, TreatmentUpdate } from "./db/types";
 import { db } from "./db/database";
 import {
   insertTreatment,
@@ -113,18 +113,16 @@ export const handlers: RouteHandlers = {
   },
 
   updateTreatment: async (request, reply) => {
-    console.log("\n\n\n");
-    console.log("Request params:", request.params);
     const treatmentId = Number(request.params.treatmentId);
     const treatmentData = request.body;
 
-    console.log("\n\n\n");
-    console.log("Updating treatment:", treatmentId, treatmentData);
+    const newData: TreatmentUpdate = {
+      name: treatmentData.name,
+      start_date: treatmentData.startDate,
+      end_date: treatmentData.endDate ?? null,
+    };
 
-    const updatedTreatment = await updateTreatmentById(
-      treatmentId,
-      treatmentData
-    );
+    const updatedTreatment = await updateTreatmentById(treatmentId, newData);
 
     if (updatedTreatment === 0n) {
       return reply.status(404).send({ error: "Treatment not found" });
