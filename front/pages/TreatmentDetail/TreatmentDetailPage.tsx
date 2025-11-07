@@ -58,7 +58,10 @@ export const TreatmentDetailPage = ({
         initialDate={initialDate}
         endDate={endDate ?? new Date()}
       />
-      <TreatmentDetailMedicines medicines={intakes ?? []} />
+      <TreatmentDetailMedicines
+        medicines={intakes ?? []}
+        treatmentId={treatmentId}
+      />
       <ModalEditTreatment
         visible={modalVisible}
         treatmentName={treatment?.name ?? ""}
