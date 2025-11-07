@@ -62,8 +62,8 @@ export const TreatmentDetailPage = ({
       <TreatmentDetailMedicines medicines={intakes ?? []} />
       <ModalEditTreatment
         visible={modalVisible}
-        treatmentName={"Manolito"}
-        treatmentId={1}
+        treatmentName={treatment?.name ?? ""}
+        treatmentId={treatmentId}
         treatmentInitialDate={initialDate}
         treatmentEndDate={endDate ?? new Date()}
         onClose={() => setModalVisible(false)}

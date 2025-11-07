@@ -3,6 +3,7 @@ import { DosingSchedule } from "@cuidamed-api/client";
 export const mockIntakes: DosingSchedule[] = [
   {
     id: 1,
+    medicineName: "Paracetamol",
     medicineId: 1,
     treatmentId: 1,
     startDate: "2025-09-01",
@@ -16,6 +17,7 @@ export const mockIntakes: DosingSchedule[] = [
   },
   {
     id: 2,
+    medicineName: "Amoxicilina",
     medicineId: 2,
     treatmentId: 1,
     startDate: "2025-09-01",
@@ -32,6 +34,7 @@ export const mockIntakes: DosingSchedule[] = [
   },
   {
     id: 3,
+    medicineName: "Ibuprofeno",
     medicineId: 3,
     treatmentId: 1,
     startDate: "2025-09-01",
@@ -47,6 +50,7 @@ export const mockIntakes: DosingSchedule[] = [
   },
   {
     id: 4,
+    medicineName: "Metformina",
     medicineId: 4,
     treatmentId: 1,
     startDate: "2025-09-01",
@@ -61,6 +65,7 @@ export const mockIntakes: DosingSchedule[] = [
   },
   {
     id: 5,
+    medicineName: "Gotas para los ojos",
     medicineId: 5,
     treatmentId: 1,
     startDate: "2025-09-01",
@@ -75,6 +80,7 @@ export const mockIntakes: DosingSchedule[] = [
   },
   {
     id: 6,
+    medicineName: "Inyección de insulina",
     medicineId: 6,
     treatmentId: 1,
     startDate: "2025-09-01",

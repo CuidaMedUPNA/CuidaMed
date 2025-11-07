@@ -18,7 +18,7 @@ export const TreatmentDetailMedicines = ({
   const router = useRouter();
   const renderMedicine = ({ item }: { item: DosingSchedule }) => (
     <AssociatedMedicine
-      name={"manolito"}
+      name={item.medicineName}
       dose={item.doseAmount}
       unit={item.doseUnit}
       schedule={item.dosingTimes}
