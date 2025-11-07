@@ -56,13 +56,22 @@ export const TreatmentDetailMedicines = ({
   });
 
   const handleDeleteIntake = (intakeId: number, treatmentId: number) => {
-    console.log("Eliminar medicamento asociado con ID:", intakeId);
-    mutation.mutate({
-      path: {
-        treatmentId,
-        intakeId: intakeId,
+    Alert.alert(t("warning"), t("treatments.delete.confirmTitle"), [
+      { text: t("cancel"), style: "cancel" },
+      {
+        text: t("delete"),
+        style: "destructive",
+        onPress: () => {
+          console.log("Eliminar medicamento asociado con ID:", intakeId);
+          mutation.mutate({
+            path: {
+              treatmentId,
+              intakeId: intakeId,
+            },
+          });
+        },
       },
-    });
+    ]);
   };
   return (
     <View style={styles.container}>
