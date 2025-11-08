@@ -1,84 +1,82 @@
-import { DosingTime } from "@cuidamed-api/client";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Dimensions,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Icon } from "react-native-elements";
-import { mapScheduleToHorarios } from "../_helpers/scheduleMapper";
 
 export interface AssociatedMedicineProps {
-  name: string;
-  dose: number;
-  unit: string;
-  schedule: DosingTime[];
+  nombre: string;
+  dosis: string;
+  frecuencia: string;
+  horarios: string[];
 }
 
-const diasSemana = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sab", "Dom"];
-const { width } = Dimensions.get("window");
-
 export const AssociatedMedicine = ({
-  name,
-  dose,
-  unit,
-  schedule,
+  nombre,
+  dosis,
+  frecuencia,
+  horarios,
 }: AssociatedMedicineProps) => {
-  const { horariosPorDia, isDiario } = mapScheduleToHorarios(schedule);
+  const momentos = [
+    { key: "mañana" as const, label: "M", range: [6, 12] },
+    { key: "tarde" as const, label: "T", range: [12, 18] },
+    { key: "noche" as const, label: "N", range: [18, 24] },
+  ];
+
+  const getMomento = (hora: string): "mañana" | "tarde" | "noche" => {
+    const [h] = hora.split(":").map(Number);
+    if (h >= 6 && h < 12) return "mañana";
+    if (h >= 12 && h < 18) return "tarde";
+    if (h >= 18 || h < 6) return "noche";
+    return "mañana";
+  };
+
+  const getActiveMomentos = (): ("mañana" | "tarde" | "noche")[] => {
+    return horarios.map(getMomento);
+  };
+
+  const activeMomentos = getActiveMomentos();
 
   return (
     <View style={styles.container}>
       <View style={styles.medicineInfo}>
-        <Text style={styles.medicineName}>{name}</Text>
+        <Text style={styles.medicineName}>{nombre}</Text>
         <Text style={styles.medicineDetails}>
-          {dose} {unit}
+          {dosis} • {frecuencia}
         </Text>
       </View>
       <View style={styles.horarios}>
-        <View style={[styles.diasContainer, { maxWidth: width * 0.4 }]}>
-          {isDiario ? (
-            <View style={styles.diaCompleto}>
-              <Text style={styles.diaLabel}>Diario</Text>
-              <View style={styles.horariosDelDia}>
-                {horariosPorDia[0].map((horario, idx) => (
-                  <Text key={idx} style={styles.horario}>
-                    {horario}
-                  </Text>
-                ))}
-              </View>
+        <View style={styles.horariosContainer}>
+          {horarios.map((horario, index) => (
+            <Text key={index} style={styles.horario}>
+              {horario}
+            </Text>
+          ))}
+        </View>
+        <View style={styles.circlesContainer}>
+          {momentos.map((momento) => (
+            <View
+              key={momento.key}
+              style={[
+                styles.circle,
+                {
+                  backgroundColor: activeMomentos.includes(momento.key)
+                    ? "#F23728"
+                    : "#bdbdbd",
+                },
+              ]}
+            >
+              <Text style={styles.circleText}>{momento.label}</Text>
             </View>
-          ) : (
-            diasSemana.map((dia, dayNum) => {
-              const dayKey = dayNum + 1;
-              const horariosDelDia = horariosPorDia[dayKey];
-              if (!horariosDelDia) return null;
-
-              return (
-                <View key={dayNum} style={styles.dia}>
-                  <Text style={styles.diaLabel}>{dia}</Text>
-                  <View style={styles.horariosDelDia}>
-                    {horariosDelDia.map((horario, idx) => (
-                      <Text key={idx} style={styles.horario}>
-                        {horario}
-                      </Text>
-                    ))}
-                  </View>
-                </View>
-              );
-            })
-          )}
+          ))}
         </View>
       </View>
-      <View style={styles.acciones}>
-        <Icon name="chevron-right" type="entypo" size={20} />
+      <Icon name="chevron-right" type="entypo" />
+      <View style={styles.papelera}>
         <TouchableOpacity
           onPress={() => {
-            console.log("Eliminar medicamento: ", name);
+            console.log("Eliminar medicamento: ", nombre);
           }}
           accessibilityRole="button"
         >
-          <Icon name="trash" type="font-awesome" color="#F23728" size={18} />
+          <Icon name="trash" type="font-awesome" color="#F23728" />
         </TouchableOpacity>
       </View>
     </View>
@@ -93,7 +91,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingVertical: 16,
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
     borderRadius: 16,
     marginVertical: 8,
     marginHorizontal: 16,
@@ -105,59 +103,37 @@ const styles = StyleSheet.create({
   },
   medicineInfo: {
     flex: 1,
-    minWidth: 80,
+    paddingRight: 16,
   },
   medicineName: {
-    fontSize: width < 375 ? 16 : 18,
+    fontSize: 18,
     fontWeight: "600",
     color: "#333",
     marginBottom: 4,
   },
   medicineDetails: {
-    fontSize: width < 375 ? 12 : 14,
+    fontSize: 14,
     color: "#666",
     marginBottom: 8,
   },
   horario: {
-    fontSize: 11,
+    fontSize: 12,
     color: "#888",
     backgroundColor: "#f0f0f0",
     paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingVertical: 2,
     borderRadius: 8,
   },
   horarios: {
-    flex: 2,
-    justifyContent: "center",
-  },
-  diasContainer: {
     flexDirection: "row",
+    gap: 16,
+  },
+  horariosContainer: {
+    display: "flex",
+    flexDirection: "column",
     flexWrap: "wrap",
-    gap: 8,
-    justifyContent: "center",
-  },
-  dia: {
-    alignItems: "center",
-    minWidth: width < 375 ? 35 : 45,
-  },
-  diaCompleto: {
-    alignItems: "center",
-  },
-  diaLabel: {
-    fontSize: 10,
-    fontWeight: "600",
-    color: "#333",
-    marginBottom: 4,
-  },
-  horariosDelDia: {
-    alignItems: "center",
-    gap: 2,
-  },
-  acciones: {
-    flexDirection: "row",
-    gap: 10,
-    alignItems: "center",
-    paddingLeft: 8,
+    gap: 26,
+    height: "100%",
   },
   circlesContainer: {
     display: "flex",
@@ -183,6 +159,7 @@ const styles = StyleSheet.create({
   },
   papelera: {
     position: "absolute",
+
     top: 10,
     right: 10,
   },
