@@ -3,8 +3,8 @@
 import { queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { createIntake, createTreatment, deleteIntake, deleteTreatment, getIntakesByTreatment, getTreatmentById, getTreatments, healthCheck, type Options, updateTreatment } from '../sdk.gen';
-import type { CreateIntakeData, CreateIntakeError, CreateIntakeResponse, CreateTreatmentData, CreateTreatmentError, CreateTreatmentResponse, DeleteIntakeData, DeleteIntakeError, DeleteIntakeResponse, DeleteTreatmentData, DeleteTreatmentError, DeleteTreatmentResponse, GetIntakesByTreatmentData, GetTreatmentByIdData, GetTreatmentsData, HealthCheckData, UpdateTreatmentData, UpdateTreatmentError, UpdateTreatmentResponse } from '../types.gen';
+import { createIntake, createTreatment, deleteIntake, deleteTreatment, getIntakesByTreatment, getTreatmentById, getTreatments, healthCheck, type Options, registerUser, updateTreatment } from '../sdk.gen';
+import type { CreateIntakeData, CreateIntakeError, CreateIntakeResponse, CreateTreatmentData, CreateTreatmentError, CreateTreatmentResponse, DeleteIntakeData, DeleteIntakeError, DeleteIntakeResponse, DeleteTreatmentData, DeleteTreatmentError, DeleteTreatmentResponse, GetIntakesByTreatmentData, GetTreatmentByIdData, GetTreatmentsData, HealthCheckData, RegisterUserData, RegisterUserError, UpdateTreatmentData, UpdateTreatmentError, UpdateTreatmentResponse } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -59,6 +59,23 @@ export const healthCheckOptions = (options?: Options<HealthCheckData>) => {
         },
         queryKey: healthCheckQueryKey(options)
     });
+};
+
+/**
+ * Registrar un nuevo usuario
+ */
+export const registerUserMutation = (options?: Partial<Options<RegisterUserData>>): UseMutationOptions<unknown, RegisterUserError, Options<RegisterUserData>> => {
+    const mutationOptions: UseMutationOptions<unknown, RegisterUserError, Options<RegisterUserData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await registerUser({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
 };
 
 export const getTreatmentsQueryKey = (options: Options<GetTreatmentsData>) => createQueryKey('getTreatments', options);
