@@ -49,18 +49,14 @@ export default function LoginScreen() {
         style={styles.container}
         contentContainerStyle={styles.content}
       >
-        {/* Logo Section */}
         <View style={styles.logoSection}>
-          <MaterialIcons name="medication" size={80} color="#F23728" />
           <Text style={styles.appName}>CuidaMed</Text>
           <Text style={styles.tagline}>Tu salud, bajo control</Text>
         </View>
 
-        {/* Login Form */}
         <View style={styles.formSection}>
           <Text style={styles.title}>Iniciar Sesión</Text>
 
-          {/* Email Input */}
           <View style={styles.inputContainer}>
             <MaterialIcons
               name="email"
@@ -80,7 +76,6 @@ export default function LoginScreen() {
             />
           </View>
 
-          {/* Password Input */}
           <View style={styles.inputContainer}>
             <MaterialIcons
               name="lock"
@@ -109,7 +104,6 @@ export default function LoginScreen() {
             </TouchableOpacity>
           </View>
 
-          {/* Login Button */}
           <TouchableOpacity
             style={[
               styles.loginButton,
@@ -125,7 +119,6 @@ export default function LoginScreen() {
             )}
           </TouchableOpacity>
 
-          {/* Forgot Password Link */}
           <TouchableOpacity
             style={styles.forgotPasswordContainer}
             disabled={isLoading}
@@ -136,7 +129,6 @@ export default function LoginScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Register Section */}
         <View style={styles.registerSection}>
           <Text style={styles.registerText}>¿No tienes cuenta?</Text>
           <TouchableOpacity disabled={isLoading}>
@@ -157,14 +149,13 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingHorizontal: 20,
     paddingVertical: 40,
-    justifyContent: "space-between",
   },
   logoSection: {
     alignItems: "center",
     marginBottom: 50,
   },
   appName: {
-    fontSize: 42,
+    fontSize: 52,
     fontWeight: "bold",
     color: "#F23728",
     marginTop: 16,
@@ -176,8 +167,8 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
   },
   formSection: {
-    flex: 1,
-    justifyContent: "center",
+    flex: 2,
+    justifyContent: "flex-start",
     marginBottom: 30,
   },
   title: {

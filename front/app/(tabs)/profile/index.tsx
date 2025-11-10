@@ -1,24 +1,35 @@
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Alert, Platform } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useAuth } from "@/context/AuthContext";
+import { useState } from "react";
 
 export default function ProfileScreen() {
   const { t } = useTranslation();
   const { logout } = useAuth();
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
-  const handleLogout = () => {
-    Alert.alert("Cerrar sesión", "¿Estás seguro de que deseas cerrar sesión?", [
-      { text: "Cancelar", onPress: () => {} },
-      {
-        text: "Cerrar sesión",
-        onPress: async () => {
-          await logout();
+  const handleLogout = async () => {
+    if (Platform.OS === "web") {
+      setShowConfirmModal(true);
+    } else {
+      Alert.alert("Cerrar sesión", "¿Estás seguro de que deseas cerrar sesión?", [
+        { text: "Cancelar", onPress: () => {} },
+        {
+          text: "Cerrar sesión",
+          onPress: async () => {
+            await logout();
+          },
+          style: "destructive",
         },
-        style: "destructive",
-      },
-    ]);
+      ]);
+    }
+  };
+
+  const handleConfirmLogout = async () => {
+    setShowConfirmModal(false);
+    await logout();
   };
 
   return (
@@ -38,6 +49,32 @@ export default function ProfileScreen() {
             <Text style={styles.logoutButtonText}>Cerrar sesión</Text>
           </TouchableOpacity>
         </View>
+
+        {/* Modal de confirmación para web */}
+        {showConfirmModal && Platform.OS === "web" && (
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>Cerrar sesión</Text>
+              <Text style={styles.modalMessage}>
+                ¿Estás seguro de que deseas cerrar sesión?
+              </Text>
+              <View style={styles.modalButtons}>
+                <TouchableOpacity
+                  style={styles.modalCancelButton}
+                  onPress={() => setShowConfirmModal(false)}
+                >
+                  <Text style={styles.modalCancelButtonText}>Cancelar</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.modalConfirmButton}
+                  onPress={handleConfirmLogout}
+                >
+                  <Text style={styles.modalConfirmButtonText}>Cerrar sesión</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        )}
       </View>
     </SafeAreaProvider>
   );
@@ -82,6 +119,63 @@ const styles = StyleSheet.create({
   logoutButtonText: {
     color: "#fff",
     fontSize: 16,
+    fontWeight: "600",
+  },
+  modalOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 1000,
+  },
+  modalContent: {
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 24,
+    minWidth: 300,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 12,
+    color: "#000",
+  },
+  modalMessage: {
+    fontSize: 14,
+    color: "#666",
+    marginBottom: 24,
+    lineHeight: 20,
+  },
+  modalButtons: {
+    flexDirection: "row",
+    gap: 12,
+    justifyContent: "flex-end",
+  },
+  modalCancelButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    backgroundColor: "#e0e0e0",
+  },
+  modalCancelButtonText: {
+    color: "#333",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  modalConfirmButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    backgroundColor: "#F23728",
+  },
+  modalConfirmButtonText: {
+    color: "#fff",
+    fontSize: 14,
     fontWeight: "600",
   },
 });
