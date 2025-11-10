@@ -15,6 +15,10 @@ export const handlers: RouteHandlers = {
     await reply.status(200).send({ status: "ok" });
   },
 
+  registerUser: async (request, reply) => {
+    reply.status(201).send();
+  },
+
   createTreatment: async (request, reply) => {
     const treatment = request.body;
 
@@ -87,11 +91,13 @@ export const handlers: RouteHandlers = {
 
     await reply.status(201).send(response);
   },
+
   getIntakesByTreatment: async (request, reply) => {
     const treatmentId = request.params.treatmentId;
     const intakes = await getIntakesByTreatmentId(treatmentId);
     reply.status(200).send(intakes);
   },
+
   deleteIntake: async (request, reply) => {
     const rowsDeleted = await deleteIntakeFromTreatment(
       request.params.treatmentId,
@@ -103,10 +109,12 @@ export const handlers: RouteHandlers = {
     }
     reply.status(204).send();
   },
+
   deleteTreatment: async (request, reply) => {
     Number(request.params.treatmentId);
     reply.status(204).send();
   },
+
   updateTreatment: async (request, reply) => {
     Number(request.params.treatmentId);
     reply.status(200).send();
