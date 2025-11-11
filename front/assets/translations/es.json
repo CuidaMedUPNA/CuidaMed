@@ -4,7 +4,10 @@
   "error": "¡Error!",
   "saving": "Guardando...",
   "edit": "Editar",
+  "cancel": "Cancelar",
+  "delete": "Eliminar",
   "success": "¡Éxito!",
+  "warning": "¡Advertencia!",
   "tabs": {
     "home": "Inicio",
     "treatments": "Tratamientos",
@@ -34,6 +37,10 @@
       "initialDate": "Fecha inicio",
       "endDate": "Fecha fin",
       "daysRemaining": "días restantes"
+    },
+    "delete": {
+      "confirmTitle": "¿Estás seguro de que quieres eliminar este tratamiento?",
+      "successMessage": "Tratamiento eliminado con éxito"
     }
   },
   "maps": {
