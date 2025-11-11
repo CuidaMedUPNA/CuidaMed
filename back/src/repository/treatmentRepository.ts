@@ -13,7 +13,6 @@ function formatDate(value: unknown): string {
   return String(value);
 }
 
-
 export async function insertTreatment(treatment: NewTreatment) {
   const insertedTreatment = await db
     .insertInto("treatment")
@@ -40,7 +39,6 @@ export async function updateTreatmentById(
     end_date: treatmentData.end_date ?? null,
   };
 
-  console.log("New data for update:", newData);
   const result = await db
     .updateTable("treatment")
     .set(newData)
