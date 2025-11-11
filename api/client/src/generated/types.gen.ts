@@ -4,6 +4,15 @@ export type ClientOptions = {
     baseUrl: 'http://localhost:3000' | (string & {});
 };
 
+export type NewUser = {
+    username: string;
+    email: string;
+    password: string;
+    birthdate?: string;
+    profilePictureUrl?: string;
+    gender?: 'male' | 'female';
+};
+
 export type NewTreatment = {
     name: string;
     userId: number;
@@ -154,6 +163,40 @@ export type HealthCheckResponses = {
 };
 
 export type HealthCheckResponse = HealthCheckResponses[keyof HealthCheckResponses];
+
+export type RegisterUserData = {
+    /**
+     * Datos del usuario a registrar
+     */
+    body: NewUser;
+    path?: never;
+    query?: never;
+    url: '/register';
+};
+
+export type RegisterUserErrors = {
+    /**
+     * Solicitud incorrecta
+     */
+    400: {
+        error?: string;
+    };
+    /**
+     * Error interno del servidor
+     */
+    500: {
+        error?: string;
+    };
+};
+
+export type RegisterUserError = RegisterUserErrors[keyof RegisterUserErrors];
+
+export type RegisterUserResponses = {
+    /**
+     * Usuario registrado exitosamente
+     */
+    201: unknown;
+};
 
 export type GetTreatmentsData = {
     body?: never;

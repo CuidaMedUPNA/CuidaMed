@@ -29,6 +29,20 @@ export const healthCheck = <ThrowOnError extends boolean = false>(options?: Opti
 };
 
 /**
+ * Registrar un nuevo usuario
+ */
+export const registerUser = <ThrowOnError extends boolean = false>(options: Options<RegisterUserData, ThrowOnError>) => {
+    return (options.client ?? client).post<RegisterUserResponses, RegisterUserErrors, ThrowOnError>({
+        url: '/register',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+/**
  * Obtener todos los tratamientos de un usuario
  */
 export const getTreatments = <ThrowOnError extends boolean = false>(options: Options<GetTreatmentsData, ThrowOnError>) => {

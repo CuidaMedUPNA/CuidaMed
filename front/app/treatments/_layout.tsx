@@ -16,7 +16,7 @@ export default function TreatmentsLayout() {
         }}
       />
       <Stack.Screen
-        name="[treatmentName]"
+        name="[treatmentId]"
         options={{
           headerShown: false,
           title: "Detalle del Tratamiento",

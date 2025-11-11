@@ -8,6 +8,10 @@ export type RouteHandlers = {
     healthCheck: RouteHandler<{
         Reply: HealthCheckResponses;
     }>;
+    registerUser: RouteHandler<{
+        Body: RegisterUserData['body'];
+        Reply: RegisterUserErrors & RegisterUserResponses;
+    }>;
     getTreatments: RouteHandler<{
         Querystring: GetTreatmentsData['query'];
         Reply: GetTreatmentsErrors & GetTreatmentsResponses;

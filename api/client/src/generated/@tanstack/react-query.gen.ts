@@ -59,6 +59,23 @@ export const healthCheckOptions = (options?: Options<HealthCheckData>) => queryO
     queryKey: healthCheckQueryKey(options)
 });
 
+/**
+ * Registrar un nuevo usuario
+ */
+export const registerUserMutation = (options?: Partial<Options<RegisterUserData>>): UseMutationOptions<unknown, RegisterUserError, Options<RegisterUserData>> => {
+    const mutationOptions: UseMutationOptions<unknown, RegisterUserError, Options<RegisterUserData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await registerUser({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
 export const getTreatmentsQueryKey = (options: Options<GetTreatmentsData>) => createQueryKey('getTreatments', options);
 
 /**
