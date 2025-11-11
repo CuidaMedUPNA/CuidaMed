@@ -204,7 +204,6 @@ paths:
                   error:
                     type: string
                     example: "Internal Server Error"
-
     delete:
       summary: Eliminar un tratamiento
       operationId: deleteTreatment
