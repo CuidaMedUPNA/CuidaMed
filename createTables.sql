@@ -5,7 +5,7 @@ CREATE TABLE "user" (
     password VARCHAR(255) NOT NULL,
     birthdate DATE,
     profile_picture TEXT,
-    gender VARCHAR(10)
+    gender VARCHAR(10) CHECK (gender IS NULL OR gender IN ('male', 'female'))
 );
 
 CREATE TABLE medicine (
