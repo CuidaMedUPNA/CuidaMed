@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { CreateIntakeData, CreateIntakeErrors, CreateIntakeResponses, CreateTreatmentData, CreateTreatmentErrors, CreateTreatmentResponses, DeleteIntakeData, DeleteIntakeErrors, DeleteIntakeResponses, DeleteTreatmentData, DeleteTreatmentErrors, DeleteTreatmentResponses, GetIntakesByTreatmentData, GetIntakesByTreatmentErrors, GetIntakesByTreatmentResponses, GetTreatmentByIdData, GetTreatmentByIdErrors, GetTreatmentByIdResponses, GetTreatmentsData, GetTreatmentsErrors, GetTreatmentsResponses, HealthCheckData, HealthCheckResponses, UpdateTreatmentData, UpdateTreatmentErrors, UpdateTreatmentResponses } from './types.gen';
+import type { CreateIntakeData, CreateIntakeErrors, CreateIntakeResponses, CreateTreatmentData, CreateTreatmentErrors, CreateTreatmentResponses, DeleteIntakeData, DeleteIntakeErrors, DeleteIntakeResponses, DeleteTreatmentData, DeleteTreatmentErrors, DeleteTreatmentResponses, GetIntakesByTreatmentData, GetIntakesByTreatmentErrors, GetIntakesByTreatmentResponses, GetTreatmentByIdData, GetTreatmentByIdErrors, GetTreatmentByIdResponses, GetTreatmentsData, GetTreatmentsErrors, GetTreatmentsResponses, HealthCheckData, HealthCheckResponses, RegisterUserData, RegisterUserErrors, RegisterUserResponses, UpdateTreatmentData, UpdateTreatmentErrors, UpdateTreatmentResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -25,6 +25,20 @@ export const healthCheck = <ThrowOnError extends boolean = false>(options?: Opti
     return (options?.client ?? client).get<HealthCheckResponses, unknown, ThrowOnError>({
         url: '/health',
         ...options
+    });
+};
+
+/**
+ * Registrar un nuevo usuario
+ */
+export const registerUser = <ThrowOnError extends boolean = false>(options: Options<RegisterUserData, ThrowOnError>) => {
+    return (options.client ?? client).post<RegisterUserResponses, RegisterUserErrors, ThrowOnError>({
+        url: '/register',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
     });
 };
 

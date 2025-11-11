@@ -16,6 +16,10 @@ export const handlers: RouteHandlers = {
     await reply.status(200).send({ status: "ok" });
   },
 
+  registerUser: async (request, reply) => {
+    reply.status(201).send();
+  },
+
   createTreatment: async (request, reply) => {
     const treatment = request.body;
 
