@@ -1,10 +1,18 @@
 import { db } from "../db/database";
-import { NewTreatment } from "../db/types";
+import { NewTreatment, TreatmentUpdate } from "../db/types";
 import {
   DosingSchedule,
   NewDosingSchedule,
   Treatment,
 } from "@cuidamed-api/server";
+
+function formatDate(value: unknown): string {
+  if (!value) return "";
+  if (typeof value === "string") return value.split("T")[0];
+  if (value instanceof Date) return value.toISOString().split("T")[0];
+  return String(value);
+}
+
 
 export async function insertTreatment(treatment: NewTreatment) {
   const insertedTreatment = await db
@@ -20,6 +28,26 @@ export async function insertTreatment(treatment: NewTreatment) {
     startDate: insertedTreatment.start_date.toISOString().split("T")[0],
     endDate: insertedTreatment.end_date?.toISOString().split("T")[0],
   };
+}
+
+export async function updateTreatmentById(
+  treatmentId: number,
+  treatmentData: TreatmentUpdate
+) {
+  const newData: TreatmentUpdate = {
+    name: treatmentData.name,
+    start_date: treatmentData.start_date,
+    end_date: treatmentData.end_date ?? null,
+  };
+
+  console.log("New data for update:", newData);
+  const result = await db
+    .updateTable("treatment")
+    .set(newData)
+    .where("id", "=", treatmentId)
+    .executeTakeFirst();
+
+  return result.numUpdatedRows;
 }
 
 export async function getTreatmentsByUserId(userId: number) {
@@ -137,8 +165,8 @@ export async function getIntakesByTreatmentId(treatmentId: number) {
         medicineId: schedule.medicine_id,
         medicineName: schedule.trade_name,
         treatmentId: schedule.treatment_id,
-        startDate: schedule.start_date.toISOString().split("T")[0],
-        endDate: schedule.end_date?.toISOString().split("T")[0],
+        startDate: formatDate(schedule.start_date),
+        endDate: formatDate(schedule.end_date),
         doseAmount: schedule.dose_amount,
         doseUnit: schedule.dose_unit,
         dosingTimes: dosingTimes,
