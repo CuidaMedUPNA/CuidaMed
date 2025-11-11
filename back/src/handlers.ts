@@ -1,6 +1,7 @@
 import { RouteHandlers } from "@cuidamed-api/server";
 import { NewTreatment, TreatmentUpdate, NewUser } from "./db/types";
 import { db } from "./db/database";
+import jwt from "jsonwebtoken";
 import {
   insertTreatment,
   getTreatmentsByUserId,
@@ -15,10 +16,35 @@ import {
   getIntakesByTreatmentId,
 } from "./repository/intakeRepository";
 import { createUser } from "./repository/userRepository";
+import { validateCredentials } from "./repository/userRepository";
 
 export const handlers: RouteHandlers = {
   healthCheck: async (request, reply) => {
     await reply.status(200).send({ status: "ok" });
+  },
+
+  login: async (request, reply) => {
+    try {
+      const { email, password } = request.body;
+
+      const user = await validateCredentials(email, password);
+
+      if (!user) {
+        return reply.status(401).send({ error: "Invalid email or password" });
+      }
+
+      const token = jwt.sign(
+        { userId: user.id, email: user.email },
+        process.env.JWT_SECRET ||
+          "your_super_secret_key_that_is_at_least_32_characters_long_for_secure_jwt_signing_purposes_12345",
+        { expiresIn: "24h" }
+      );
+
+      await reply.status(200).send({ token });
+    } catch (error) {
+      request.log.error(error);
+      reply.status(400).send({ error: "Bad Request" });
+    }
   },
 
   registerUser: async (request, reply) => {
@@ -210,9 +236,5 @@ export const handlers: RouteHandlers = {
       console.error("Error in getAllMedicines:", err);
       return reply.status(500).send({ error: "Internal Server Error" });
     }
-  },
-
-  login: async (request, reply) => {
-    return reply.status(200).send();
   },
 };

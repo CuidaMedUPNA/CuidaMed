@@ -7,11 +7,20 @@ import fastifyStatic from "@fastify/static";
 import path from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import { authMiddleware } from "./middleware/auth";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const fastify = Fastify({ logger: true });
+
+fastify.addHook("preHandler", async (request, reply) => {
+  const publicPaths = ["/login", "/register", "/health"];
+
+  if (!publicPaths.includes(request.url)) {
+    await authMiddleware(request, reply);
+  }
+});
 
 const options = {
   specification: path.resolve(__dirname, "../../api/openapi/bundled.yaml"),
