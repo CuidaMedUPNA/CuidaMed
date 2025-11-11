@@ -25,10 +25,10 @@ export const MyTreatmentsPage = () => {
     })
   );
 
-  const handleTreatmentPress = (treatmentName: string) => {
+  const handleTreatmentPress = (treatmentId: number) => {
     router.push({
-      pathname: "/treatments/[treatmentName]",
-      params: { treatmentName },
+      pathname: "/treatments/[treatmentId]",
+      params: { treatmentId },
     });
   };
 
@@ -86,7 +86,7 @@ const TreatmentsList = ({
   isLoading,
 }: {
   treatments: Treatment[];
-  onTreatmentPress: (treatmentName: string) => void;
+  onTreatmentPress: (treatmentId: number, treatmentName: string) => void;
   isLoading?: boolean;
 }) => {
   return (
@@ -141,7 +141,7 @@ const TreatmentsList = ({
               <View key={treatment.name} style={styles.treatmentWrapper}>
                 <TouchableOpacity
                   style={styles.treatmentCard}
-                  onPress={() => onTreatmentPress(treatment.name)}
+                  onPress={() => onTreatmentPress(treatment.id, treatment.name)}
                   activeOpacity={0.7}
                 >
                   <View style={styles.treatmentContent}>
@@ -149,7 +149,9 @@ const TreatmentsList = ({
                       name={treatment.name}
                       startDate={treatment.startDate}
                       endDate={treatment.endDate ?? "hasta morir"}
-                      onPress={() => onTreatmentPress(treatment.name)}
+                      onPress={() =>
+                        onTreatmentPress(treatment.id, treatment.name)
+                      }
                     />
                   </View>
                 </TouchableOpacity>

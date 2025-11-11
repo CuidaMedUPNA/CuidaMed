@@ -3,11 +3,14 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { TreatmentDetailPage } from "@/pages/TreatmentDetail/TreatmentDetailPage";
 
 export default function TreatmentDetail() {
-  const { treatmentName } = useLocalSearchParams();
+  const { treatmentId: treatmentIdStr } = useLocalSearchParams();
+  const treatmentId = treatmentIdStr
+    ? parseInt(treatmentIdStr as string, 10)
+    : undefined;
 
   return (
     <SafeAreaProvider>
-      <TreatmentDetailPage treatmentName={treatmentName as string} />
+      <TreatmentDetailPage treatmentId={treatmentId as number} />
     </SafeAreaProvider>
   );
 }
