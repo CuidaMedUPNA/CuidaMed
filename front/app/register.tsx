@@ -75,12 +75,12 @@ export default function RegisterScreen() {
         contentContainerStyle={styles.content}
       >
         <View style={styles.logoSection}>
-          <Text style={styles.appName}>CuidaMed</Text>
+          <Text style={styles.appName}>{t("appName")}</Text>
           <Image source={logo} style={styles.logo} />
         </View>
 
         <View style={styles.formSection}>
-          <Text style={styles.title}>Crear Cuenta</Text>
+          <Text style={styles.title}>{t("register.title")}</Text>
 
           <View style={styles.inputContainer}>
             <MaterialIcons
@@ -91,7 +91,7 @@ export default function RegisterScreen() {
             />
             <TextInput
               style={styles.input}
-              placeholder="Nombre completo"
+              placeholder={t("register.namePlaceholder")}
               placeholderTextColor="#999"
               value={name}
               onChangeText={setName}
@@ -108,7 +108,7 @@ export default function RegisterScreen() {
             />
             <TextInput
               style={styles.input}
-              placeholder="Correo electrónico"
+              placeholder={t("register.emailPlaceholder")}
               placeholderTextColor="#999"
               value={email}
               onChangeText={setEmail}
@@ -134,7 +134,7 @@ export default function RegisterScreen() {
             >
               {birthDate
                 ? birthDate.toLocaleDateString("es-ES")
-                : "Fecha de nacimiento"}
+                : t("register.birthDatePlaceholder")}
             </Text>
           </TouchableOpacity>
 
@@ -160,7 +160,7 @@ export default function RegisterScreen() {
                     gender === "M" && styles.genderButtonTextActive,
                   ]}
                 >
-                  Masculino
+                  {t("register.male")}
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -177,7 +177,7 @@ export default function RegisterScreen() {
                     gender === "F" && styles.genderButtonTextActive,
                   ]}
                 >
-                  Femenino
+                  {t("register.female")}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -192,7 +192,7 @@ export default function RegisterScreen() {
             />
             <TextInput
               style={styles.input}
-              placeholder="Contraseña"
+              placeholder={t("register.passwordPlaceholder")}
               placeholderTextColor="#999"
               value={password}
               onChangeText={setPassword}
@@ -222,18 +222,20 @@ export default function RegisterScreen() {
             {isLoading ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text style={styles.registerButtonText}>Crear Cuenta</Text>
+              <Text style={styles.registerButtonText}>
+                {t("register.registerButton")}
+              </Text>
             )}
           </TouchableOpacity>
         </View>
 
         <View style={styles.loginSection}>
-          <Text style={styles.loginText}>¿Ya tienes cuenta?</Text>
+          <Text style={styles.loginText}>{t("register.haveAccount")}</Text>
           <TouchableOpacity
             disabled={isLoading}
             onPress={() => router.push("/login")}
           >
-            <Text style={styles.loginLink}>Inicia sesión aquí</Text>
+            <Text style={styles.loginLink}>{t("register.loginHere")}</Text>
           </TouchableOpacity>
         </View>
 

@@ -1,4 +1,5 @@
 {
+  "appName": "CuidaMed",
   "landingPageTitle": "Pantalla principal",
   "welcome": "🚀 Bienvenido a la app",
   "error": "¡Error!",
@@ -80,5 +81,17 @@
     "open": "Abierto",
     "closed": "Cerrado",
     "retry": "Reintentar"
+  },
+  "register": {
+    "title": "Crear una cuenta",
+    "namePlaceholder": "Nombre completo",
+    "emailPlaceholder": "Correo electrónico",
+    "passwordPlaceholder": "Contraseña",
+    "birthDatePlaceholder": "Fecha de nacimiento",
+    "male": "Masculino",
+    "female": "Femenino",
+    "registerButton": "Registrarse",
+    "haveAccount": "¿Ya tienes una cuenta?",
+    "loginHere": "Inicia sesión aquí"
   }
 }
