@@ -139,7 +139,12 @@ export const handlers: RouteHandlers = {
 
     await reply.status(200).send();
   },
+
   getAllMedicines: async (request, reply) => {
+    return reply.status(200).send();
+  },
+
+  login: async (request, reply) => {
     return reply.status(200).send();
   },
 };

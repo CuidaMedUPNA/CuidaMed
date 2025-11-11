@@ -13,6 +13,24 @@ export type NewUser = {
     gender?: 'male' | 'female';
 };
 
+export type LoginCredentials = {
+    /**
+     * Email del usuario
+     */
+    email: string;
+    /**
+     * Contraseña del usuario
+     */
+    password: string;
+};
+
+export type LoginResponse = {
+    /**
+     * JWT token para autenticación
+     */
+    token: string;
+};
+
 export type NewTreatment = {
     name: string;
     userId: number;
@@ -163,6 +181,48 @@ export type HealthCheckResponses = {
 };
 
 export type HealthCheckResponse = HealthCheckResponses[keyof HealthCheckResponses];
+
+export type LoginData = {
+    /**
+     * Credenciales del usuario
+     */
+    body: LoginCredentials;
+    path?: never;
+    query?: never;
+    url: '/login';
+};
+
+export type LoginErrors = {
+    /**
+     * Solicitud incorrecta
+     */
+    400: {
+        error?: string;
+    };
+    /**
+     * Credenciales inválidas
+     */
+    401: {
+        error?: string;
+    };
+    /**
+     * Error interno del servidor
+     */
+    500: {
+        error?: string;
+    };
+};
+
+export type LoginError = LoginErrors[keyof LoginErrors];
+
+export type LoginResponses = {
+    /**
+     * Login exitoso
+     */
+    200: LoginResponse;
+};
+
+export type LoginResponse2 = LoginResponses[keyof LoginResponses];
 
 export type RegisterUserData = {
     /**
