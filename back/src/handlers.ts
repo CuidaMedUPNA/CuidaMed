@@ -90,9 +90,15 @@ export const handlers: RouteHandlers = {
   },
 
   getIntakesByTreatment: async (request, reply) => {
-    const treatmentId = request.params.treatmentId;
-    const intakes = await getIntakesByTreatmentId(treatmentId);
-    reply.status(200).send(intakes);
+    try {
+      const treatmentId = Number(request.params.treatmentId);
+      const intakes = await getIntakesByTreatmentId(treatmentId);
+      reply.status(200).send(intakes);
+    } catch (error) {
+      request.log.error(error);
+      reply.status(500).send({ error: "Internal Server Error" });
+    }
+
   },
 
   deleteIntake: async (request, reply) => {

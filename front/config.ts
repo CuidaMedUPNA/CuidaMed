@@ -12,7 +12,7 @@ const getApiUrl = () => {
   }
 
   // Fallback para web o producción
-  return "http://localhost:3000";
+  return "https://cuidamed-sveo.onrender.com";
 };
 
 export const API_URL = getApiUrl();

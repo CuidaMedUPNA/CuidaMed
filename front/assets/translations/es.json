@@ -8,7 +8,8 @@
   "tabs": {
     "home": "Inicio",
     "treatments": "Tratamientos",
-    "profile": "Perfil"
+    "profile": "Perfil",
+    "maps": "Mapa"
   },
   "treatments": {
     "treatmentsTitle": "Mis Tratamientos",
@@ -34,5 +35,35 @@
       "endDate": "Fecha fin",
       "daysRemaining": "días restantes"
     }
+  },
+  "maps": {
+    "location_permission_denied": "Permiso de ubicación denegado",
+    "unknown_address": "Dirección no disponible",
+    "error": "Error al obtener farmacias:",
+    "filters": {
+      "title": "Filtros",
+      "customize_search": "Personaliza tu búsqueda",
+      "pharmacy_name": "🏥 Buscar Farmacia",
+      "distance": "📍 Distancia máxima",
+      "km": "kilómetros",
+      "availability": "⏰ Disponibilidad",
+      "all": "todos",
+      "open": "abierto",
+      "closed": "cerrado",
+      "24h": "24h",
+      "open_emoji": "✅ Abiertas",
+      "closed_emoji": "❌ Cerradas",
+      "24h_emoji": "⏰ 24h",
+      "apply_filters": "Aplicar Filtros"
+    },
+    "search_placeholder": "Buscar por nombre...",
+    "loading_farmacies": "Cargando farmacias...",
+    "loading_farmacies_subtext": "Esto puede tomar unos segundos",
+    "pharmacy": "Farmacia",
+    "pharmacies": "Farmacias",
+    "your_location": "Usted está aquí",
+    "open": "Abierto",
+    "closed": "Cerrado",
+    "retry": "Reintentar"
   }
 }

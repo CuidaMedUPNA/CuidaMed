@@ -30,7 +30,6 @@ export default function RootLayout() {
             borderTopColor: "#e0e0e0",
             height: 60 + insets.bottom,
             paddingBottom: insets.bottom,
-            paddingTop: 8,
           },
           tabBarLabelStyle: {
             fontSize: 12,
@@ -65,6 +64,16 @@ export default function RootLayout() {
             headerShown: false,
             tabBarIcon: ({ color, size }: { color: string; size: number }) => (
               <MaterialIcons name="person" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="maps/index"
+          options={{
+            tabBarLabel: `${t("tabs.maps")}`,
+            headerShown: false,
+            tabBarIcon: ({ color, size }: { color: string; size: number }) => (
+              <MaterialIcons name="map" size={size} color={color} />
             ),
           }}
         />
