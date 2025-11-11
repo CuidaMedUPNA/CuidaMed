@@ -1,5 +1,5 @@
 import { RouteHandlers } from "@cuidamed-api/server";
-import { NewTreatment } from "./db/types";
+import { NewTreatment, TreatmentUpdate } from "./db/types";
 import { db } from "./db/database";
 import {
   insertTreatment,
@@ -8,6 +8,7 @@ import {
   deleteIntakeFromTreatment,
   getIntakesByTreatmentId,
   getTreatmentById,
+  updateTreatmentById,
 } from "./repository/treatmentRepository";
 
 export const handlers: RouteHandlers = {
@@ -87,6 +88,7 @@ export const handlers: RouteHandlers = {
 
     await reply.status(201).send(response);
   },
+
   getIntakesByTreatment: async (request, reply) => {
     try {
       const treatmentId = Number(request.params.treatmentId);
@@ -98,6 +100,7 @@ export const handlers: RouteHandlers = {
     }
 
   },
+
   deleteIntake: async (request, reply) => {
     const rowsDeleted = await deleteIntakeFromTreatment(
       request.params.treatmentId,
@@ -109,12 +112,28 @@ export const handlers: RouteHandlers = {
     }
     reply.status(204).send();
   },
+
   deleteTreatment: async (request, reply) => {
     Number(request.params.treatmentId);
     reply.status(204).send();
   },
+
   updateTreatment: async (request, reply) => {
-    Number(request.params.treatmentId);
-    reply.status(200).send();
+    const treatmentId = Number(request.params.treatmentId);
+    const treatmentData = request.body;
+
+    const newData: TreatmentUpdate = {
+      name: treatmentData.name,
+      start_date: treatmentData.startDate,
+      end_date: treatmentData.endDate ?? null,
+    };
+
+    const updatedTreatment = await updateTreatmentById(treatmentId, newData);
+
+    if (updatedTreatment === 0n) {
+      return reply.status(404).send({ error: "Treatment not found" });
+    }
+
+    await reply.status(200).send();
   },
 };
