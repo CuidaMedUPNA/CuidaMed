@@ -7,6 +7,13 @@ interface AuthContextType {
   isLoading: boolean;
   userEmail: string | null;
   login: (email: string, password: string) => Promise<void>;
+  register: (
+    name: string,
+    email: string,
+    password: string,
+    birthDate: string,
+    gender: string
+  ) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -67,6 +74,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const token = await storageHelper.getItem("authToken");
       const email = await storageHelper.getItem("userEmail");
       if (token) {
+        console.log("Found stored token:", token);
         setIsLogged(true);
         setUserEmail(email);
       }
@@ -103,9 +111,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const register = async (
+    name: string,
+    email: string,
+    password: string,
+    birthDate: string,
+    gender: string
+  ) => {
+    try {
+      // TODO: Implement actual API register call
+      // For now, we'll just simulate successful registration and login
+      const token = `token_${email}`;
+      await storageHelper.setItem("authToken", token);
+      await storageHelper.setItem("userEmail", email);
+      setIsLogged(true);
+      setUserEmail(email);
+    } catch (error) {
+      console.error("Register error:", error);
+      throw error;
+    }
+  };
+
   return (
     <AuthContext.Provider
-      value={{ isLogged, isLoading, userEmail, login, logout }}
+      value={{ isLogged, isLoading, userEmail, login, logout, register }}
     >
       {children}
     </AuthContext.Provider>
