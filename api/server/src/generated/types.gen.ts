@@ -131,6 +131,21 @@ export type DosingTime = {
     dayOfWeek?: number | null;
 };
 
+export type Medicine = {
+    /**
+     * ID del medicamento
+     */
+    id: number;
+    /**
+     * Nombre del medicamento
+     */
+    name: string;
+    /**
+     * URL de la imagen del medicamento
+     */
+    pictureUrl?: string;
+};
+
 export type HealthCheckData = {
     body?: never;
     path?: never;
@@ -512,3 +527,30 @@ export type DeleteIntakeResponses = {
 };
 
 export type DeleteIntakeResponse = DeleteIntakeResponses[keyof DeleteIntakeResponses];
+
+export type GetAllMedicinesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/medicines';
+};
+
+export type GetAllMedicinesErrors = {
+    /**
+     * Error interno del servidor
+     */
+    500: {
+        error?: string;
+    };
+};
+
+export type GetAllMedicinesError = GetAllMedicinesErrors[keyof GetAllMedicinesErrors];
+
+export type GetAllMedicinesResponses = {
+    /**
+     * Lista de medicinas disponibles
+     */
+    200: Array<Medicine>;
+};
+
+export type GetAllMedicinesResponse = GetAllMedicinesResponses[keyof GetAllMedicinesResponses];

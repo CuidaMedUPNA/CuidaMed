@@ -3,8 +3,8 @@
 import { queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { createIntake, createTreatment, deleteIntake, deleteTreatment, getIntakesByTreatment, getTreatmentById, getTreatments, healthCheck, type Options, registerUser, updateTreatment } from '../sdk.gen';
-import type { CreateIntakeData, CreateIntakeError, CreateIntakeResponse, CreateTreatmentData, CreateTreatmentError, CreateTreatmentResponse, DeleteIntakeData, DeleteIntakeError, DeleteIntakeResponse, DeleteTreatmentData, DeleteTreatmentError, DeleteTreatmentResponse, GetIntakesByTreatmentData, GetTreatmentByIdData, GetTreatmentsData, HealthCheckData, RegisterUserData, RegisterUserError, UpdateTreatmentData, UpdateTreatmentError, UpdateTreatmentResponse } from '../types.gen';
+import { createIntake, createTreatment, deleteIntake, deleteTreatment, getAllMedicines, getIntakesByTreatment, getTreatmentById, getTreatments, healthCheck, type Options, updateTreatment } from '../sdk.gen';
+import type { CreateIntakeData, CreateIntakeError, CreateIntakeResponse, CreateTreatmentData, CreateTreatmentError, CreateTreatmentResponse, DeleteIntakeData, DeleteIntakeError, DeleteIntakeResponse, DeleteTreatmentData, DeleteTreatmentError, DeleteTreatmentResponse, GetAllMedicinesData, GetIntakesByTreatmentData, GetTreatmentByIdData, GetTreatmentsData, HealthCheckData, UpdateTreatmentData, UpdateTreatmentError, UpdateTreatmentResponse } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -46,20 +46,18 @@ export const healthCheckQueryKey = (options?: Options<HealthCheckData>) => creat
 /**
  * Health check
  */
-export const healthCheckOptions = (options?: Options<HealthCheckData>) => {
-    return queryOptions({
-        queryFn: async ({ queryKey, signal }) => {
-            const { data } = await healthCheck({
-                ...options,
-                ...queryKey[0],
-                signal,
-                throwOnError: true
-            });
-            return data;
-        },
-        queryKey: healthCheckQueryKey(options)
-    });
-};
+export const healthCheckOptions = (options?: Options<HealthCheckData>) => queryOptions({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await healthCheck({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: healthCheckQueryKey(options)
+});
 
 /**
  * Registrar un nuevo usuario
@@ -83,20 +81,18 @@ export const getTreatmentsQueryKey = (options: Options<GetTreatmentsData>) => cr
 /**
  * Obtener todos los tratamientos de un usuario
  */
-export const getTreatmentsOptions = (options: Options<GetTreatmentsData>) => {
-    return queryOptions({
-        queryFn: async ({ queryKey, signal }) => {
-            const { data } = await getTreatments({
-                ...options,
-                ...queryKey[0],
-                signal,
-                throwOnError: true
-            });
-            return data;
-        },
-        queryKey: getTreatmentsQueryKey(options)
-    });
-};
+export const getTreatmentsOptions = (options: Options<GetTreatmentsData>) => queryOptions({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getTreatments({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getTreatmentsQueryKey(options)
+});
 
 /**
  * Crear tratamiento
@@ -137,20 +133,18 @@ export const getTreatmentByIdQueryKey = (options: Options<GetTreatmentByIdData>)
 /**
  * Obtener datos de un tratamiento específico
  */
-export const getTreatmentByIdOptions = (options: Options<GetTreatmentByIdData>) => {
-    return queryOptions({
-        queryFn: async ({ queryKey, signal }) => {
-            const { data } = await getTreatmentById({
-                ...options,
-                ...queryKey[0],
-                signal,
-                throwOnError: true
-            });
-            return data;
-        },
-        queryKey: getTreatmentByIdQueryKey(options)
-    });
-};
+export const getTreatmentByIdOptions = (options: Options<GetTreatmentByIdData>) => queryOptions({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getTreatmentById({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getTreatmentByIdQueryKey(options)
+});
 
 /**
  * Actualizar un tratamiento
@@ -174,20 +168,18 @@ export const getIntakesByTreatmentQueryKey = (options: Options<GetIntakesByTreat
 /**
  * Obtener todas las tomas de un tratamiento
  */
-export const getIntakesByTreatmentOptions = (options: Options<GetIntakesByTreatmentData>) => {
-    return queryOptions({
-        queryFn: async ({ queryKey, signal }) => {
-            const { data } = await getIntakesByTreatment({
-                ...options,
-                ...queryKey[0],
-                signal,
-                throwOnError: true
-            });
-            return data;
-        },
-        queryKey: getIntakesByTreatmentQueryKey(options)
-    });
-};
+export const getIntakesByTreatmentOptions = (options: Options<GetIntakesByTreatmentData>) => queryOptions({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getIntakesByTreatment({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getIntakesByTreatmentQueryKey(options)
+});
 
 /**
  * Añadir una toma de medicamento a un tratamiento
@@ -222,3 +214,21 @@ export const deleteIntakeMutation = (options?: Partial<Options<DeleteIntakeData>
     };
     return mutationOptions;
 };
+
+export const getAllMedicinesQueryKey = (options?: Options<GetAllMedicinesData>) => createQueryKey('getAllMedicines', options);
+
+/**
+ * Obtener todas las medicinas disponibles en el sistema
+ */
+export const getAllMedicinesOptions = (options?: Options<GetAllMedicinesData>) => queryOptions({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getAllMedicines({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getAllMedicinesQueryKey(options)
+});

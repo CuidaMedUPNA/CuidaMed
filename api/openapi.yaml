@@ -237,7 +237,6 @@ paths:
                   error:
                     type: string
                     example: "Internal Server Error"
-
     delete:
       summary: Eliminar un tratamiento
       operationId: deleteTreatment
@@ -407,7 +406,30 @@ paths:
                   error:
                     type: string
                     example: "Internal Server Error"
-
+  /medicines:
+    get:
+      summary: Obtener todas las medicinas disponibles en el sistema
+      operationId: getAllMedicines
+      responses:
+        "200":
+          description: Lista de medicinas disponibles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Medicine"
+        "500":
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Internal Server Error"
+  
 components:
   schemas:
     NewUser:
@@ -599,3 +621,20 @@ components:
         - id
         - dosingScheduleId
         - scheduledTime
+
+    Medicine:
+      type: object
+      properties:
+        id:
+          type: number
+          description: ID del medicamento
+        name:
+          type: string
+          description: Nombre del medicamento
+        pictureUrl:
+          type: string
+          format: uri
+          description: URL de la imagen del medicamento
+      required:
+        - id
+        - name

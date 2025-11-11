@@ -93,6 +93,11 @@ export const handlers: RouteHandlers = {
     await reply.status(201).send(response);
   },
 
+  deleteTreatment: async (request, reply) => {
+    Number(request.params.treatmentId);
+    reply.status(204).send();
+  },
+
   getIntakesByTreatment: async (request, reply) => {
     try {
       const treatmentId = Number(request.params.treatmentId);
@@ -102,7 +107,6 @@ export const handlers: RouteHandlers = {
       request.log.error(error);
       reply.status(500).send({ error: "Internal Server Error" });
     }
-
   },
 
   deleteIntake: async (request, reply) => {
@@ -114,11 +118,6 @@ export const handlers: RouteHandlers = {
     if (rowsDeleted === 0) {
       return reply.status(404).send({ error: "Intake not found" });
     }
-    reply.status(204).send();
-  },
-
-  deleteTreatment: async (request, reply) => {
-    Number(request.params.treatmentId);
     reply.status(204).send();
   },
 
@@ -139,5 +138,8 @@ export const handlers: RouteHandlers = {
     }
 
     await reply.status(200).send();
+  },
+  getAllMedicines: async (request, reply) => {
+    return reply.status(200).send();
   },
 };
