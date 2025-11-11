@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useState, useMemo } from "react";
 import {
   View,
   Text,
   StyleSheet,
   FlatList,
   TouchableOpacity,
+  TextInput,
+  Platform,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 const SAMPLE_MEDICINES = [
   { id: "1", name: "Paracetamol", presentation: "Tabletas 500 mg" },
@@ -16,6 +19,15 @@ const SAMPLE_MEDICINES = [
 ];
 
 export const AddMedicinePage = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+
+  const filteredMedicines = useMemo(() => {
+    return SAMPLE_MEDICINES.filter((medicine) =>
+      medicine.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [searchQuery]);
+
   const renderItem = ({
     item,
   }: {
@@ -42,8 +54,41 @@ export const AddMedicinePage = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Selecciona un medicamento</Text>
+      <View style={styles.searchContainer}>
+        <View
+          style={[
+            styles.searchInputContainer,
+            isSearchFocused && styles.searchInputContainerFocused,
+          ]}
+        >
+          <Ionicons
+            name="search-outline"
+            size={20}
+            color="#f23728"
+            style={styles.searchIcon}
+          />
+          <TextInput
+            style={[
+              styles.searchInput,
+              // remove web focus outline via inline style (cast to any to satisfy TS)
+              Platform.OS === "web"
+                ? ({ outlineWidth: 0, outlineColor: "transparent" } as any)
+                : {},
+            ]}
+            placeholder="Buscar medicamento..."
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            autoCapitalize="none"
+            autoCorrect={false}
+            placeholderTextColor="#666"
+            selectionColor="#f23728"
+            onFocus={() => setIsSearchFocused(true)}
+            onBlur={() => setIsSearchFocused(false)}
+          />
+        </View>
+      </View>
       <FlatList
-        data={SAMPLE_MEDICINES}
+        data={filteredMedicines}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
@@ -58,6 +103,28 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#e9e9ef",
     paddingTop: 16,
+  },
+  searchContainer: {
+    paddingHorizontal: 16,
+    marginBottom: 12,
+  },
+  searchInputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#ffffff",
+    borderRadius: 22,
+  },
+  searchInputContainerFocused: {
+    backgroundColor: "transparent",
+  },
+  searchIcon: {
+    marginLeft: 20,
+  },
+  searchInput: {
+    flex: 1,
+    paddingHorizontal: 8,
+    paddingVertical: 12,
+    fontSize: 16,
   },
   title: {
     fontSize: 20,
