@@ -22,6 +22,13 @@ export default function TreatmentsLayout() {
           title: "Detalle del Tratamiento",
         }}
       />
+      <Stack.Screen
+        name="[treatmentId]/addMedicine"
+        options={{
+          headerShown: false,
+          title: "Agregar Medicamento",
+        }}
+      />
     </Stack>
   );
 }

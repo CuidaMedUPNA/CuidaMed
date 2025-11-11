@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import { AssociatedMedicine } from "./AssociatedMedicine";
 import { DosingSchedule } from "@cuidamed-api/client";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 export interface TreatmentDetailMedicinesProps {
   medicines: DosingSchedule[];
 }
@@ -25,6 +25,8 @@ export const TreatmentDetailMedicines = ({
     />
   );
 
+  const { treatmentId } = useLocalSearchParams();
+
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>
@@ -32,7 +34,10 @@ export const TreatmentDetailMedicines = ({
         <TouchableOpacity
           style={styles.addMedicineButton}
           onPress={() => {
-            router.push("/medicines/addMedicine");
+            router.push({
+              pathname: "/treatments/[treatmentId]/addMedicine",
+              params: { treatmentId: treatmentId as string },
+            });
           }}
           accessibilityLabel="Agregar medicamento"
         >
