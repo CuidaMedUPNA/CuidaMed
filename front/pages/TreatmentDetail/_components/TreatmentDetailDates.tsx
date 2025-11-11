@@ -78,7 +78,7 @@ export const TreatmentDetailDates = ({
             style={{
               height: "100%",
               width: `${progressPercentage}%`,
-              backgroundColor: "#cf0000ff",
+              backgroundColor: "#F23728",
               borderRadius: 3,
             }}
           />

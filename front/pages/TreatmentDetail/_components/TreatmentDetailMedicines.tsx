@@ -5,23 +5,25 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
-import { AssociatedMedicine } from "./AssociatedMedicine";
-import { DosingSchedule } from "@cuidamed-api/client";
+import {
+  AssociatedMedicine,
+  AssociatedMedicineProps,
+} from "./AssociatedMedicine";
 import { useRouter } from "expo-router";
 export interface TreatmentDetailMedicinesProps {
-  medicines: DosingSchedule[];
+  medicines: AssociatedMedicineProps[];
 }
 
 export const TreatmentDetailMedicines = ({
   medicines,
 }: TreatmentDetailMedicinesProps) => {
   const router = useRouter();
-  const renderMedicine = ({ item }: { item: DosingSchedule }) => (
+  const renderMedicine = ({ item }: { item: AssociatedMedicineProps }) => (
     <AssociatedMedicine
-      name={item.medicineName}
-      dose={item.doseAmount}
-      unit={item.doseUnit}
-      schedule={item.dosingTimes}
+      nombre={item.nombre}
+      dosis={item.dosis}
+      frecuencia={item.frecuencia}
+      horarios={item.horarios}
     />
   );
 
@@ -42,7 +44,7 @@ export const TreatmentDetailMedicines = ({
       <FlatList
         data={medicines}
         renderItem={renderMedicine}
-        keyExtractor={(item, index) => `${item.id}-${index}`}
+        keyExtractor={(item, index) => `${item.nombre}-${index}`}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContainer}
         style={styles.list}
