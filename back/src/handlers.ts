@@ -54,8 +54,8 @@ export const handlers: RouteHandlers = {
   },
 
   createIntake: async (request, reply) => {
+  try {
     const dosingSchedule = request.body;
-
     const insertedSchedule = await insertIntakeToTreatment(dosingSchedule);
 
     const insertedTimes = await db
@@ -75,8 +75,10 @@ export const handlers: RouteHandlers = {
       medicineId: insertedSchedule.medicine_id,
       medicineName: medicine.trade_name,
       treatmentId: insertedSchedule.treatment_id,
-      startDate: insertedSchedule.start_date.toISOString().split("T")[0],
-      endDate: insertedSchedule.end_date?.toISOString().split("T")[0],
+      startDate: new Date(insertedSchedule.start_date).toISOString().split("T")[0],
+      endDate: insertedSchedule.end_date
+        ? new Date(insertedSchedule.end_date).toISOString().split("T")[0]
+        : null,
       doseAmount: insertedSchedule.dose_amount,
       doseUnit: insertedSchedule.dose_unit,
       dosingTimes: insertedTimes.map((time) => {
@@ -91,7 +93,12 @@ export const handlers: RouteHandlers = {
     };
 
     await reply.status(201).send(response);
-  },
+  } catch (err) {
+    console.error("Error in createIntake:", err);
+    await reply.status(500).send({ error: "Internal Server Error" });
+  }
+},
+
 
   deleteTreatment: async (request, reply) => {
     Number(request.params.treatmentId);
