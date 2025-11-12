@@ -1,5 +1,6 @@
-import { describe, it, expect, beforeAll, afterAll } from "vitest";
+import { describe, it, expect, beforeAll, afterAll, vi } from "vitest";
 import { app, db } from "./setup";
+import * as treatmentRepo from "../src/repository/treatmentRepository";
 import * as mockInsert from "./utils/seeders";
 
 describe("POST /treatments/{treatmentId}/intakes", () => {
@@ -49,6 +50,36 @@ describe("POST /treatments/{treatmentId}/intakes", () => {
         });
 
         expect(res.statusCode).toBe(201);
+    });
+
+    it("returns 400 when treatmentId is invalid", async () => {
+        const res = await app.inject({
+            method: "GET",
+            url: "/treatments/abc/intakes",
+        });
+
+        expect(res.statusCode).toBe(400);
+        const body = res.json();
+        expect(body).toHaveProperty("error");
+        expect(body.error).toBe("Bad Request");
+    });
+
+    it("returns 500 when there is an internal server error", async () => {
+        const spy = vi
+            .spyOn(treatmentRepo, "getIntakesByTreatmentId")
+            .mockRejectedValueOnce(new Error("DB connection failed"));
+
+            const res = await app.inject({
+            method: "GET",
+            url: "/treatments/999/intakes", 
+        });
+
+        spy.mockRestore();
+
+        expect(res.statusCode).toBe(500);
+        const body = res.json();
+        expect(body).toHaveProperty("error");
+        expect(body.error).toBe("Internal Server Error");
     });
 
     afterAll(async () => {
