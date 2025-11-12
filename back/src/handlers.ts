@@ -78,7 +78,7 @@ export const handlers: RouteHandlers = {
       startDate: new Date(insertedSchedule.start_date).toISOString().split("T")[0],
       endDate: insertedSchedule.end_date
         ? new Date(insertedSchedule.end_date).toISOString().split("T")[0]
-        : null,
+        : undefined,
       doseAmount: insertedSchedule.dose_amount,
       doseUnit: insertedSchedule.dose_unit,
       dosingTimes: insertedTimes.map((time) => {
