@@ -4,11 +4,11 @@ import * as mockInsert from "./utils/seedTestDB";
 
 describe("GET /treatments/{treatmentId}", () => {
   let treatmentId: number;
+  let userId: number;
   beforeAll(async () => {
-    await mockInsert.insertUser();
-
-    const treatment = await mockInsert.insertTreatment();
-
+    const user = await mockInsert.insertUser();
+    userId = user.id;
+    const treatment = await mockInsert.insertTreatment({ user_id: userId });
     treatmentId = treatment.id;
   });
 
@@ -47,6 +47,6 @@ describe("GET /treatments/{treatmentId}", () => {
 
   afterAll(async () => {
     await db.deleteFrom("treatment").where("id", "=", treatmentId).execute();
-    await db.deleteFrom("user").where("id", "=", 1).execute();
+    await db.deleteFrom("user").where("id", "=", userId).execute();
   });
 });
