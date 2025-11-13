@@ -38,5 +38,5 @@ jobs:
       - name: Type checking
         run: npm run typecheck --workspace=back
 
-      # - name: Run tests
-      #   run: npm run test --workspace=back
+      - name: Run tests
+        run: npm run test -w back
