@@ -134,15 +134,20 @@ export const handlers: RouteHandlers = {
   },
 
   deleteIntake: async (request, reply) => {
-    const rowsDeleted = await deleteIntakeFromTreatment(
-      request.params.treatmentId,
-      request.params.intakeId
-    );
+    try {
+      const rowsDeleted = await deleteIntakeFromTreatment(
+        request.params.treatmentId,
+        request.params.intakeId
+      );
 
-    if (rowsDeleted === 0) {
-      return reply.status(404).send({ error: "Intake not found" });
+      if (rowsDeleted === 0) {
+        return reply.status(404).send({ error: "Intake not found" });
+      }
+      reply.status(204).send();
+    } catch (error) {
+      request.log.error(error);
+      reply.status(500).send({ error: "Internal Server Error" });
     }
-    reply.status(204).send();
   },
 
   updateTreatment: async (request, reply) => {
