@@ -2,11 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-<<<<<<< HEAD
 import type { CreateIntakeData, CreateIntakeErrors, CreateIntakeResponses, CreateTreatmentData, CreateTreatmentErrors, CreateTreatmentResponses, DeleteIntakeData, DeleteIntakeErrors, DeleteIntakeResponses, DeleteTreatmentData, DeleteTreatmentErrors, DeleteTreatmentResponses, GetAllMedicinesData, GetAllMedicinesErrors, GetAllMedicinesResponses, GetIntakesByTreatmentData, GetIntakesByTreatmentErrors, GetIntakesByTreatmentResponses, GetTreatmentByIdData, GetTreatmentByIdErrors, GetTreatmentByIdResponses, GetTreatmentsData, GetTreatmentsErrors, GetTreatmentsResponses, HealthCheckData, HealthCheckResponses, LoginData, LoginErrors, LoginResponses, RegisterUserData, RegisterUserErrors, RegisterUserResponses, UpdateTreatmentData, UpdateTreatmentErrors, UpdateTreatmentResponses } from './types.gen';
-=======
-import type { CreateIntakeData, CreateIntakeErrors, CreateIntakeResponses, CreateTreatmentData, CreateTreatmentErrors, CreateTreatmentResponses, DeleteIntakeData, DeleteIntakeErrors, DeleteIntakeResponses, DeleteTreatmentData, DeleteTreatmentErrors, DeleteTreatmentResponses, GetAllMedicinesData, GetAllMedicinesErrors, GetAllMedicinesResponses, GetIntakesByTreatmentData, GetIntakesByTreatmentErrors, GetIntakesByTreatmentResponses, GetTreatmentByIdData, GetTreatmentByIdErrors, GetTreatmentByIdResponses, GetTreatmentsData, GetTreatmentsErrors, GetTreatmentsResponses, HealthCheckData, HealthCheckResponses, RegisterUserData, RegisterUserErrors, RegisterUserResponses, UpdateTreatmentData, UpdateTreatmentErrors, UpdateTreatmentResponses } from './types.gen';
->>>>>>> a010141 ([#194] - Agregado test para crear un nuevo tratamiento.)
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**

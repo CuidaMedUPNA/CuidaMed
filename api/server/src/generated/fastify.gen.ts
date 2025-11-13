@@ -2,11 +2,7 @@
 
 import type { RouteHandler } from 'fastify';
 
-<<<<<<< HEAD
 import type { CreateIntakeData, CreateIntakeErrors, CreateIntakeResponses, CreateTreatmentData, CreateTreatmentErrors, CreateTreatmentResponses, DeleteIntakeData, DeleteIntakeErrors, DeleteIntakeResponses, DeleteTreatmentData, DeleteTreatmentErrors, DeleteTreatmentResponses, GetAllMedicinesErrors, GetAllMedicinesResponses, GetIntakesByTreatmentData, GetIntakesByTreatmentErrors, GetIntakesByTreatmentResponses, GetTreatmentByIdData, GetTreatmentByIdErrors, GetTreatmentByIdResponses, GetTreatmentsData, GetTreatmentsErrors, GetTreatmentsResponses, HealthCheckResponses, LoginData, LoginErrors, LoginResponses, RegisterUserData, RegisterUserErrors, RegisterUserResponses, UpdateTreatmentData, UpdateTreatmentErrors, UpdateTreatmentResponses } from './types.gen';
-=======
-import type { CreateIntakeData, CreateIntakeErrors, CreateIntakeResponses, CreateTreatmentData, CreateTreatmentErrors, CreateTreatmentResponses, DeleteIntakeData, DeleteIntakeErrors, DeleteIntakeResponses, DeleteTreatmentData, DeleteTreatmentErrors, DeleteTreatmentResponses, GetAllMedicinesErrors, GetAllMedicinesResponses, GetIntakesByTreatmentData, GetIntakesByTreatmentErrors, GetIntakesByTreatmentResponses, GetTreatmentByIdData, GetTreatmentByIdErrors, GetTreatmentByIdResponses, GetTreatmentsData, GetTreatmentsErrors, GetTreatmentsResponses, HealthCheckResponses, RegisterUserData, RegisterUserErrors, RegisterUserResponses, UpdateTreatmentData, UpdateTreatmentErrors, UpdateTreatmentResponses } from './types.gen';
->>>>>>> a010141 ([#194] - Agregado test para crear un nuevo tratamiento.)
 
 export type RouteHandlers = {
     healthCheck: RouteHandler<{
