@@ -13,7 +13,6 @@ function formatDate(value: unknown): string {
   return String(value);
 }
 
-
 export async function insertTreatment(treatment: NewTreatment) {
   const insertedTreatment = await db
     .insertInto("treatment")
@@ -193,4 +192,13 @@ async function getDosingTimesByScheduleId(scheduleId: number) {
       dayOfWeek: time.day_of_week,
     };
   });
+}
+
+export async function deleteTreatmentByTreatmentId(treatmentId: number) {
+  const result = await db
+    .deleteFrom("treatment")
+    .where("id", "=", treatmentId)
+    .executeTakeFirst();
+
+  return result.numDeletedRows || 0;
 }
