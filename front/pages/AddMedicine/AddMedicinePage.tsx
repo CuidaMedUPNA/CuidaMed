@@ -9,18 +9,68 @@ import {
   Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { ModalAddMedicine } from "./_components/ModalAddMedicine";
+import { useMutation } from "@tanstack/react-query";
+import { createIntakeMutation } from "@cuidamed-api/client";
+import { useLocalSearchParams } from "expo-router";
 
 const SAMPLE_MEDICINES = [
-  { id: "1", name: "Paracetamol", presentation: "Tabletas 500 mg" },
-  { id: "2", name: "Ibuprofeno", presentation: "Tabletas 400 mg" },
-  { id: "3", name: "Amoxicilina", presentation: "Cápsulas 500 mg" },
-  { id: "4", name: "Omeprazol", presentation: "Cápsulas 20 mg" },
-  { id: "5", name: "Aspirina", presentation: "Tabletas 100 mg" },
+  { id: "34", name: "Paracetamol", presentation: "Tabletas 500 mg" },
+  { id: "1", name: "Ibuprofeno", presentation: "Tabletas 400 mg" },
+  { id: "68", name: "Amoxicilina", presentation: "Cápsulas 500 mg" },
+  { id: "69", name: "Omeprazol", presentation: "Cápsulas 20 mg" },
+  { id: "67", name: "Aspirina", presentation: "Tabletas 100 mg" },
 ];
 
 export const AddMedicinePage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedMedicine, setSelectedMedicine] = useState(0);
+  const { treatmentId: treatmentIdStr } = useLocalSearchParams();
+  const treatmentId = treatmentIdStr
+    ? parseInt(treatmentIdStr as string, 10)
+    : undefined;
+
+  const mutation = useMutation(createIntakeMutation());
+
+  const handleAddMedicineClick = (formData: {
+    medicineId: number | null;
+    startDate: string;
+    endDate: string | null;
+    doseAmount: number | null;
+    doseUnit: string;
+    dosingTimes: any[];
+  }) => {
+    if (
+      !formData.startDate ||
+      !formData.doseAmount ||
+      !formData.doseUnit ||
+      formData.dosingTimes.length === 0 ||
+      !selectedMedicine
+    ) {
+      return;
+    }
+
+    const body: any = {
+      medicineId: Number(selectedMedicine),
+      doseAmount: formData.doseAmount,
+      doseUnit: formData.doseUnit,
+      dosingTimes: formData.dosingTimes,
+      startDate: formData.startDate,
+      treatmentId: treatmentId,
+    };
+
+    if (formData.endDate) {
+      body.endDate = formData.endDate;
+    }
+
+    mutation.mutate({
+      body,
+      path: { treatmentId: treatmentId as number },
+    });
+    setOpenModal(false);
+  };
 
   const filteredMedicines = useMemo(() => {
     return SAMPLE_MEDICINES.filter((medicine) =>
@@ -36,8 +86,9 @@ export const AddMedicinePage = () => {
     <TouchableOpacity
       style={styles.item}
       onPress={() => {
-        // por ahora solo registro la selección en consola
-        console.log("Medicamento seleccionado:", item);
+        setSelectedMedicine(Number(item.id));
+        console.log("Selected medicine:", selectedMedicine);
+        setOpenModal(true);
       }}
       accessibilityRole="button"
     >
@@ -93,6 +144,13 @@ export const AddMedicinePage = () => {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
         showsVerticalScrollIndicator={false}
+      />
+      <ModalAddMedicine
+        visible={openModal}
+        onClose={() => setOpenModal(false)}
+        onSubmit={handleAddMedicineClick}
+        treatmentId={treatmentId as number}
+        medicineId={selectedMedicine ? Number(selectedMedicine) : 0}
       />
     </View>
   );
