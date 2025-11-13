@@ -5,19 +5,20 @@ import {
   insertMedicine,
   insertUser,
   insertTreatment,
-} from "./utils/seeders";
-import { getTreatmentById } from "../src/repository/treatmentRepository";
+  clearTestDB,
+} from "./utils/seedTestDB";
+import { getIntakesByTreatmentId } from "../src/repository/intakeRepository";
 
 describe("DELETE /treatments/{treatmentId}/intakes/{intakeId}", () => {
   let treatmentId: number;
   let intakeId: number;
 
   beforeAll(async () => {
-    const user = await insertUser();
+    await insertUser();
 
     const treatment = await insertTreatment();
 
-    const medicine = await insertMedicine();
+    await insertMedicine();
 
     const intake = await insertDosingSchedule();
 
@@ -33,8 +34,8 @@ describe("DELETE /treatments/{treatmentId}/intakes/{intakeId}", () => {
 
     expect(res.statusCode).toBe(204);
 
-    const treatment = await getTreatmentById(treatmentId);
-    expect(treatment).toBeNull();
+    const deletedIntakes = await getIntakesByTreatmentId(treatmentId);
+    expect(deletedIntakes).toEqual([]);
   });
 
   it("returns 404 if the treatment does not exist", async () => {

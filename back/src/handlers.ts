@@ -4,14 +4,16 @@ import { db } from "./db/database";
 import {
   insertTreatment,
   getTreatmentsByUserId,
-  insertIntakeToTreatment,
-  deleteIntakeFromTreatment,
-  getIntakesByTreatmentId,
   getTreatmentById,
   updateTreatmentById,
   deleteTreatmentByTreatmentId,
 } from "./repository/treatmentRepository";
 import { getAllMedicines } from "./repository/medicineRepository";
+import {
+  insertIntakeToTreatment,
+  deleteIntakeFromTreatment,
+  getIntakesByTreatmentId,
+} from "./repository/intakeRepository";
 
 export const handlers: RouteHandlers = {
   healthCheck: async (request, reply) => {
