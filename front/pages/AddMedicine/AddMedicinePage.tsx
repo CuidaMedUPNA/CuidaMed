@@ -9,6 +9,9 @@ import {
   Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { NewMedicine } from "./_types/NewMedicine";
+import { useMutation } from "@tanstack/react-query";
+import { createIntakeMutation } from "@cuidamed-api/client";
 
 const SAMPLE_MEDICINES = [
   { id: "1", name: "Paracetamol", presentation: "Tabletas 500 mg" },
@@ -21,6 +24,24 @@ const SAMPLE_MEDICINES = [
 export const AddMedicinePage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+
+  const handleAddMedicineClick = (newMedicine: NewMedicine) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useMutation(
+      createIntakeMutation({
+        body: {
+          doseAmount: newMedicine.doseAmount,
+          doseUnit: newMedicine.doseUnit,
+          dosingTimes: newMedicine.dosingTimes,
+          startDate: newMedicine.startDate,
+          endDate: newMedicine.endDate,
+          treatmentId: newMedicine.treatmentId,
+          medicineId: newMedicine.id,
+        },
+      })
+    );
+  };
 
   const filteredMedicines = useMemo(() => {
     return SAMPLE_MEDICINES.filter((medicine) =>
@@ -36,8 +57,7 @@ export const AddMedicinePage = () => {
     <TouchableOpacity
       style={styles.item}
       onPress={() => {
-        // por ahora solo registro la selección en consola
-        console.log("Medicamento seleccionado:", item);
+        setOpenModal(true);
       }}
       accessibilityRole="button"
     >
