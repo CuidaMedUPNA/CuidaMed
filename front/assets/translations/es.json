@@ -15,7 +15,10 @@
     "invalid": "Inválido",
     "invalidEmail": "Por favor, introduce un correo electrónico válido",
     "loginFailed": "Error de inicio de sesión",
-    "checkCredentials": "Por favor, verifica tus credenciales e intenta de nuevo"
+    "checkCredentials": "Por favor, verifica tus credenciales e intenta de nuevo",
+    "passwordTooShort": "La contraseña debe tener al menos 6 caracteres",
+    "registerFailed": "Error de registro",
+    "tryAgain": "Ha ocurrido un error. Por favor, inténtalo de nuevo más tarde"
   },
   "tabs": {
     "home": "Inicio",
