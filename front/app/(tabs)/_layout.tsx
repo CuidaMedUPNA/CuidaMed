@@ -68,6 +68,16 @@ export default function TabsLayout() {
             ),
           }}
         />
+        <Tabs.Screen
+          name="maps"
+          options={{
+            tabBarLabel: t("tabs.maps"),
+            headerShown: false,
+            tabBarIcon: ({ color, size }: { color: string; size: number }) => (
+              <MaterialIcons name="location-on" size={size} color={color} />
+            ),
+          }}
+        />
       </Tabs>
     </QueryClientProvider>
   );
