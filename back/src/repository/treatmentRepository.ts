@@ -13,7 +13,6 @@ function formatDate(value: unknown): string {
   return String(value);
 }
 
-
 export async function insertTreatment(treatment: NewTreatment) {
   const insertedTreatment = await db
     .insertInto("treatment")
