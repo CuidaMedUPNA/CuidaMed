@@ -13,6 +13,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useAuth } from "@/context/AuthContext";
 import { useTranslation } from "react-i18next";
+import { useRouter } from "expo-router";
 
 export default function LoginScreen() {
   const { t } = useTranslation();
@@ -42,6 +43,8 @@ export default function LoginScreen() {
       setIsLoading(false);
     }
   };
+
+  const router = useRouter();
 
   return (
     <SafeAreaProvider>
@@ -131,7 +134,10 @@ export default function LoginScreen() {
 
         <View style={styles.registerSection}>
           <Text style={styles.registerText}>¿No tienes cuenta?</Text>
-          <TouchableOpacity disabled={isLoading}>
+          <TouchableOpacity
+            disabled={isLoading}
+            onPress={() => router.push("/register")}
+          >
             <Text style={styles.registerLink}>Crear una ahora</Text>
           </TouchableOpacity>
         </View>
