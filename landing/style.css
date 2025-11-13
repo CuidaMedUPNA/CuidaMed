@@ -462,7 +462,7 @@ header nav > div {
         display: flex;
     }
 
-    .btn.btn-primary {
+    header .btn.btn-primary {
         display: none;
     }
 
