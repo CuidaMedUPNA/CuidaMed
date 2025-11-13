@@ -24,13 +24,6 @@ export type LoginCredentials = {
     password: string;
 };
 
-export type LoginResponse = {
-    /**
-     * JWT token para autenticación
-     */
-    token: string;
-};
-
 export type NewTreatment = {
     name: string;
     userId: number;
@@ -219,10 +212,15 @@ export type LoginResponses = {
     /**
      * Login exitoso
      */
-    200: LoginResponse;
+    200: {
+        /**
+         * JWT token para autenticación
+         */
+        token?: string;
+    };
 };
 
-export type LoginResponse2 = LoginResponses[keyof LoginResponses];
+export type LoginResponse = LoginResponses[keyof LoginResponses];
 
 export type RegisterUserData = {
     /**

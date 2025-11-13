@@ -41,7 +41,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/LoginResponse"
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: JWT token para autenticación
         "400":
           description: Solicitud incorrecta
           content:
@@ -521,15 +525,6 @@ components:
       required:
         - email
         - password
-
-    LoginResponse:
-      type: object
-      properties:
-        token:
-          type: string
-          description: JWT token para autenticación
-      required:
-        - token
 
     NewTreatment:
       type: object
