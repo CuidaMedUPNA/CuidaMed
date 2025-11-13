@@ -9,9 +9,8 @@ import {
   Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { NewMedicine } from "./_types/NewMedicine";
+import { ModalAddMedicine } from "./_components/ModalAddMedicine";
 import { useMutation } from "@tanstack/react-query";
-import { createIntakeMutation } from "@cuidamed-api/client";
 
 const SAMPLE_MEDICINES = [
   { id: "1", name: "Paracetamol", presentation: "Tabletas 500 mg" },
@@ -25,22 +24,72 @@ export const AddMedicinePage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [openModal, setOpenModal] = useState(false);
+  const [selectedMedicine, setSelectedMedicine] = useState(0);
+  const [treatmentId] = useState(1); // TODO: Obtener del contexto o parámetros
 
-  const handleAddMedicineClick = (newMedicine: NewMedicine) => {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useMutation(
-      createIntakeMutation({
-        body: {
-          doseAmount: newMedicine.doseAmount,
-          doseUnit: newMedicine.doseUnit,
-          dosingTimes: newMedicine.dosingTimes,
-          startDate: newMedicine.startDate,
-          endDate: newMedicine.endDate,
-          treatmentId: newMedicine.treatmentId,
-          medicineId: newMedicine.id,
-        },
-      })
-    );
+  const mutation = useMutation({
+    mutationFn: async (data: { body: any; path: { treatmentId: number } }) => {
+      const response = await fetch(
+        `http://localhost:3000/treatments/${data.path.treatmentId}/intakes`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data.body),
+        }
+      );
+      if (!response.ok) throw new Error("Failed to create intake");
+      return response.json();
+    },
+  });
+
+  const handleAddMedicineClick = (formData: {
+    medicineId: number | null;
+    startDate: string;
+    endDate: string | null;
+    doseAmount: number | null;
+    doseUnit: string;
+    dosingTimes: any[];
+  }) => {
+    if (
+      !formData.startDate ||
+      !formData.doseAmount ||
+      !formData.doseUnit ||
+      formData.dosingTimes.length === 0 ||
+      !selectedMedicine
+    ) {
+      return;
+    }
+
+    console.log("Adding medicine with data:", {
+      medicineId: Number(selectedMedicine),
+      doseAmount: formData.doseAmount,
+      startDate: formData.startDate,
+      endDate: formData.endDate,
+      doseUnit: formData.doseUnit,
+      dosingTimes: formData.dosingTimes,
+    });
+
+    console.log("Dosing times:", formData.dosingTimes);
+
+    const body: any = {
+      // medicineId: Number(selectedMedicine),
+      medicineId: 1,
+      doseAmount: formData.doseAmount,
+      doseUnit: formData.doseUnit,
+      dosingTimes: formData.dosingTimes,
+      startDate: formData.startDate,
+      treatmentId: treatmentId,
+    };
+
+    if (formData.endDate) {
+      body.endDate = formData.endDate;
+    }
+
+    mutation.mutate({
+      body,
+      path: { treatmentId },
+    });
+    setOpenModal(false);
   };
 
   const filteredMedicines = useMemo(() => {
@@ -57,6 +106,8 @@ export const AddMedicinePage = () => {
     <TouchableOpacity
       style={styles.item}
       onPress={() => {
+        setSelectedMedicine(Number(item.id));
+        console.log("Selected medicine:", selectedMedicine);
         setOpenModal(true);
       }}
       accessibilityRole="button"
@@ -113,6 +164,13 @@ export const AddMedicinePage = () => {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
         showsVerticalScrollIndicator={false}
+      />
+      <ModalAddMedicine
+        visible={openModal}
+        onClose={() => setOpenModal(false)}
+        onSubmit={handleAddMedicineClick}
+        treatmentId={treatmentId}
+        medicineId={selectedMedicine ? Number(selectedMedicine) : 0}
       />
     </View>
   );

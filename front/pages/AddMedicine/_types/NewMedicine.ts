@@ -1,11 +1,14 @@
-import { DosingTime } from "@cuidamed-api/client";
+export interface NewDosingTime {
+  scheduledTime: string;
+  dayOfWeek: number;
+}
 
 export interface NewMedicine {
-  id: number;
+  medicineId: number;
   treatmentId: number;
   startDate: string;
-  endDate: string;
+  endDate: string | null;
   doseAmount: number;
   doseUnit: string;
-  dosingTimes: DosingTime[];
+  dosingTimes: NewDosingTime[];
 }
