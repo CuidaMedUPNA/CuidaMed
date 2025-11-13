@@ -220,45 +220,47 @@ export const ModalAddMedicine = ({
               </View>
 
               <View style={styles.dosingTimeInput}>
-                <TextInput
-                  style={[styles.input, styles.timeInput]}
-                  placeholder="HH:mm"
-                  placeholderTextColor="#999"
-                  value={dosingTimeInput.scheduledTime}
-                  onChangeText={(text) =>
-                    setDosingTimeInput((prev) => ({
-                      ...prev,
-                      scheduledTime: text,
-                    }))
-                  }
-                />
-
-                {!isDailyDosing && (
+                <View style={styles.dosingTimeInputRow}>
                   <TextInput
-                    style={[styles.input, styles.dayInput]}
-                    placeholder="Día (1-7)"
+                    style={[styles.input, styles.timeInput]}
+                    placeholder="HH:mm"
                     placeholderTextColor="#999"
-                    keyboardType="numeric"
-                    value={
-                      dosingTimeInput.dayOfWeek > 0
-                        ? String(dosingTimeInput.dayOfWeek)
-                        : ""
-                    }
+                    value={dosingTimeInput.scheduledTime}
                     onChangeText={(text) =>
                       setDosingTimeInput((prev) => ({
                         ...prev,
-                        dayOfWeek: text ? parseInt(text, 10) : 0,
+                        scheduledTime: text,
                       }))
                     }
                   />
-                )}
 
-                <TouchableOpacity
-                  style={styles.addButton}
-                  onPress={handleAddDosingTime}
-                >
-                  <Text style={styles.addButtonText}>+</Text>
-                </TouchableOpacity>
+                  {!isDailyDosing && (
+                    <TextInput
+                      style={[styles.input, styles.dayInput]}
+                      placeholder="Día (1-7)"
+                      placeholderTextColor="#999"
+                      keyboardType="numeric"
+                      value={
+                        dosingTimeInput.dayOfWeek > 0
+                          ? String(dosingTimeInput.dayOfWeek)
+                          : ""
+                      }
+                      onChangeText={(text) =>
+                        setDosingTimeInput((prev) => ({
+                          ...prev,
+                          dayOfWeek: text ? parseInt(text, 10) : 0,
+                        }))
+                      }
+                    />
+                  )}
+
+                  <TouchableOpacity
+                    style={styles.addButton}
+                    onPress={handleAddDosingTime}
+                  >
+                    <Text style={styles.addButtonText}>+</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
 
               {/* Lista de Horarios Agregados */}
@@ -364,27 +366,32 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   dosingTimeInput: {
-    flexDirection: "row",
-    gap: 8,
     marginBottom: 12,
+  },
+  dosingTimeInputRow: {
+    flexDirection: "row",
+    gap: 10,
     alignItems: "center",
   },
   timeInput: {
-    flex: 2,
+    flex: 1,
+    minWidth: 80,
   },
   dayInput: {
-    flex: 1,
+    flex: 0.6,
+    minWidth: 60,
   },
   addButton: {
     backgroundColor: "#4CAF50",
     borderRadius: 8,
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
     justifyContent: "center",
     alignItems: "center",
+    flexShrink: 0,
   },
   addButtonText: {
-    fontSize: 20,
+    fontSize: 22,
     color: "#fff",
     fontWeight: "bold",
   },
