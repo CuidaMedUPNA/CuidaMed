@@ -89,11 +89,8 @@ const CustomNavBar: React.FC<BottomTabBarProps> = ({
         return <MaterialIcons name="medication" size={30} color={color} />;
       case "profile":
         return <MaterialIcons name="person" size={30} color={color} />;
-<<<<<<< HEAD
       case "maps":
         return <MaterialIcons name="location-on" size={30} color={color} />;
-=======
->>>>>>> 8ed211c ([] - Mejorado navBar)
       default:
         return <MaterialIcons name="circle" size={30} color={color} />;
     }
