@@ -53,7 +53,6 @@ export const MyTreatmentsPage = () => {
           <View style={styles.fabContainer}>
             <View style={styles.fabGlow} />
             <TouchableOpacity
-              style={styles.fab}
               onPress={() => setModalVisible(true)}
               activeOpacity={0.85}
             >
@@ -63,7 +62,7 @@ export const MyTreatmentsPage = () => {
                 end={{ x: 1, y: 1 }}
                 style={styles.fabGradient}
               >
-                <AntDesign name="plus" size={28} color="white" />
+                <AntDesign name="plus" size={16} color="white" />
               </LinearGradient>
             </TouchableOpacity>
           </View>
@@ -273,12 +272,12 @@ const styles = StyleSheet.create({
   fabContainer: {
     position: "absolute",
     right: 20,
-    top: 16,
+    top: 24,
   },
   fabGlow: {
     position: "absolute",
-    width: 70,
-    height: 70,
+    width: 50,
+    height: 50,
     borderRadius: 35,
     backgroundColor: "#FF3B30",
     opacity: 0.3,
@@ -290,14 +289,10 @@ const styles = StyleSheet.create({
     shadowRadius: 20,
     elevation: 10,
   },
-  fab: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-  },
+
   fabGradient: {
-    width: 64,
-    height: 64,
+    width: 44,
+    height: 44,
     borderRadius: 32,
     justifyContent: "center",
     alignItems: "center",
