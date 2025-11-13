@@ -138,7 +138,7 @@ const TreatmentsList = ({
         ) : (
           <View>
             {treatments.map((treatment, index) => (
-              <View key={treatment.name} style={styles.treatmentWrapper}>
+              <View key={treatment.id} style={styles.treatmentWrapper}>
                 <TouchableOpacity
                   style={styles.treatmentCard}
                   onPress={() => onTreatmentPress(treatment.id, treatment.name)}
