@@ -24,6 +24,28 @@ paths:
                     type: string
                     example: "ok"
 
+  /me:
+    get:
+      summary: Obtener datos del usuario autenticado
+      operationId: getProfile
+      responses:
+        "200":
+          description: Datos del usuario
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+        "401":
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Unauthorized"
+
   /login:
     post:
       summary: Iniciar sesión de usuario
@@ -511,6 +533,36 @@ components:
         - username
         - password
         - email
+    UserProfile:
+              type: object
+              properties:
+                id:
+                  type: number
+                  description: ID del usuario
+                name:
+                  type: string
+                  description: Nombre del usuario
+                email:
+                  type: string
+                  format: email
+                  description: Email del usuario
+                birthdate:
+                  type: string
+                  format: date
+                  description: Fecha de nacimiento del usuario
+                profilePictureUrl:
+                  type: string
+                  format: uri
+                  description: URL de la foto de perfil
+                gender:
+                  type: string
+                  enum:
+                    - male
+                    - female
+              required:
+                - id
+                - name
+                - email
 
     LoginCredentials:
       type: object

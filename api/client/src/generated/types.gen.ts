@@ -13,6 +13,30 @@ export type NewUser = {
     gender?: 'male' | 'female';
 };
 
+export type UserProfile = {
+    /**
+     * ID del usuario
+     */
+    id: number;
+    /**
+     * Nombre del usuario
+     */
+    name: string;
+    /**
+     * Email del usuario
+     */
+    email: string;
+    /**
+     * Fecha de nacimiento del usuario
+     */
+    birthdate?: string;
+    /**
+     * URL de la foto de perfil
+     */
+    profilePictureUrl?: string;
+    gender?: 'male' | 'female';
+};
+
 export type LoginCredentials = {
     /**
      * Email del usuario
@@ -174,6 +198,33 @@ export type HealthCheckResponses = {
 };
 
 export type HealthCheckResponse = HealthCheckResponses[keyof HealthCheckResponses];
+
+export type GetProfileData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/me';
+};
+
+export type GetProfileErrors = {
+    /**
+     * No autorizado
+     */
+    401: {
+        error?: string;
+    };
+};
+
+export type GetProfileError = GetProfileErrors[keyof GetProfileErrors];
+
+export type GetProfileResponses = {
+    /**
+     * Datos del usuario
+     */
+    200: UserProfile;
+};
+
+export type GetProfileResponse = GetProfileResponses[keyof GetProfileResponses];
 
 export type LoginData = {
     /**
