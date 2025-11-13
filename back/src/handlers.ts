@@ -137,7 +137,15 @@ export const handlers: RouteHandlers = {
       return reply.status(404).send({ error: "Treatment not found" });
     }
 
-    await reply.status(200).send();
+    const responseTreatment = {
+      id: treatmentId,
+      name: treatmentData.name,
+      userId: treatmentData.userId,
+      startDate: treatmentData.startDate,
+      endDate: treatmentData.endDate ?? undefined,
+    };
+
+    await reply.status(200).send(responseTreatment);
   },
 
   getAllMedicines: async (request, reply) => {
