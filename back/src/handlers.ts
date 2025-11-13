@@ -146,30 +146,35 @@ export const handlers: RouteHandlers = {
   },
 
   updateTreatment: async (request, reply) => {
-    const treatmentId = Number(request.params.treatmentId);
-    const treatmentData = request.body;
+    try {
+      const treatmentId = Number(request.params.treatmentId);
+      const treatmentData = request.body;
 
-    const newData: TreatmentUpdate = {
-      name: treatmentData.name,
-      start_date: treatmentData.startDate,
-      end_date: treatmentData.endDate ?? null,
-    };
+      const newData: TreatmentUpdate = {
+        name: treatmentData.name,
+        start_date: treatmentData.startDate,
+        end_date: treatmentData.endDate ?? null,
+      };
 
-    const updatedTreatment = await updateTreatmentById(treatmentId, newData);
+      const updatedTreatment = await updateTreatmentById(treatmentId, newData);
 
-    if (updatedTreatment === 0n) {
-      return reply.status(404).send({ error: "Treatment not found" });
+      if (updatedTreatment === 0n) {
+        return reply.status(404).send({ error: "Treatment not found" });
+      }
+
+      const responseTreatment = {
+        id: treatmentId,
+        name: treatmentData.name,
+        userId: treatmentData.userId,
+        startDate: treatmentData.startDate,
+        endDate: treatmentData.endDate ?? undefined,
+      };
+
+      await reply.status(200).send(responseTreatment);
+    } catch (error) {
+      request.log.error(error);
+      reply.status(500).send({ error: "Internal Server Error" });
     }
-
-    const responseTreatment = {
-      id: treatmentId,
-      name: treatmentData.name,
-      userId: treatmentData.userId,
-      startDate: treatmentData.startDate,
-      endDate: treatmentData.endDate ?? undefined,
-    };
-
-    await reply.status(200).send(responseTreatment);
   },
 
   getAllMedicines: async (request, reply) => {
