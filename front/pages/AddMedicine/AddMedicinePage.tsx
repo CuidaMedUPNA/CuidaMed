@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -11,26 +11,33 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { ModalAddMedicine } from "./_components/ModalAddMedicine";
 import { useMutation } from "@tanstack/react-query";
-import { createIntakeMutation } from "@cuidamed-api/client";
-import { useLocalSearchParams } from "expo-router";
-
-const SAMPLE_MEDICINES = [
-  { id: "34", name: "Paracetamol", presentation: "Tabletas 500 mg" },
-  { id: "1", name: "Ibuprofeno", presentation: "Tabletas 400 mg" },
-  { id: "68", name: "Amoxicilina", presentation: "Cápsulas 500 mg" },
-  { id: "69", name: "Omeprazol", presentation: "Cápsulas 20 mg" },
-  { id: "67", name: "Aspirina", presentation: "Tabletas 100 mg" },
-];
+import { useLocalSearchParams } from "expo-router/build/hooks";
+import { createIntakeMutation, getAllMedicines } from "@cuidamed-api/client";
 
 export const AddMedicinePage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [openModal, setOpenModal] = useState(false);
-  const [selectedMedicine, setSelectedMedicine] = useState(0);
+  const [selectedMedicine, setSelectedMedicine] = useState<number | null>(null);
+  const [allMedicines, setAllMedicines] = useState<any[]>([]);
   const { treatmentId: treatmentIdStr } = useLocalSearchParams();
   const treatmentId = treatmentIdStr
     ? parseInt(treatmentIdStr as string, 10)
     : undefined;
+
+  useEffect(() => {
+    const loadMedicines = async () => {
+      try {
+        const response = await getAllMedicines({ throwOnError: true });
+        console.log("All medicines:", response.data);
+        setAllMedicines(response.data || []);
+      } catch (error) {
+        console.error("Error loading medicines:", error);
+        setAllMedicines([]);
+      }
+    };
+    loadMedicines();
+  }, []);
 
   const mutation = useMutation(createIntakeMutation());
 
@@ -47,13 +54,14 @@ export const AddMedicinePage = () => {
       !formData.doseAmount ||
       !formData.doseUnit ||
       formData.dosingTimes.length === 0 ||
-      !selectedMedicine
+      selectedMedicine === null ||
+      !treatmentId
     ) {
       return;
     }
 
     const body: any = {
-      medicineId: Number(selectedMedicine),
+      medicineId: selectedMedicine,
       doseAmount: formData.doseAmount,
       doseUnit: formData.doseUnit,
       dosingTimes: formData.dosingTimes,
@@ -67,22 +75,12 @@ export const AddMedicinePage = () => {
 
     mutation.mutate({
       body,
-      path: { treatmentId: treatmentId as number },
+      path: { treatmentId: treatmentId },
     });
     setOpenModal(false);
   };
 
-  const filteredMedicines = useMemo(() => {
-    return SAMPLE_MEDICINES.filter((medicine) =>
-      medicine.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [searchQuery]);
-
-  const renderItem = ({
-    item,
-  }: {
-    item: { id: string; name: string; presentation: string };
-  }) => (
+  const renderItem = ({ item }: { item: any }) => (
     <TouchableOpacity
       style={styles.item}
       onPress={() => {
@@ -94,7 +92,7 @@ export const AddMedicinePage = () => {
     >
       <View style={styles.itemText}>
         <Text style={styles.name}>{item.name}</Text>
-        <Text style={styles.presentation}>{item.presentation}</Text>
+        <Text style={styles.presentation}>{item.pictureUrl || ""}</Text>
       </View>
       <View style={styles.addCircle}>
         <Text style={styles.addCircleText}>+</Text>
@@ -139,9 +137,9 @@ export const AddMedicinePage = () => {
         </View>
       </View>
       <FlatList
-        data={filteredMedicines}
+        data={allMedicines}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.listContainer}
         showsVerticalScrollIndicator={false}
       />
@@ -150,7 +148,7 @@ export const AddMedicinePage = () => {
         onClose={() => setOpenModal(false)}
         onSubmit={handleAddMedicineClick}
         treatmentId={treatmentId as number}
-        medicineId={selectedMedicine ? Number(selectedMedicine) : 0}
+        medicineId={selectedMedicine || 0}
       />
     </View>
   );
