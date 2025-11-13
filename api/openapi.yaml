@@ -162,12 +162,8 @@ paths:
             schema:
               $ref: "#/components/schemas/NewTreatment"
       responses:
-        "200":
-          description: Tratamiento creado
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Treatment"
+        "201":
+          description: Tratamiento creado exitosamente
         "400":
           description: Solicitud incorrecta
           content:

@@ -3,8 +3,13 @@
 import { type DefaultError, queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
+<<<<<<< HEAD
 import { createIntake, createTreatment, deleteIntake, deleteTreatment, getAllMedicines, getIntakesByTreatment, getTreatmentById, getTreatments, healthCheck, login, type Options, registerUser, updateTreatment } from '../sdk.gen';
 import type { CreateIntakeData, CreateIntakeError, CreateIntakeResponse, CreateTreatmentData, CreateTreatmentError, CreateTreatmentResponse, DeleteIntakeData, DeleteIntakeError, DeleteIntakeResponse, DeleteTreatmentData, DeleteTreatmentError, DeleteTreatmentResponse, GetAllMedicinesData, GetAllMedicinesError, GetAllMedicinesResponse, GetIntakesByTreatmentData, GetIntakesByTreatmentError, GetIntakesByTreatmentResponse, GetTreatmentByIdData, GetTreatmentByIdError, GetTreatmentByIdResponse, GetTreatmentsData, GetTreatmentsError, GetTreatmentsResponse, HealthCheckData, HealthCheckResponse, LoginData, LoginError, LoginResponse, RegisterUserData, RegisterUserError, UpdateTreatmentData, UpdateTreatmentError, UpdateTreatmentResponse } from '../types.gen';
+=======
+import { createIntake, createTreatment, deleteIntake, deleteTreatment, getAllMedicines, getIntakesByTreatment, getTreatmentById, getTreatments, healthCheck, type Options, registerUser, updateTreatment } from '../sdk.gen';
+import type { CreateIntakeData, CreateIntakeError, CreateIntakeResponse, CreateTreatmentData, CreateTreatmentError, DeleteIntakeData, DeleteIntakeError, DeleteIntakeResponse, DeleteTreatmentData, DeleteTreatmentError, DeleteTreatmentResponse, GetAllMedicinesData, GetAllMedicinesError, GetAllMedicinesResponse, GetIntakesByTreatmentData, GetIntakesByTreatmentError, GetIntakesByTreatmentResponse, GetTreatmentByIdData, GetTreatmentByIdError, GetTreatmentByIdResponse, GetTreatmentsData, GetTreatmentsError, GetTreatmentsResponse, HealthCheckData, HealthCheckResponse, RegisterUserData, RegisterUserError, UpdateTreatmentData, UpdateTreatmentError, UpdateTreatmentResponse } from '../types.gen';
+>>>>>>> a010141 ([#194] - Agregado test para crear un nuevo tratamiento.)
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -114,8 +119,8 @@ export const getTreatmentsOptions = (options: Options<GetTreatmentsData>) => que
 /**
  * Crear tratamiento
  */
-export const createTreatmentMutation = (options?: Partial<Options<CreateTreatmentData>>): UseMutationOptions<CreateTreatmentResponse, CreateTreatmentError, Options<CreateTreatmentData>> => {
-    const mutationOptions: UseMutationOptions<CreateTreatmentResponse, CreateTreatmentError, Options<CreateTreatmentData>> = {
+export const createTreatmentMutation = (options?: Partial<Options<CreateTreatmentData>>): UseMutationOptions<unknown, CreateTreatmentError, Options<CreateTreatmentData>> => {
+    const mutationOptions: UseMutationOptions<unknown, CreateTreatmentError, Options<CreateTreatmentData>> = {
         mutationFn: async (fnOptions) => {
             const { data } = await createTreatment({
                 ...options,

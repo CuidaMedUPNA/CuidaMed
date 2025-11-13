@@ -22,17 +22,22 @@ export const handlers: RouteHandlers = {
   },
 
   createTreatment: async (request, reply) => {
-    const treatment = request.body;
+    try {
+      const treatment = request.body;
 
-    const newTreatment: NewTreatment = {
-      name: treatment.name,
-      user_id: Number(treatment.userId),
-      start_date: treatment.startDate,
-      end_date: treatment.endDate,
-    };
+      const newTreatment: NewTreatment = {
+        name: treatment.name,
+        user_id: Number(treatment.userId),
+        start_date: treatment.startDate,
+        end_date: treatment.endDate,
+      };
 
-    const insertedTreatment = await insertTreatment(newTreatment);
-    await reply.status(200).send(insertedTreatment);
+      await insertTreatment(newTreatment);
+      await reply.status(201).send();
+    } catch (err) {
+      console.error("Error in createTreatment:", err);
+      await reply.status(500).send({ error: "Internal Server Error" });
+    }
   },
 
   getTreatments: async (request, reply) => {

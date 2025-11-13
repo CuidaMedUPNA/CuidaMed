@@ -14,19 +14,11 @@ function formatDate(value: unknown): string {
 }
 
 export async function insertTreatment(treatment: NewTreatment) {
-  const insertedTreatment = await db
+  await db
     .insertInto("treatment")
     .values(treatment)
     .returningAll()
     .executeTakeFirstOrThrow();
-
-  return {
-    id: insertedTreatment.id,
-    name: insertedTreatment.name,
-    userId: insertedTreatment.user_id,
-    startDate: insertedTreatment.start_date.toISOString().split("T")[0],
-    endDate: insertedTreatment.end_date?.toISOString().split("T")[0],
-  };
 }
 
 export async function updateTreatmentById(
