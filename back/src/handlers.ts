@@ -168,4 +168,8 @@ export const handlers: RouteHandlers = {
   getAllMedicines: async (request, reply) => {
     return reply.status(200).send();
   },
+
+  login: async (request, reply) => {
+    return reply.status(200).send();
+  },
 };
