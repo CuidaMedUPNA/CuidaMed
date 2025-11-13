@@ -32,8 +32,8 @@ export const handlers: RouteHandlers = {
         end_date: treatment.endDate,
       };
 
-      await insertTreatment(newTreatment);
-      await reply.status(200).send();
+      const insertedTreatment = await insertTreatment(newTreatment);
+      await reply.status(200).send(insertedTreatment);
     } catch (err) {
       console.error("Error in createTreatment:", err);
       await reply.status(500).send({ error: "Internal Server Error" });

@@ -11,7 +11,7 @@ describe("POST /treatments/", () => {
         defaultUserId = user.id;
     });
 
-    it("returns 201 for a succesfully treatment creation", async () => {
+    it("returns 200 for a succesfully treatment creation", async () => {
 
         const newTreatment = {
             name: "Tratamiento antibiótico",
@@ -30,6 +30,30 @@ describe("POST /treatments/", () => {
         });
 
         expect(res.statusCode).toBe(200);
+        const data = res.json();
+        expect(data.name).toBe(newTreatment.name);
+        expect(data.userId).toBe(newTreatment.userId);
+        expect(data.startDate).toBe(newTreatment.startDate);
+        expect(data.endDate).toBe(newTreatment.endDate);
+    });
+
+    it("returns 400 for a treatment creation with missing fields", async () => {
+
+        const incompleteTreatment = {
+            name: "Tratamiento incompleto",
+            // Missing userId, startDate, endDate
+        };
+        
+        const res = await app.inject({
+            method: "POST",
+            url: `/treatments`,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(incompleteTreatment),
+        });
+
+        expect(res.statusCode).toBe(400);
     });
 
     afterAll(async () => {
