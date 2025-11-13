@@ -11,6 +11,8 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { ModalAddMedicine } from "./_components/ModalAddMedicine";
 import { useMutation } from "@tanstack/react-query";
+import { createIntakeMutation } from "@cuidamed-api/client";
+import { useLocalSearchParams } from "expo-router";
 
 const SAMPLE_MEDICINES = [
   { id: "1", name: "Paracetamol", presentation: "Tabletas 500 mg" },
@@ -25,22 +27,12 @@ export const AddMedicinePage = () => {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [selectedMedicine, setSelectedMedicine] = useState(0);
-  const [treatmentId] = useState(1); // TODO: Obtener del contexto o parámetros
+  const { treatmentId: treatmentIdStr } = useLocalSearchParams();
+  const treatmentId = treatmentIdStr
+    ? parseInt(treatmentIdStr as string, 10)
+    : undefined;
 
-  const mutation = useMutation({
-    mutationFn: async (data: { body: any; path: { treatmentId: number } }) => {
-      const response = await fetch(
-        `http://localhost:3000/treatments/${data.path.treatmentId}/intakes`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data.body),
-        }
-      );
-      if (!response.ok) throw new Error("Failed to create intake");
-      return response.json();
-    },
-  });
+  const mutation = useMutation(createIntakeMutation());
 
   const handleAddMedicineClick = (formData: {
     medicineId: number | null;
@@ -87,7 +79,7 @@ export const AddMedicinePage = () => {
 
     mutation.mutate({
       body,
-      path: { treatmentId },
+      path: { treatmentId: treatmentId as number },
     });
     setOpenModal(false);
   };
@@ -169,7 +161,7 @@ export const AddMedicinePage = () => {
         visible={openModal}
         onClose={() => setOpenModal(false)}
         onSubmit={handleAddMedicineClick}
-        treatmentId={treatmentId}
+        treatmentId={treatmentId as number}
         medicineId={selectedMedicine ? Number(selectedMedicine) : 0}
       />
     </View>
