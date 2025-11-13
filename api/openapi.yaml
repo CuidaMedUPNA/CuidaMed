@@ -534,35 +534,35 @@ components:
         - password
         - email
     UserProfile:
-              type: object
-              properties:
-                id:
-                  type: number
-                  description: ID del usuario
-                name:
-                  type: string
-                  description: Nombre del usuario
-                email:
-                  type: string
-                  format: email
-                  description: Email del usuario
-                birthdate:
-                  type: string
-                  format: date
-                  description: Fecha de nacimiento del usuario
-                profilePictureUrl:
-                  type: string
-                  format: uri
-                  description: URL de la foto de perfil
-                gender:
-                  type: string
-                  enum:
-                    - male
-                    - female
-              required:
-                - id
-                - name
-                - email
+      type: object
+      properties:
+        id:
+          type: number
+          description: ID del usuario
+        name:
+          type: string
+          description: Nombre del usuario
+        email:
+          type: string
+          format: email
+          description: Email del usuario
+        birthdate:
+          type: string
+          format: date
+          description: Fecha de nacimiento del usuario
+        profilePictureUrl:
+          type: string
+          format: uri
+          description: URL de la foto de perfil
+        gender:
+          type: string
+          enum:
+            - male
+            - female
+      required:
+        - id
+        - name
+        - email
 
     LoginCredentials:
       type: object
