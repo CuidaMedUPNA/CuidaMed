@@ -323,10 +323,12 @@ export type CreateTreatmentError = CreateTreatmentErrors[keyof CreateTreatmentEr
 
 export type CreateTreatmentResponses = {
     /**
-     * Tratamiento creado exitosamente
+     * Tratamiento creado
      */
-    201: unknown;
+    200: Treatment;
 };
+
+export type CreateTreatmentResponse = CreateTreatmentResponses[keyof CreateTreatmentResponses];
 
 export type DeleteTreatmentData = {
     body?: never;

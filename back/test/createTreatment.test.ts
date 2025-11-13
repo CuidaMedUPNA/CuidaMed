@@ -29,7 +29,7 @@ describe("POST /treatments/", () => {
             body: JSON.stringify(newTreatment),
         });
 
-        expect(res.statusCode).toBe(201);
+        expect(res.statusCode).toBe(200);
     });
 
     afterAll(async () => {
