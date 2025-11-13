@@ -5,7 +5,7 @@ import * as mockInsert from "./utils/seedTestDB";
 describe("GET /treatments/{treatmentId}", () => {
   let treatmentId: number;
   beforeAll(async () => {
-    const user = await mockInsert.insertUser();
+    await mockInsert.insertUser();
 
     const treatment = await mockInsert.insertTreatment();
 
