@@ -28,8 +28,8 @@ export async function createTestDB(db: Kysely<Database>) {
     .addColumn("user_id", "integer", (col) =>
       col.references("user.id").onDelete("cascade"),
     )
-    .addColumn("start_date", "varchar", (col) => col.notNull())
-    .addColumn("end_date", "varchar")
+    .addColumn("start_date", "date", (col) => col.notNull())
+    .addColumn("end_date", "date")
     .execute();
 
   await db.schema
@@ -54,8 +54,8 @@ export async function createTestDB(db: Kysely<Database>) {
     .addColumn("treatment_id", "integer", (col) =>
       col.references("treatment.id").onDelete("cascade"),
     )
-    .addColumn("start_date", "varchar")
-    .addColumn("end_date", "varchar")
+    .addColumn("start_date", "date")
+    .addColumn("end_date", "date")
     .addColumn("dose_amount", "integer")
     .addColumn("dose_unit", "varchar")
     .execute();
