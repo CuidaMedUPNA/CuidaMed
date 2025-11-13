@@ -1,4 +1,11 @@
-import { View, Text, StyleSheet, TouchableOpacity, Alert, Platform } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+  Platform,
+} from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -14,16 +21,20 @@ export default function ProfileScreen() {
     if (Platform.OS === "web") {
       setShowConfirmModal(true);
     } else {
-      Alert.alert("Cerrar sesión", "¿Estás seguro de que deseas cerrar sesión?", [
-        { text: "Cancelar", onPress: () => {} },
-        {
-          text: "Cerrar sesión",
-          onPress: async () => {
-            await logout();
+      Alert.alert(
+        "Cerrar sesión",
+        "¿Estás seguro de que deseas cerrar sesión?",
+        [
+          { text: "Cancelar", onPress: () => {} },
+          {
+            text: "Cerrar sesión",
+            onPress: async () => {
+              await logout();
+            },
+            style: "destructive",
           },
-          style: "destructive",
-        },
-      ]);
+        ]
+      );
     }
   };
 
@@ -69,7 +80,9 @@ export default function ProfileScreen() {
                   style={styles.modalConfirmButton}
                   onPress={handleConfirmLogout}
                 >
-                  <Text style={styles.modalConfirmButtonText}>Cerrar sesión</Text>
+                  <Text style={styles.modalConfirmButtonText}>
+                    Cerrar sesión
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -115,6 +128,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 12,
+    bottom: 200,
   },
   logoutButtonText: {
     color: "#fff",

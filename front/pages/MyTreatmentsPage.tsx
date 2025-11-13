@@ -49,6 +49,24 @@ export const MyTreatmentsPage = () => {
             {treatments?.length || 0}{" "}
             {t("treatments.active", { defaultValue: "activos" })}
           </Text>
+          {/* FAB con glow effect */}
+          <View style={styles.fabContainer}>
+            <View style={styles.fabGlow} />
+            <TouchableOpacity
+              style={styles.fab}
+              onPress={() => setModalVisible(true)}
+              activeOpacity={0.85}
+            >
+              <LinearGradient
+                colors={["#FF3B30", "#FF6B6B"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.fabGradient}
+              >
+                <AntDesign name="plus" size={28} color="white" />
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
         </View>
 
         <TreatmentsList
@@ -56,25 +74,6 @@ export const MyTreatmentsPage = () => {
           onTreatmentPress={handleTreatmentPress}
           isLoading={isLoading}
         />
-
-        {/* FAB con glow effect */}
-        <View style={styles.fabContainer}>
-          <View style={styles.fabGlow} />
-          <TouchableOpacity
-            style={styles.fab}
-            onPress={() => setModalVisible(true)}
-            activeOpacity={0.85}
-          >
-            <LinearGradient
-              colors={["#FF3B30", "#FF6B6B"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.fabGradient}
-            >
-              <AntDesign name="plus" size={28} color="white" />
-            </LinearGradient>
-          </TouchableOpacity>
-        </View>
       </View>
     </>
   );
@@ -273,8 +272,8 @@ const styles = StyleSheet.create({
   },
   fabContainer: {
     position: "absolute",
-    bottom: 30,
     right: 20,
+    top: 16,
   },
   fabGlow: {
     position: "absolute",
