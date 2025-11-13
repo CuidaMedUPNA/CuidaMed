@@ -9,6 +9,7 @@ import {
   getIntakesByTreatmentId,
   getTreatmentById,
   updateTreatmentById,
+  deleteTreatmentByTreatmentId,
 } from "./repository/treatmentRepository";
 
 export const handlers: RouteHandlers = {
@@ -101,8 +102,17 @@ export const handlers: RouteHandlers = {
 
 
   deleteTreatment: async (request, reply) => {
-    Number(request.params.treatmentId);
-    reply.status(204).send();
+    try {
+      const treatmentId = Number(request.params.treatmentId);
+      const rowsDeleted = await deleteTreatmentByTreatmentId(treatmentId);
+      if (rowsDeleted === 0) {
+        reply.status(404).send({ error: "Treatment not found" });
+      }
+      reply.status(204).send();
+    } catch (error) {
+      request.log.error(error);
+      reply.status(500).send({ error: "Internal Server Error" });
+    }
   },
 
   getIntakesByTreatment: async (request, reply) => {

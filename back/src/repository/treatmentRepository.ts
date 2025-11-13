@@ -193,3 +193,12 @@ async function getDosingTimesByScheduleId(scheduleId: number) {
     };
   });
 }
+
+export async function deleteTreatmentByTreatmentId(treatmentId: number) {
+  const result = await db
+    .deleteFrom("treatment")
+    .where("id", "=", treatmentId)
+    .executeTakeFirst();
+
+  return result.numDeletedRows || 0;
+}
