@@ -31,7 +31,7 @@ export const TreatmentDetailHeader = ({
         <TouchableOpacity onPress={() => router.push("/treatments")}>
           <AntDesign name="arrow-left" size={24} color="#6b6b6bff" />
         </TouchableOpacity>
-        <View>
+        <View style={{ width: 220 }}>
           <Text
             style={{
               fontSize: 24,
