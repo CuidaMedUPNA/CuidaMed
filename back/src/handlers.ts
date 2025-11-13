@@ -60,51 +60,52 @@ export const handlers: RouteHandlers = {
   },
 
   createIntake: async (request, reply) => {
-  try {
-    const dosingSchedule = request.body;
-    const insertedSchedule = await insertIntakeToTreatment(dosingSchedule);
+    try {
+      const dosingSchedule = request.body;
+      const insertedSchedule = await insertIntakeToTreatment(dosingSchedule);
 
-    const insertedTimes = await db
-      .selectFrom("dosing_time")
-      .selectAll()
-      .where("dosing_schedule_id", "=", insertedSchedule.id)
-      .execute();
+      const insertedTimes = await db
+        .selectFrom("dosing_time")
+        .selectAll()
+        .where("dosing_schedule_id", "=", insertedSchedule.id)
+        .execute();
 
-    const medicine = await db
-      .selectFrom("medicine")
-      .select("trade_name")
-      .where("id", "=", insertedSchedule.medicine_id)
-      .executeTakeFirstOrThrow();
+      const medicine = await db
+        .selectFrom("medicine")
+        .select("trade_name")
+        .where("id", "=", insertedSchedule.medicine_id)
+        .executeTakeFirstOrThrow();
 
-    const response = {
-      id: insertedSchedule.id,
-      medicineId: insertedSchedule.medicine_id,
-      medicineName: medicine.trade_name,
-      treatmentId: insertedSchedule.treatment_id,
-      startDate: new Date(insertedSchedule.start_date).toISOString().split("T")[0],
-      endDate: insertedSchedule.end_date
-        ? new Date(insertedSchedule.end_date).toISOString().split("T")[0]
-        : undefined,
-      doseAmount: insertedSchedule.dose_amount,
-      doseUnit: insertedSchedule.dose_unit,
-      dosingTimes: insertedTimes.map((time) => {
-        const [hours, minutes] = time.scheduled_time.split(":");
-        return {
-          id: time.id,
-          dosingScheduleId: time.dosing_schedule_id,
-          scheduledTime: `${hours}:${minutes}`,
-          dayOfWeek: time.day_of_week,
-        };
-      }),
-    };
+      const response = {
+        id: insertedSchedule.id,
+        medicineId: insertedSchedule.medicine_id,
+        medicineName: medicine.trade_name,
+        treatmentId: insertedSchedule.treatment_id,
+        startDate: new Date(insertedSchedule.start_date)
+          .toISOString()
+          .split("T")[0],
+        endDate: insertedSchedule.end_date
+          ? new Date(insertedSchedule.end_date).toISOString().split("T")[0]
+          : undefined,
+        doseAmount: insertedSchedule.dose_amount,
+        doseUnit: insertedSchedule.dose_unit,
+        dosingTimes: insertedTimes.map((time) => {
+          const [hours, minutes] = time.scheduled_time.split(":");
+          return {
+            id: time.id,
+            dosingScheduleId: time.dosing_schedule_id,
+            scheduledTime: `${hours}:${minutes}`,
+            dayOfWeek: time.day_of_week,
+          };
+        }),
+      };
 
-    await reply.status(201).send(response);
-  } catch (err) {
-    console.error("Error in createIntake:", err);
-    await reply.status(500).send({ error: "Internal Server Error" });
-  }
-},
-
+      await reply.status(201).send(response);
+    } catch (err) {
+      console.error("Error in createIntake:", err);
+      await reply.status(500).send({ error: "Internal Server Error" });
+    }
+  },
 
   deleteTreatment: async (request, reply) => {
     try {
@@ -144,30 +145,35 @@ export const handlers: RouteHandlers = {
   },
 
   updateTreatment: async (request, reply) => {
-    const treatmentId = Number(request.params.treatmentId);
-    const treatmentData = request.body;
+    try {
+      const treatmentId = Number(request.params.treatmentId);
+      const treatmentData = request.body;
 
-    const newData: TreatmentUpdate = {
-      name: treatmentData.name,
-      start_date: treatmentData.startDate,
-      end_date: treatmentData.endDate ?? null,
-    };
+      const newData: TreatmentUpdate = {
+        name: treatmentData.name,
+        start_date: treatmentData.startDate,
+        end_date: treatmentData.endDate ?? null,
+      };
 
-    const updatedTreatment = await updateTreatmentById(treatmentId, newData);
+      const updatedTreatment = await updateTreatmentById(treatmentId, newData);
 
-    if (updatedTreatment === 0n) {
-      return reply.status(404).send({ error: "Treatment not found" });
+      if (updatedTreatment === 0n) {
+        return reply.status(404).send({ error: "Treatment not found" });
+      }
+
+      const responseTreatment = {
+        id: treatmentId,
+        name: treatmentData.name,
+        userId: treatmentData.userId,
+        startDate: treatmentData.startDate,
+        endDate: treatmentData.endDate ?? undefined,
+      };
+
+      await reply.status(200).send(responseTreatment);
+    } catch (error) {
+      request.log.error(error);
+      reply.status(500).send({ error: "Internal Server Error" });
     }
-
-    const responseTreatment = {
-      id: treatmentId,
-      name: treatmentData.name,
-      userId: treatmentData.userId,
-      startDate: treatmentData.startDate,
-      endDate: treatmentData.endDate ?? undefined,
-    };
-
-    await reply.status(200).send(responseTreatment);
   },
 
   getAllMedicines: async (request, reply) => {
