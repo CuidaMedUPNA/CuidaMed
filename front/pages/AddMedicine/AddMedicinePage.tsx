@@ -15,11 +15,11 @@ import { createIntakeMutation } from "@cuidamed-api/client";
 import { useLocalSearchParams } from "expo-router";
 
 const SAMPLE_MEDICINES = [
-  { id: "1", name: "Paracetamol", presentation: "Tabletas 500 mg" },
-  { id: "2", name: "Ibuprofeno", presentation: "Tabletas 400 mg" },
-  { id: "3", name: "Amoxicilina", presentation: "Cápsulas 500 mg" },
-  { id: "4", name: "Omeprazol", presentation: "Cápsulas 20 mg" },
-  { id: "5", name: "Aspirina", presentation: "Tabletas 100 mg" },
+  { id: "34", name: "Paracetamol", presentation: "Tabletas 500 mg" },
+  { id: "1", name: "Ibuprofeno", presentation: "Tabletas 400 mg" },
+  { id: "68", name: "Amoxicilina", presentation: "Cápsulas 500 mg" },
+  { id: "69", name: "Omeprazol", presentation: "Cápsulas 20 mg" },
+  { id: "67", name: "Aspirina", presentation: "Tabletas 100 mg" },
 ];
 
 export const AddMedicinePage = () => {
@@ -52,20 +52,8 @@ export const AddMedicinePage = () => {
       return;
     }
 
-    console.log("Adding medicine with data:", {
-      medicineId: Number(selectedMedicine),
-      doseAmount: formData.doseAmount,
-      startDate: formData.startDate,
-      endDate: formData.endDate,
-      doseUnit: formData.doseUnit,
-      dosingTimes: formData.dosingTimes,
-    });
-
-    console.log("Dosing times:", formData.dosingTimes);
-
     const body: any = {
-      // medicineId: Number(selectedMedicine),
-      medicineId: 1,
+      medicineId: Number(selectedMedicine),
       doseAmount: formData.doseAmount,
       doseUnit: formData.doseUnit,
       dosingTimes: formData.dosingTimes,

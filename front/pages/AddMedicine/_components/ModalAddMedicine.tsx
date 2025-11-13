@@ -137,7 +137,6 @@ export const ModalAddMedicine = ({
           <ScrollView style={styles.form} showsVerticalScrollIndicator={false}>
             {/* Fecha de Inicio */}
             <View style={styles.formGroup}>
-              <Text style={styles.label}>Fecha de Inicio *</Text>
               <CustomDatePicker
                 label="Fecha de Inicio"
                 value={new Date(formData.startDate)}
@@ -153,9 +152,8 @@ export const ModalAddMedicine = ({
 
             {/* Fecha de Fin */}
             <View style={styles.formGroup}>
-              <Text style={styles.label}>Fecha de Fin (Opcional)</Text>
               <CustomDatePicker
-                label="Fecha de Fin"
+                label="Fecha de Fin (Opcional)"
                 value={
                   formData.endDate ? new Date(formData.endDate) : undefined
                 }
