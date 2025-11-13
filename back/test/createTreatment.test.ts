@@ -1,13 +1,13 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { app, db } from "./setup";
-import * as mockInsert from "./utils/seeders";
+import { app } from "./setup";
+import { clearTestDB, insertUser } from "./utils/seedTestDB";
 
 describe("POST /treatments/", () => {
 
     let defaultUserId: number;
 
     beforeAll(async () => {
-        const user = await mockInsert.insertUser();
+        const user = await insertUser();
         defaultUserId = user.id;
     });
 
@@ -33,11 +33,7 @@ describe("POST /treatments/", () => {
     });
 
     afterAll(async () => {
-        await db.deleteFrom("dosing_time").execute();
-        await db.deleteFrom("dosing_schedule").execute();
-        await db.deleteFrom("treatment").execute();
-        await db.deleteFrom("medicine").execute();
-        await db.deleteFrom("user").execute();
+        await clearTestDB();
     });
 
 });

@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll, vi } from "vitest";
 import { app, db } from "./setup";
 import * as treatmentRepo from "../src/repository/treatmentRepository";
-import * as mockInsert from "./utils/seeders";
+import * as mockInsert from "./utils/seedTestDB";
 
 describe("POST /treatments/{treatmentId}/intakes", () => {
 
