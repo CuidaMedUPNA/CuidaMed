@@ -1,14 +1,14 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { app, db } from "./setup";
-import * as mockInsert from "./utils/seedTestDB";
+import { app } from "./setup";
+import { insertUser, insertTreatment, clearTestDB } from "./utils/seedTestDB";
 
 describe("GET /treatments/{treatmentId}", () => {
   let treatmentId: number;
   let userId: number;
   beforeAll(async () => {
-    const user = await mockInsert.insertUser();
+    const user = await insertUser();
     userId = user.id;
-    const treatment = await mockInsert.insertTreatment({ user_id: userId });
+    const treatment = await insertTreatment({ user_id: userId });
     treatmentId = treatment.id;
   });
 
@@ -46,7 +46,6 @@ describe("GET /treatments/{treatmentId}", () => {
   });
 
   afterAll(async () => {
-    await db.deleteFrom("treatment").where("id", "=", treatmentId).execute();
-    await db.deleteFrom("user").where("id", "=", userId).execute();
+    await clearTestDB();
   });
 });
