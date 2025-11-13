@@ -466,6 +466,10 @@ header nav > div {
         display: none;
     }
 
+    .hero-scroll-btn {
+        display: none;
+    }
+
     header nav {
         height: 70px;
         padding-right: 10px;
@@ -559,7 +563,7 @@ header nav > div {
     }
 
     .nav-links {
-        display: flex;
+        display: none;
     }
 
     .logo-image {
