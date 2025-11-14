@@ -1,10 +1,9 @@
 import { describe, it, expect, beforeAll, afterAll, vi } from "vitest";
 import { app, db } from "./setup";
-import * as treatmentRepo from "../src/repository/treatmentRepository";
+import * as intakeRepo from "../src/repository/intakeRepository";
 import * as mockInsert from "./utils/seedTestDB";
 
 describe("GET /treatments/{treatmentId}/intakes", () => {
-
   beforeAll(async () => {
     const user = await mockInsert.insertUser();
 
@@ -24,7 +23,7 @@ describe("GET /treatments/{treatmentId}/intakes", () => {
       treatment_id: treatment.id,
       dose_amount: 2,
       dose_unit: "ml",
-      });
+    });
 
     await mockInsert.insertDosingTime({
       dosing_schedule_id: schedule.id,
@@ -94,12 +93,12 @@ describe("GET /treatments/{treatmentId}/intakes", () => {
 
   it("returns 500 when there is an internal server error", async () => {
     const spy = vi
-      .spyOn(treatmentRepo, "getIntakesByTreatmentId")
+      .spyOn(intakeRepo, "getIntakesByTreatmentId")
       .mockRejectedValueOnce(new Error("DB connection failed"));
 
     const res = await app.inject({
       method: "GET",
-      url: "/treatments/999/intakes", 
+      url: "/treatments/999/intakes",
     });
 
     spy.mockRestore();
@@ -117,6 +116,4 @@ describe("GET /treatments/{treatmentId}/intakes", () => {
     await db.deleteFrom("medicine").execute();
     await db.deleteFrom("user").execute();
   });
-
 });
-
