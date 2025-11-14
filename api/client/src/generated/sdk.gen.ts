@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { CreateIntakeData, CreateIntakeErrors, CreateIntakeResponses, CreateTreatmentData, CreateTreatmentErrors, CreateTreatmentResponses, DeleteIntakeData, DeleteIntakeErrors, DeleteIntakeResponses, DeleteTreatmentData, DeleteTreatmentErrors, DeleteTreatmentResponses, GetAllMedicinesData, GetAllMedicinesErrors, GetAllMedicinesResponses, GetIntakesByTreatmentData, GetIntakesByTreatmentErrors, GetIntakesByTreatmentResponses, GetTreatmentByIdData, GetTreatmentByIdErrors, GetTreatmentByIdResponses, GetTreatmentsData, GetTreatmentsErrors, GetTreatmentsResponses, HealthCheckData, HealthCheckResponses, LoginData, LoginErrors, LoginResponses, RegisterUserData, RegisterUserErrors, RegisterUserResponses, UpdateTreatmentData, UpdateTreatmentErrors, UpdateTreatmentResponses } from './types.gen';
+import type { CreateIntakeData, CreateIntakeErrors, CreateIntakeResponses, CreateTreatmentData, CreateTreatmentErrors, CreateTreatmentResponses, DeleteIntakeData, DeleteIntakeErrors, DeleteIntakeResponses, DeleteTreatmentData, DeleteTreatmentErrors, DeleteTreatmentResponses, GetAllMedicinesData, GetAllMedicinesErrors, GetAllMedicinesResponses, GetIntakesByTreatmentData, GetIntakesByTreatmentErrors, GetIntakesByTreatmentResponses, GetProfileData, GetProfileErrors, GetProfileResponses, GetTreatmentByIdData, GetTreatmentByIdErrors, GetTreatmentByIdResponses, GetTreatmentsData, GetTreatmentsErrors, GetTreatmentsResponses, HealthCheckData, HealthCheckResponses, LoginData, LoginErrors, LoginResponses, RegisterUserData, RegisterUserErrors, RegisterUserResponses, UpdateTreatmentData, UpdateTreatmentErrors, UpdateTreatmentResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -24,6 +24,16 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
 export const healthCheck = <ThrowOnError extends boolean = false>(options?: Options<HealthCheckData, ThrowOnError>) => {
     return (options?.client ?? client).get<HealthCheckResponses, unknown, ThrowOnError>({
         url: '/health',
+        ...options
+    });
+};
+
+/**
+ * Obtener datos del usuario autenticado
+ */
+export const getProfile = <ThrowOnError extends boolean = false>(options?: Options<GetProfileData, ThrowOnError>) => {
+    return (options?.client ?? client).get<GetProfileResponses, GetProfileErrors, ThrowOnError>({
+        url: '/me',
         ...options
     });
 };

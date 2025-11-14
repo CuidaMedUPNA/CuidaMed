@@ -24,6 +24,10 @@ export const handlers: RouteHandlers = {
     reply.status(201).send();
   },
 
+  getProfile: async (request, reply) => {
+    reply.status(200).send();
+  },
+
   createTreatment: async (request, reply) => {
     try {
       const treatment = request.body;

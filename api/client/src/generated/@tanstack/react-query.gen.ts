@@ -3,8 +3,8 @@
 import { type DefaultError, queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { createIntake, createTreatment, deleteIntake, deleteTreatment, getAllMedicines, getIntakesByTreatment, getTreatmentById, getTreatments, healthCheck, login, type Options, registerUser, updateTreatment } from '../sdk.gen';
-import type { CreateIntakeData, CreateIntakeError, CreateIntakeResponse, CreateTreatmentData, CreateTreatmentError, CreateTreatmentResponse, DeleteIntakeData, DeleteIntakeError, DeleteIntakeResponse, DeleteTreatmentData, DeleteTreatmentError, DeleteTreatmentResponse, GetAllMedicinesData, GetAllMedicinesError, GetAllMedicinesResponse, GetIntakesByTreatmentData, GetIntakesByTreatmentError, GetIntakesByTreatmentResponse, GetTreatmentByIdData, GetTreatmentByIdError, GetTreatmentByIdResponse, GetTreatmentsData, GetTreatmentsError, GetTreatmentsResponse, HealthCheckData, HealthCheckResponse, LoginData, LoginError, LoginResponse, RegisterUserData, RegisterUserError, UpdateTreatmentData, UpdateTreatmentError, UpdateTreatmentResponse } from '../types.gen';
+import { createIntake, createTreatment, deleteIntake, deleteTreatment, getAllMedicines, getIntakesByTreatment, getProfile, getTreatmentById, getTreatments, healthCheck, login, type Options, registerUser, updateTreatment } from '../sdk.gen';
+import type { CreateIntakeData, CreateIntakeError, CreateIntakeResponse, CreateTreatmentData, CreateTreatmentError, CreateTreatmentResponse, DeleteIntakeData, DeleteIntakeError, DeleteIntakeResponse, DeleteTreatmentData, DeleteTreatmentError, DeleteTreatmentResponse, GetAllMedicinesData, GetAllMedicinesError, GetAllMedicinesResponse, GetIntakesByTreatmentData, GetIntakesByTreatmentError, GetIntakesByTreatmentResponse, GetProfileData, GetProfileError, GetProfileResponse, GetTreatmentByIdData, GetTreatmentByIdError, GetTreatmentByIdResponse, GetTreatmentsData, GetTreatmentsError, GetTreatmentsResponse, HealthCheckData, HealthCheckResponse, LoginData, LoginError, LoginResponse, RegisterUserData, RegisterUserError, UpdateTreatmentData, UpdateTreatmentError, UpdateTreatmentResponse } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -57,6 +57,24 @@ export const healthCheckOptions = (options?: Options<HealthCheckData>) => queryO
         return data;
     },
     queryKey: healthCheckQueryKey(options)
+});
+
+export const getProfileQueryKey = (options?: Options<GetProfileData>) => createQueryKey("getProfile", options);
+
+/**
+ * Obtener datos del usuario autenticado
+ */
+export const getProfileOptions = (options?: Options<GetProfileData>) => queryOptions<GetProfileResponse, GetProfileError, GetProfileResponse, ReturnType<typeof getProfileQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getProfile({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getProfileQueryKey(options)
 });
 
 /**
