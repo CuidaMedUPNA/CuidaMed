@@ -44,11 +44,20 @@ export const handlers: RouteHandlers = {
   },
 
   getTreatments: async (request, reply) => {
-    const userId = request.query.userId;
+    try {
+      const userId = request.query.userId;
 
-    const treatments = await getTreatmentsByUserId(userId);
+      const treatments = await getTreatmentsByUserId(userId);
 
-    await reply.status(200).send(treatments);
+      if (treatments.length === 0) {
+        return await reply.status(404).send({ error: "User not found" });
+      }
+
+      await reply.status(200).send(treatments);
+    } catch (err) {
+      console.error("Error in getTreatments:", err);
+      await reply.status(500).send({ error: "Internal Server Error" });
+    }
   },
 
   getTreatmentById: async (request, reply) => {
