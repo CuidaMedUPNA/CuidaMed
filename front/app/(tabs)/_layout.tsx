@@ -60,6 +60,16 @@ export default function TabsLayout() {
             ),
           }}
         />
+        <Tabs.Screen
+          name="calendar"
+          options={{
+            tabBarLabel: `${t("tabs.calendar")}`,
+            headerShown: false,
+            tabBarIcon: ({ color, size }: { color: string; size: number }) => (
+              <MaterialIcons name="calendar-month" size={size} color={color} />
+            ),
+          }}
+        />
       </Tabs>
     </QueryClientProvider>
   );
