@@ -38,7 +38,7 @@ export const Tratamiento = ({ name, startDate, endDate, onPress }: Props) => {
           {name}
         </Text>
         <Text style={styles.percent}>{percent}%</Text>
-        <Icon name="chevron-right" type="entypo" />
+        <Icon name="chevron-right" type="entypo" style={styles.chevron} />
       </View>
 
       <View style={styles.metaRow}>
@@ -96,5 +96,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#9ca3af",
     marginHorizontal: 8,
+  },
+  chevron: {
+    marginRight: 30,
   },
 });

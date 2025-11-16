@@ -14,6 +14,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { t } from "i18next";
 import { LinearGradient } from "expo-linear-gradient";
+import { Icon } from "react-native-elements";
 
 export const MyTreatmentsPage = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -152,7 +153,32 @@ const TreatmentsList = ({
                       }
                     />
                   </View>
+                  <TouchableOpacity
+                    onPress={() => {
+                      console.log(
+                        "Eliminar medicamento asociado con nombre: ",
+                        treatment.name
+                      );
+                    }}
+                    accessibilityRole="button"
+                    style={{
+                      position: "absolute",
+                      top: 5,
+                      right: 5,
+                      margin: 5,
+                      padding: 5,
+                      zIndex: 1,
+                    }}
+                  >
+                    <Icon
+                      name="trash"
+                      type="font-awesome"
+                      color="#F23728"
+                      size={24}
+                    />
+                  </TouchableOpacity>
                 </TouchableOpacity>
+                <View></View>
               </View>
             ))}
           </View>
