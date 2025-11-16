@@ -8,9 +8,15 @@ import {
   TouchableOpacity,
   Text,
   StyleSheet,
+  Alert,
 } from "react-native";
-import { getTreatmentsOptions, Treatment } from "@cuidamed-api/client";
-import { useQuery } from "@tanstack/react-query";
+import {
+  getTreatmentsOptions,
+  Treatment,
+  deleteTreatmentMutation,
+  getTreatmentsQueryKey,
+} from "@cuidamed-api/client";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { t } from "i18next";
 import { LinearGradient } from "expo-linear-gradient";
@@ -88,6 +94,23 @@ const TreatmentsList = ({
   onTreatmentPress: (treatmentId: number, treatmentName: string) => void;
   isLoading?: boolean;
 }) => {
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    ...deleteTreatmentMutation(),
+    onSuccess: () => {
+      console.log("✅ Tratamiento eliminado con éxito.");
+      queryClient.invalidateQueries({
+        queryKey: getTreatmentsQueryKey({ query: { userId: 1 } }),
+      });
+    },
+    onError: (error) => {
+      console.error("❌ Error al eliminar tratamiento:", error);
+      Alert.alert(t("error"), t("treatments.delete.errorAlert"));
+    },
+  });
+
+  const deleteTreatmentHandler = (treatmentId: number) => {};
+
   return (
     <View style={styles.listContainer}>
       <ScrollView
@@ -155,10 +178,7 @@ const TreatmentsList = ({
                   </View>
                   <TouchableOpacity
                     onPress={() => {
-                      console.log(
-                        "Eliminar medicamento asociado con nombre: ",
-                        treatment.name
-                      );
+                      mutation.mutate({ path: { treatmentId: treatment.id } });
                     }}
                     accessibilityRole="button"
                     style={{
