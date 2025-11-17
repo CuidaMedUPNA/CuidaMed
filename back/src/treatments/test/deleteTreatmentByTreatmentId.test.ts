@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { app, db } from "./setup";
-import * as treatmentRepo from "../src/repository/treatmentRepository";
-import * as mockInsert from "./utils/seedTestDB";
+import { app, db } from "../../../test/setup";
+import * as treatmentRepo from "../treatmentRepository";
+import * as mockInsert from "../../../test/utils/seedTestDB";
 
 describe("DELETE /treatments/{treatmentId}", () => {
   beforeAll(async () => {
