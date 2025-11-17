@@ -17,7 +17,7 @@ export async function buildTestApp() {
   const app = Fastify({ logger: false });
 
   const options = {
-    specification: path.resolve(__dirname, "../../api/openapi.yaml"),
+    specification: path.resolve(__dirname, "../../api/openapi/bundled.yaml"),
     serviceHandlers: handlers,
   };
 
