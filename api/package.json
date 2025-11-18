@@ -4,7 +4,9 @@
     "client"
   ],
   "scripts": {
-    "build": "npx @redocly/cli build-docs ./openapi.yaml -o ../docs/api.html",
+    "bundle:openapi": "npx @redocly/cli bundle ./openapi.yaml -o ./openapi/bundled.yaml",
+    "docs:openapi": "npx @redocly/cli build-docs ./openapi/bundled.yaml -o ../docs/api.html",
+    "build": "npm run bundle:openapi && npm run docs:openapi",
     "lint": "redocly lint ./openapi.yaml --config ../redocly.yaml"
   },
   "devDependencies": {

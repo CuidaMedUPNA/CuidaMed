@@ -1,0 +1,693 @@
+openapi: 3.1.1
+info:
+  title: CuidaMed API
+  version: 1.0.0
+  description: API para la aplicación CuidaMed
+servers:
+  - url: http://localhost:3000
+    description: Servidor de desarrollo
+paths:
+  /health:
+    get:
+      summary: Health check
+      operationId: healthCheck
+      responses:
+        '200':
+          description: Servidor funcionando
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+  /login:
+    post:
+      summary: Iniciar sesión de usuario
+      operationId: login
+      requestBody:
+        description: Credenciales del usuario
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginCredentials'
+      responses:
+        '200':
+          description: Login exitoso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: JWT token para autenticación
+        '400':
+          description: Solicitud incorrecta
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Bad Request
+        '401':
+          description: Credenciales inválidas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Invalid email or password
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal Server Error
+  /register:
+    post:
+      summary: Registrar un nuevo usuario
+      operationId: registerUser
+      requestBody:
+        description: Datos del usuario a registrar
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewUser'
+      responses:
+        '201':
+          description: Usuario registrado exitosamente
+        '400':
+          description: Solicitud incorrecta
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Bad Request
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal Server Error
+  /treatments:
+    get:
+      summary: Obtener todos los tratamientos de un usuario
+      operationId: getTreatments
+      parameters:
+        - in: query
+          name: userId
+          schema:
+            type: number
+          required: true
+          description: ID del usuario para filtrar tratamientos
+      responses:
+        '200':
+          description: Lista de tratamientos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Treatment'
+        '400':
+          description: Solicitud incorrecta
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Bad Request
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal Server Error
+    post:
+      summary: Crear tratamiento
+      operationId: createTreatment
+      requestBody:
+        description: Datos del tratamiento a crear
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewTreatment'
+      responses:
+        '200':
+          description: Tratamiento creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Treatment'
+        '400':
+          description: Solicitud incorrecta
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Bad Request
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal Server Error
+  /treatments/{treatmentId}:
+    get:
+      summary: Obtener datos de un tratamiento específico
+      operationId: getTreatmentById
+      parameters:
+        - in: path
+          name: treatmentId
+          schema:
+            type: number
+          required: true
+          description: ID del tratamiento
+      responses:
+        '200':
+          description: Datos del tratamiento
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Treatment'
+        '400':
+          description: Solicitud incorrecta
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Bad Request
+        '404':
+          description: Tratamiento no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Not Found
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal Server Error
+    put:
+      summary: Actualizar un tratamiento
+      operationId: updateTreatment
+      parameters:
+        - in: path
+          name: treatmentId
+          schema:
+            type: number
+          required: true
+          description: ID del tratamiento
+      requestBody:
+        description: Datos del tratamiento a actualizar
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewTreatment'
+      responses:
+        '200':
+          description: Tratamiento actualizado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Treatment'
+        '400':
+          description: Solicitud incorrecta
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Bad Request
+        '404':
+          description: Tratamiento no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Treatment not found
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal Server Error
+    delete:
+      summary: Eliminar un tratamiento
+      operationId: deleteTreatment
+      parameters:
+        - in: path
+          name: treatmentId
+          schema:
+            type: number
+          required: true
+          description: ID del tratamiento
+      responses:
+        '204':
+          description: Tratamiento eliminado exitosamente
+        '404':
+          description: Tratamiento no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Treatment not found
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal Server Error
+  /treatments/{treatmentId}/intakes:
+    get:
+      summary: Obtener todas las tomas de un tratamiento
+      operationId: getIntakesByTreatment
+      parameters:
+        - in: path
+          name: treatmentId
+          schema:
+            type: number
+          required: true
+          description: ID del tratamiento
+      responses:
+        '200':
+          description: Lista de tomas del tratamiento
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DosingSchedule'
+        '400':
+          description: Solicitud incorrecta
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Bad Request
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal Server Error
+    post:
+      summary: Añadir una toma de medicamento a un tratamiento
+      operationId: createIntake
+      parameters:
+        - in: path
+          name: treatmentId
+          schema:
+            type: number
+          required: true
+          description: ID del tratamiento
+      requestBody:
+        description: Datos de la toma
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewDosingSchedule'
+      responses:
+        '201':
+          description: Toma creada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DosingSchedule'
+        '400':
+          description: Solicitud incorrecta
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Bad Request
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal Server Error
+  /treatments/{treatmentId}/intakes/{intakeId}:
+    delete:
+      summary: Eliminar una toma de medicamento de un tratamiento
+      operationId: deleteIntake
+      parameters:
+        - in: path
+          name: treatmentId
+          schema:
+            type: number
+          required: true
+          description: ID del tratamiento
+        - in: path
+          name: intakeId
+          schema:
+            type: number
+          required: true
+          description: ID de la toma
+      responses:
+        '204':
+          description: Toma eliminada exitosamente
+        '400':
+          description: Solicitud incorrecta
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Bad Request
+        '404':
+          description: Toma no encontrada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Not Found
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal Server Error
+  /medicines:
+    get:
+      summary: Obtener todas las medicinas disponibles en el sistema
+      operationId: getAllMedicines
+      responses:
+        '200':
+          description: Lista de medicinas disponibles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Medicine'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal Server Error
+components:
+  schemas:
+    Treatment:
+      type: object
+      properties:
+        id:
+          type: number
+          description: ID del tratamiento
+        name:
+          type: string
+        userId:
+          type: number
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+      required:
+        - id
+        - name
+        - userId
+        - startDate
+    NewTreatment:
+      type: object
+      properties:
+        name:
+          type: string
+        userId:
+          type: number
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+      required:
+        - name
+        - userId
+        - startDate
+    LoginCredentials:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: Email del usuario
+        password:
+          type: string
+          description: Contraseña del usuario
+      required:
+        - email
+        - password
+    NewUser:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+        birthdate:
+          type: string
+          format: date
+        profilePictureUrl:
+          type: string
+          format: uri
+        gender:
+          type: string
+          enum:
+            - male
+            - female
+      required:
+        - username
+        - password
+        - email
+    DosingSchedule:
+      type: object
+      properties:
+        id:
+          type: number
+          description: ID de la toma
+        medicineId:
+          type: number
+          description: ID del medicamento
+        medicineName:
+          type: string
+          description: Nombre del medicamento
+        treatmentId:
+          type: number
+          description: ID del tratamiento
+        startDate:
+          type: string
+          format: date
+          description: Fecha de inicio de la toma
+        endDate:
+          type: string
+          format: date
+          description: Fecha de fin de la toma (opcional)
+        doseAmount:
+          type: number
+          format: double
+          description: Cantidad de dosis
+        doseUnit:
+          type: string
+          description: Unidad de dosis (comprimidos, ml, etc)
+        dosingTimes:
+          type: array
+          description: Horarios de toma
+          items:
+            $ref: '#/components/schemas/DosingTime'
+      required:
+        - id
+        - medicineId
+        - medicineName
+        - treatmentId
+        - startDate
+        - doseAmount
+        - doseUnit
+        - dosingTimes
+    NewDosingSchedule:
+      type: object
+      properties:
+        medicineId:
+          type: number
+          description: ID del medicamento
+        treatmentId:
+          type: number
+          description: ID del tratamiento
+        startDate:
+          type: string
+          format: date
+          description: Fecha de inicio de la toma
+        endDate:
+          type: string
+          format: date
+          description: Fecha de fin de la toma (opcional)
+        doseAmount:
+          type: number
+          format: double
+          description: Cantidad de dosis
+        doseUnit:
+          type: string
+          description: Unidad de dosis (comprimidos, ml, etc)
+        dosingTimes:
+          type: array
+          description: Horarios de toma
+          items:
+            $ref: '#/components/schemas/NewDosingTime'
+      required:
+        - medicineId
+        - treatmentId
+        - startDate
+        - doseAmount
+        - doseUnit
+        - dosingTimes
+    DosingTime:
+      type: object
+      properties:
+        id:
+          type: number
+          description: ID de la toma
+        dosingScheduleId:
+          type: number
+          description: ID del schedule de dosificación
+        scheduledTime:
+          type: string
+          pattern: ^([01]?[0-9]|2[0-3]):[0-5][0-9]$
+          description: Hora de la toma (HH:mm)
+        dayOfWeek:
+          oneOf:
+            - type: integer
+              minimum: 1
+              maximum: 7
+            - type: 'null'
+          description: Día de la semana (1=Lunes, 7=Domingo). NULL para tomas diarias.
+      required:
+        - id
+        - dosingScheduleId
+        - scheduledTime
+    NewDosingTime:
+      type: object
+      properties:
+        scheduledTime:
+          type: string
+          pattern: ^([01]?[0-9]|2[0-3]):[0-5][0-9]$
+          description: Hora de la toma (HH:mm)
+        dayOfWeek:
+          oneOf:
+            - type: integer
+              minimum: 1
+              maximum: 7
+            - type: 'null'
+          description: Día de la semana (1=Lunes, 7=Domingo). NULL para tomas diarias.
+      required:
+        - scheduledTime
+    Medicine:
+      type: object
+      properties:
+        id:
+          type: number
+          description: ID del medicamento
+        name:
+          type: string
+          description: Nombre del medicamento
+        pictureUrl:
+          type: string
+          format: uri
+          description: URL de la imagen del medicamento
+      required:
+        - id
+        - name
