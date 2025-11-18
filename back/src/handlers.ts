@@ -14,6 +14,7 @@ import {
   deleteIntakeFromTreatment,
   getIntakesByTreatmentId,
 } from "./repository/intakeRepository";
+import { getUserById } from "./repository/userRepository";
 
 export const handlers: RouteHandlers = {
   healthCheck: async (request, reply) => {
@@ -45,14 +46,14 @@ export const handlers: RouteHandlers = {
 
   getTreatments: async (request, reply) => {
     try {
-      const userId = request.query.userId;
-
-      const treatments = await getTreatmentsByUserId(userId);
-
-      if (treatments.length === 0) {
-        return await reply.status(404).send({ error: "User not found" });
+      const userId = Number(request.query.userId);
+      
+      const user = await getUserById(userId);
+      if (!user) {
+        return reply.status(404).send({ error: "User not found" });
       }
 
+      const treatments = await getTreatmentsByUserId(userId);
       await reply.status(200).send(treatments);
     } catch (err) {
       console.error("Error in getTreatments:", err);

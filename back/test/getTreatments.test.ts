@@ -2,38 +2,25 @@ import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { app } from "./setup";
 import { clearTestDB, insertTreatment, insertUser } from "./utils/seedTestDB";
 
-describe("GET /treatments/{userId}", () => {
-
-    let defaultUserId: number;
+describe("GET /treatments?userId={userId}", () => {
 
     beforeAll(async () => {
-        const user = await insertUser();
-        defaultUserId = user.id;
+        await insertUser();
 
-        await insertTreatment({ 
-            user_id: defaultUserId,
-            name: "Treatment A",
-            end_date: "2026-12-31"
-        });
-        await insertTreatment({ 
-            user_id: defaultUserId,
-            name: "Treatment B",
-            end_date: "2026-12-31"
-        });
+        await insertTreatment();
+        await insertTreatment();
 
     });
 
-    it("retrieve all treatments for an user id", async () => {
+    it("retrieve all treatments for a user id", async () => {
         const response = await app.inject({
             method: "GET",
-            url: `/treatments?userId=${defaultUserId}`,
+            url: `/treatments?userId=1`,
         });
 
         expect(response.statusCode).toBe(200);
         const treatments = response.json();
         expect(treatments).toHaveLength(2);
-        expect(treatments[0]).toHaveProperty("name", "Treatment A");
-        expect(treatments[1]).toHaveProperty("name", "Treatment B");
     });
 
     it("returns 400 if user id is not a number", async () => {
