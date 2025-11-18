@@ -48,10 +48,10 @@ export const intakesHandlers: Partial<RouteHandlers> = {
         }),
       };
 
-      await reply.status(201).send(response);
-    } catch (err) {
-      console.error("Error in createIntake:", err);
-      await reply.status(500).send({ error: "Internal Server Error" });
+      return reply.status(201).send(response);
+    } catch (error) {
+      request.log.error(error);
+      return reply.status(500).send({ error: "Internal Server Error" });
     }
   },
 
@@ -59,10 +59,10 @@ export const intakesHandlers: Partial<RouteHandlers> = {
     try {
       const treatmentId = Number(request.params.treatmentId);
       const intakes = await getIntakesByTreatmentId(treatmentId);
-      reply.status(200).send(intakes);
+      return reply.status(200).send(intakes);
     } catch (error) {
       request.log.error(error);
-      reply.status(500).send({ error: "Internal Server Error" });
+      return reply.status(500).send({ error: "Internal Server Error" });
     }
   },
 
@@ -79,7 +79,7 @@ export const intakesHandlers: Partial<RouteHandlers> = {
       reply.status(204).send();
     } catch (error) {
       request.log.error(error);
-      reply.status(500).send({ error: "Internal Server Error" });
+      return reply.status(500).send({ error: "Internal Server Error" });
     }
   },
 };

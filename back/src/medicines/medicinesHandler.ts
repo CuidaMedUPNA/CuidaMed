@@ -6,8 +6,8 @@ export const medicinesHandler: Partial<RouteHandlers> = {
     try {
       const medicines = await getAllMedicines();
       return reply.status(200).send(medicines);
-    } catch (err) {
-      console.error("Error in getAllMedicines:", err);
+    } catch (error) {
+      request.log.error(error);
       return reply.status(500).send({ error: "Internal Server Error" });
     }
   },
