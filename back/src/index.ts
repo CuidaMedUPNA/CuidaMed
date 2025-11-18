@@ -14,7 +14,7 @@ const __dirname = dirname(__filename);
 const fastify = Fastify({ logger: true });
 
 const options = {
-  specification: path.resolve(__dirname, "../../api/openapi.yaml"),
+  specification: path.resolve(__dirname, "../../api/openapi/bundled.yaml"),
   service: handlers,
 };
 fastify.register(openapiGlue, options);
