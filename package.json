@@ -21,8 +21,5 @@
   "dependencies": {
     "expo-location": "^19.0.7",
     "react-native-maps": "^1.20.1"
-  },
-  "devDependencies": {
-    "jsonwebtoken": "^9.0.2"
   }
 }
