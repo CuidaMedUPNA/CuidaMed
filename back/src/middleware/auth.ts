@@ -31,11 +31,11 @@ export async function authMiddleware(
       return reply.status(401).send({ error: "Missing token" });
     }
 
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET ||
-        "your_super_secret_key_that_is_at_least_32_characters_long_for_secure_jwt_signing_purposes_12345"
-    ) as JWTPayload;
+    if (!process.env.JWT_SECRET) {
+      throw new Error("JWT_SECRET is not defined");
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET) as JWTPayload;
 
     Object.assign(request, { user: decoded });
   } catch (error) {

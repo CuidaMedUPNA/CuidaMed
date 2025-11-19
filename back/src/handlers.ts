@@ -33,10 +33,13 @@ export const handlers: RouteHandlers = {
         return reply.status(401).send({ error: "Invalid email or password" });
       }
 
+      if (!process.env.JWT_SECRET) {
+        throw new Error("JWT_SECRET is not defined");
+      }
+
       const token = jwt.sign(
         { userId: user.id, email: user.email },
-        process.env.JWT_SECRET ||
-          "your_super_secret_key_that_is_at_least_32_characters_long_for_secure_jwt_signing_purposes_12345",
+        process.env.JWT_SECRET,
         { expiresIn: "24h" }
       );
 
