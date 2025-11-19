@@ -1,6 +1,8 @@
 import * as React from "react";
 import { Platform } from "react-native";
 import * as SecureStore from "expo-secure-store";
+import { useMutation } from "@tanstack/react-query";
+import { loginMutation, registerUserMutation } from "@cuidamed-api/client";
 
 interface AuthContextType {
   isLogged: boolean;
@@ -11,6 +13,7 @@ interface AuthContextType {
     name: string,
     email: string,
     password: string,
+    username: string,
     birthDate: string,
     gender: string
   ) => Promise<void>;
@@ -65,6 +68,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = React.useState(true);
   const [userEmail, setUserEmail] = React.useState<string | null>(null);
 
+  const loginMutationQuery = useMutation(loginMutation());
+  const registerMutationQuery = useMutation(registerUserMutation());
+
   React.useEffect(() => {
     checkStoredLogin();
   }, []);
@@ -87,11 +93,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
-      // TODO: Implement actual API login call
-      // For now, we'll just store a dummy token
-      const token = `token_${email}`;
+      const response = await loginMutationQuery.mutateAsync({
+        body: {
+          email,
+          password,
+        },
+      });
+      const token = response?.token;
+      if (!token) {
+        throw new Error("Invalid login response - no token received");
+      }
       await storageHelper.setItem("authToken", token);
       await storageHelper.setItem("userEmail", email);
+
       setIsLogged(true);
       setUserEmail(email);
     } catch (error) {
@@ -114,18 +128,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const register = async (
     name: string,
     email: string,
+    username: string,
     password: string,
     birthDate: string,
     gender: string
   ) => {
     try {
-      // TODO: Implement actual API register call
-      // For now, we'll just simulate successful registration and login
-      const token = `token_${email}`;
-      await storageHelper.setItem("authToken", token);
-      await storageHelper.setItem("userEmail", email);
-      setIsLogged(true);
-      setUserEmail(email);
+      await registerMutationQuery.mutateAsync({
+        body: {
+          username,
+          email,
+          password,
+          birthdate: birthDate,
+          gender: gender as "male" | "female",
+        },
+      });
+      await login(email, password);
     } catch (error) {
       console.error("Register error:", error);
       throw error;
