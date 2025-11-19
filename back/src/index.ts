@@ -15,7 +15,7 @@ const __dirname = dirname(__filename);
 const fastify = Fastify({ logger: true });
 
 fastify.addHook("preHandler", async (request, reply) => {
-  const publicPaths = ["/login", "/register", "/health"];
+  const publicPaths = ["/login", "/register", "/health", "/documentation"];
 
   if (!publicPaths.includes(request.url)) {
     await authMiddleware(request, reply);
