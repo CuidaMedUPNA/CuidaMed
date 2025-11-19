@@ -1,5 +1,5 @@
 import { RouteHandlers } from "@cuidamed-api/server";
-import { NewTreatment, TreatmentUpdate } from "./db/types";
+import { NewTreatment, TreatmentUpdate, NewUser } from "./db/types";
 import { db } from "./db/database";
 import {
   insertTreatment,
@@ -14,6 +14,7 @@ import {
   deleteIntakeFromTreatment,
   getIntakesByTreatmentId,
 } from "./repository/intakeRepository";
+import { createUser } from "./repository/userRepository";
 
 export const handlers: RouteHandlers = {
   healthCheck: async (request, reply) => {
@@ -21,7 +22,24 @@ export const handlers: RouteHandlers = {
   },
 
   registerUser: async (request, reply) => {
-    reply.status(201).send();
+    try {
+      const userData = request.body;
+
+      const newUser: NewUser = {
+        name: userData.username,
+        email: userData.email,
+        password: userData.password,
+        birthdate: userData.birthdate || null,
+        profile_picture: userData.profilePictureUrl || null,
+        gender: userData.gender || null,
+      };
+
+      const createdUser = await createUser(newUser);
+      await reply.status(201).send(createdUser);
+    } catch (error) {
+      request.log.error(error);
+      reply.status(400).send({ error: "Bad Request" });
+    }
   },
 
   createTreatment: async (request, reply) => {
