@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { CreateIntakeData, CreateIntakeErrors, CreateIntakeResponses, CreateTreatmentData, CreateTreatmentErrors, CreateTreatmentResponses, DeleteIntakeData, DeleteIntakeErrors, DeleteIntakeResponses, DeleteTreatmentData, DeleteTreatmentErrors, DeleteTreatmentResponses, GetAllMedicinesData, GetAllMedicinesErrors, GetAllMedicinesResponses, GetIntakesByTreatmentData, GetIntakesByTreatmentErrors, GetIntakesByTreatmentResponses, GetTreatmentByIdData, GetTreatmentByIdErrors, GetTreatmentByIdResponses, GetTreatmentsData, GetTreatmentsErrors, GetTreatmentsResponses, HealthCheckData, HealthCheckResponses, LoginData, LoginErrors, LoginResponses, RegisterUserData, RegisterUserErrors, RegisterUserResponses, UpdateTreatmentData, UpdateTreatmentErrors, UpdateTreatmentResponses } from './types.gen';
+import type { CreateIntakeData, CreateIntakeErrors, CreateIntakeResponses, CreateTreatmentData, CreateTreatmentErrors, CreateTreatmentResponses, DeleteIntakeData, DeleteIntakeErrors, DeleteIntakeResponses, DeleteTreatmentData, DeleteTreatmentErrors, DeleteTreatmentResponses, GetAllMedicinesData, GetAllMedicinesErrors, GetAllMedicinesResponses, GetIntakesByTreatmentData, GetIntakesByTreatmentErrors, GetIntakesByTreatmentResponses, GetProfileData, GetProfileErrors, GetProfileResponses, GetTreatmentByIdData, GetTreatmentByIdErrors, GetTreatmentByIdResponses, GetTreatmentsData, GetTreatmentsErrors, GetTreatmentsResponses, HealthCheckData, HealthCheckResponses, LoginData, LoginErrors, LoginResponses, RegisterUserData, RegisterUserErrors, RegisterUserResponses, UpdateTreatmentData, UpdateTreatmentErrors, UpdateTreatmentResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -21,139 +21,99 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
 /**
  * Health check
  */
-export const healthCheck = <ThrowOnError extends boolean = false>(options?: Options<HealthCheckData, ThrowOnError>) => {
-    return (options?.client ?? client).get<HealthCheckResponses, unknown, ThrowOnError>({
-        url: '/health',
-        ...options
-    });
-};
+export const healthCheck = <ThrowOnError extends boolean = false>(options?: Options<HealthCheckData, ThrowOnError>) => (options?.client ?? client).get<HealthCheckResponses, unknown, ThrowOnError>({ url: '/health', ...options });
 
 /**
  * Iniciar sesión de usuario
  */
-export const login = <ThrowOnError extends boolean = false>(options: Options<LoginData, ThrowOnError>) => {
-    return (options.client ?? client).post<LoginResponses, LoginErrors, ThrowOnError>({
-        url: '/login',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
+export const login = <ThrowOnError extends boolean = false>(options: Options<LoginData, ThrowOnError>) => (options.client ?? client).post<LoginResponses, LoginErrors, ThrowOnError>({
+    url: '/login',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * Registrar un nuevo usuario
  */
-export const registerUser = <ThrowOnError extends boolean = false>(options: Options<RegisterUserData, ThrowOnError>) => {
-    return (options.client ?? client).post<RegisterUserResponses, RegisterUserErrors, ThrowOnError>({
-        url: '/register',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
+export const registerUser = <ThrowOnError extends boolean = false>(options: Options<RegisterUserData, ThrowOnError>) => (options.client ?? client).post<RegisterUserResponses, RegisterUserErrors, ThrowOnError>({
+    url: '/register',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Obtener datos del usuario autenticado
+ */
+export const getProfile = <ThrowOnError extends boolean = false>(options?: Options<GetProfileData, ThrowOnError>) => (options?.client ?? client).get<GetProfileResponses, GetProfileErrors, ThrowOnError>({ url: '/me', ...options });
 
 /**
  * Obtener todos los tratamientos de un usuario
  */
-export const getTreatments = <ThrowOnError extends boolean = false>(options: Options<GetTreatmentsData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetTreatmentsResponses, GetTreatmentsErrors, ThrowOnError>({
-        url: '/treatments',
-        ...options
-    });
-};
+export const getTreatments = <ThrowOnError extends boolean = false>(options: Options<GetTreatmentsData, ThrowOnError>) => (options.client ?? client).get<GetTreatmentsResponses, GetTreatmentsErrors, ThrowOnError>({ url: '/treatments', ...options });
 
 /**
  * Crear tratamiento
  */
-export const createTreatment = <ThrowOnError extends boolean = false>(options: Options<CreateTreatmentData, ThrowOnError>) => {
-    return (options.client ?? client).post<CreateTreatmentResponses, CreateTreatmentErrors, ThrowOnError>({
-        url: '/treatments',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
+export const createTreatment = <ThrowOnError extends boolean = false>(options: Options<CreateTreatmentData, ThrowOnError>) => (options.client ?? client).post<CreateTreatmentResponses, CreateTreatmentErrors, ThrowOnError>({
+    url: '/treatments',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * Eliminar un tratamiento
  */
-export const deleteTreatment = <ThrowOnError extends boolean = false>(options: Options<DeleteTreatmentData, ThrowOnError>) => {
-    return (options.client ?? client).delete<DeleteTreatmentResponses, DeleteTreatmentErrors, ThrowOnError>({
-        url: '/treatments/{treatmentId}',
-        ...options
-    });
-};
+export const deleteTreatment = <ThrowOnError extends boolean = false>(options: Options<DeleteTreatmentData, ThrowOnError>) => (options.client ?? client).delete<DeleteTreatmentResponses, DeleteTreatmentErrors, ThrowOnError>({ url: '/treatments/{treatmentId}', ...options });
 
 /**
  * Obtener datos de un tratamiento específico
  */
-export const getTreatmentById = <ThrowOnError extends boolean = false>(options: Options<GetTreatmentByIdData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetTreatmentByIdResponses, GetTreatmentByIdErrors, ThrowOnError>({
-        url: '/treatments/{treatmentId}',
-        ...options
-    });
-};
+export const getTreatmentById = <ThrowOnError extends boolean = false>(options: Options<GetTreatmentByIdData, ThrowOnError>) => (options.client ?? client).get<GetTreatmentByIdResponses, GetTreatmentByIdErrors, ThrowOnError>({ url: '/treatments/{treatmentId}', ...options });
 
 /**
  * Actualizar un tratamiento
  */
-export const updateTreatment = <ThrowOnError extends boolean = false>(options: Options<UpdateTreatmentData, ThrowOnError>) => {
-    return (options.client ?? client).put<UpdateTreatmentResponses, UpdateTreatmentErrors, ThrowOnError>({
-        url: '/treatments/{treatmentId}',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
+export const updateTreatment = <ThrowOnError extends boolean = false>(options: Options<UpdateTreatmentData, ThrowOnError>) => (options.client ?? client).put<UpdateTreatmentResponses, UpdateTreatmentErrors, ThrowOnError>({
+    url: '/treatments/{treatmentId}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * Obtener todas las tomas de un tratamiento
  */
-export const getIntakesByTreatment = <ThrowOnError extends boolean = false>(options: Options<GetIntakesByTreatmentData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetIntakesByTreatmentResponses, GetIntakesByTreatmentErrors, ThrowOnError>({
-        url: '/treatments/{treatmentId}/intakes',
-        ...options
-    });
-};
+export const getIntakesByTreatment = <ThrowOnError extends boolean = false>(options: Options<GetIntakesByTreatmentData, ThrowOnError>) => (options.client ?? client).get<GetIntakesByTreatmentResponses, GetIntakesByTreatmentErrors, ThrowOnError>({ url: '/treatments/{treatmentId}/intakes', ...options });
 
 /**
  * Añadir una toma de medicamento a un tratamiento
  */
-export const createIntake = <ThrowOnError extends boolean = false>(options: Options<CreateIntakeData, ThrowOnError>) => {
-    return (options.client ?? client).post<CreateIntakeResponses, CreateIntakeErrors, ThrowOnError>({
-        url: '/treatments/{treatmentId}/intakes',
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers
-        }
-    });
-};
+export const createIntake = <ThrowOnError extends boolean = false>(options: Options<CreateIntakeData, ThrowOnError>) => (options.client ?? client).post<CreateIntakeResponses, CreateIntakeErrors, ThrowOnError>({
+    url: '/treatments/{treatmentId}/intakes',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * Eliminar una toma de medicamento de un tratamiento
  */
-export const deleteIntake = <ThrowOnError extends boolean = false>(options: Options<DeleteIntakeData, ThrowOnError>) => {
-    return (options.client ?? client).delete<DeleteIntakeResponses, DeleteIntakeErrors, ThrowOnError>({
-        url: '/treatments/{treatmentId}/intakes/{intakeId}',
-        ...options
-    });
-};
+export const deleteIntake = <ThrowOnError extends boolean = false>(options: Options<DeleteIntakeData, ThrowOnError>) => (options.client ?? client).delete<DeleteIntakeResponses, DeleteIntakeErrors, ThrowOnError>({ url: '/treatments/{treatmentId}/intakes/{intakeId}', ...options });
 
 /**
  * Obtener todas las medicinas disponibles en el sistema
  */
-export const getAllMedicines = <ThrowOnError extends boolean = false>(options?: Options<GetAllMedicinesData, ThrowOnError>) => {
-    return (options?.client ?? client).get<GetAllMedicinesResponses, GetAllMedicinesErrors, ThrowOnError>({
-        url: '/medicines',
-        ...options
-    });
-};
+export const getAllMedicines = <ThrowOnError extends boolean = false>(options?: Options<GetAllMedicinesData, ThrowOnError>) => (options?.client ?? client).get<GetAllMedicinesResponses, GetAllMedicinesErrors, ThrowOnError>({ url: '/medicines', ...options });

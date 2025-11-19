@@ -12,6 +12,8 @@ export type LoginCredentials = AuthLoginCredentials;
 
 export type NewUser = AuthNewUser;
 
+export type UserProfile = AuthUserProfile;
+
 export type DosingSchedule = IntakesDosingSchedule;
 
 export type NewDosingSchedule = IntakesNewDosingSchedule;
@@ -42,7 +44,33 @@ export type AuthNewUser = {
     gender?: 'male' | 'female';
 };
 
+export type AuthUserProfile = {
+    /**
+     * ID del usuario
+     */
+    id: number;
+    /**
+     * Nombre del usuario
+     */
+    name: string;
+    /**
+     * Email del usuario
+     */
+    email: string;
+    /**
+     * Fecha de nacimiento del usuario
+     */
+    birthdate?: string;
+    /**
+     * URL de la foto de perfil
+     */
+    profilePictureUrl?: string;
+    gender?: 'male' | 'female';
+};
+
 export type Auth1Login = unknown;
+
+export type Auth1Me = unknown;
 
 export type Auth1Register = unknown;
 
@@ -287,6 +315,33 @@ export type RegisterUserResponses = {
      */
     201: unknown;
 };
+
+export type GetProfileData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/me';
+};
+
+export type GetProfileErrors = {
+    /**
+     * No autorizado
+     */
+    401: {
+        error?: string;
+    };
+};
+
+export type GetProfileError = GetProfileErrors[keyof GetProfileErrors];
+
+export type GetProfileResponses = {
+    /**
+     * Datos del usuario
+     */
+    200: AuthUserProfile;
+};
+
+export type GetProfileResponse = GetProfileResponses[keyof GetProfileResponses];
 
 export type GetTreatmentsData = {
     body?: never;

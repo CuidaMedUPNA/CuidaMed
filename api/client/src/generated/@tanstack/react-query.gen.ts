@@ -3,8 +3,8 @@
 import { type DefaultError, queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { createIntake, createTreatment, deleteIntake, deleteTreatment, getAllMedicines, getIntakesByTreatment, getTreatmentById, getTreatments, healthCheck, login, type Options, registerUser, updateTreatment } from '../sdk.gen';
-import type { CreateIntakeData, CreateIntakeError, CreateIntakeResponse, CreateTreatmentData, CreateTreatmentError, CreateTreatmentResponse, DeleteIntakeData, DeleteIntakeError, DeleteIntakeResponse, DeleteTreatmentData, DeleteTreatmentError, DeleteTreatmentResponse, GetAllMedicinesData, GetAllMedicinesError, GetAllMedicinesResponse, GetIntakesByTreatmentData, GetIntakesByTreatmentError, GetIntakesByTreatmentResponse, GetTreatmentByIdData, GetTreatmentByIdError, GetTreatmentByIdResponse, GetTreatmentsData, GetTreatmentsError, GetTreatmentsResponse, HealthCheckData, HealthCheckResponse, LoginData, LoginError, LoginResponse, RegisterUserData, RegisterUserError, UpdateTreatmentData, UpdateTreatmentError, UpdateTreatmentResponse } from '../types.gen';
+import { createIntake, createTreatment, deleteIntake, deleteTreatment, getAllMedicines, getIntakesByTreatment, getProfile, getTreatmentById, getTreatments, healthCheck, login, type Options, registerUser, updateTreatment } from '../sdk.gen';
+import type { CreateIntakeData, CreateIntakeError, CreateIntakeResponse, CreateTreatmentData, CreateTreatmentError, CreateTreatmentResponse, DeleteIntakeData, DeleteIntakeError, DeleteIntakeResponse, DeleteTreatmentData, DeleteTreatmentError, DeleteTreatmentResponse, GetAllMedicinesData, GetAllMedicinesError, GetAllMedicinesResponse, GetIntakesByTreatmentData, GetIntakesByTreatmentError, GetIntakesByTreatmentResponse, GetProfileData, GetProfileError, GetProfileResponse, GetTreatmentByIdData, GetTreatmentByIdError, GetTreatmentByIdResponse, GetTreatmentsData, GetTreatmentsError, GetTreatmentsResponse, HealthCheckData, HealthCheckResponse, LoginData, LoginError, LoginResponse, RegisterUserData, RegisterUserError, UpdateTreatmentData, UpdateTreatmentError, UpdateTreatmentResponse } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -36,12 +36,10 @@ const createQueryKey = <TOptions extends Options>(id: string, options?: TOptions
     if (options?.query) {
         params.query = options.query;
     }
-    return [
-        params
-    ];
+    return [params];
 };
 
-export const healthCheckQueryKey = (options?: Options<HealthCheckData>) => createQueryKey("healthCheck", options);
+export const healthCheckQueryKey = (options?: Options<HealthCheckData>) => createQueryKey('healthCheck', options);
 
 /**
  * Health check
@@ -93,7 +91,25 @@ export const registerUserMutation = (options?: Partial<Options<RegisterUserData>
     return mutationOptions;
 };
 
-export const getTreatmentsQueryKey = (options: Options<GetTreatmentsData>) => createQueryKey("getTreatments", options);
+export const getProfileQueryKey = (options?: Options<GetProfileData>) => createQueryKey('getProfile', options);
+
+/**
+ * Obtener datos del usuario autenticado
+ */
+export const getProfileOptions = (options?: Options<GetProfileData>) => queryOptions<GetProfileResponse, GetProfileError, GetProfileResponse, ReturnType<typeof getProfileQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getProfile({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getProfileQueryKey(options)
+});
+
+export const getTreatmentsQueryKey = (options: Options<GetTreatmentsData>) => createQueryKey('getTreatments', options);
 
 /**
  * Obtener todos los tratamientos de un usuario
@@ -145,7 +161,7 @@ export const deleteTreatmentMutation = (options?: Partial<Options<DeleteTreatmen
     return mutationOptions;
 };
 
-export const getTreatmentByIdQueryKey = (options: Options<GetTreatmentByIdData>) => createQueryKey("getTreatmentById", options);
+export const getTreatmentByIdQueryKey = (options: Options<GetTreatmentByIdData>) => createQueryKey('getTreatmentById', options);
 
 /**
  * Obtener datos de un tratamiento específico
@@ -180,7 +196,7 @@ export const updateTreatmentMutation = (options?: Partial<Options<UpdateTreatmen
     return mutationOptions;
 };
 
-export const getIntakesByTreatmentQueryKey = (options: Options<GetIntakesByTreatmentData>) => createQueryKey("getIntakesByTreatment", options);
+export const getIntakesByTreatmentQueryKey = (options: Options<GetIntakesByTreatmentData>) => createQueryKey('getIntakesByTreatment', options);
 
 /**
  * Obtener todas las tomas de un tratamiento
@@ -232,7 +248,7 @@ export const deleteIntakeMutation = (options?: Partial<Options<DeleteIntakeData>
     return mutationOptions;
 };
 
-export const getAllMedicinesQueryKey = (options?: Options<GetAllMedicinesData>) => createQueryKey("getAllMedicines", options);
+export const getAllMedicinesQueryKey = (options?: Options<GetAllMedicinesData>) => createQueryKey('getAllMedicines', options);
 
 /**
  * Obtener todas las medicinas disponibles en el sistema
