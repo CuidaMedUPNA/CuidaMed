@@ -7,6 +7,7 @@ import {
   deleteTreatmentByTreatmentId,
   updateTreatmentById,
 } from "./treatmentRepository";
+import { getUserById } from "../user/userRepository";
 
 export const treatmentHandlers: Partial<RouteHandlers> = {
   createTreatment: async (request, reply) => {
@@ -31,7 +32,11 @@ export const treatmentHandlers: Partial<RouteHandlers> = {
   getTreatments: async (request, reply) => {
     try {
       const userId = request.query.userId;
-      const treatments = await getTreatmentsByUserId(userId);
+      const user = await getUserById(Number(userId));
+      if (!user) {
+        return reply.status(404).send({ error: "User not found" });
+      }
+      const treatments = await getTreatmentsByUserId(Number(userId));
       return reply.status(200).send(treatments);
     } catch (error) {
       request.log.error(error);
