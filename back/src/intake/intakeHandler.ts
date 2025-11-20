@@ -49,8 +49,8 @@ export const intakeHandlers: Partial<RouteHandlers> = {
       };
 
       return reply.status(201).send(response);
-    } catch (err) {
-      request.log.error("Error in createIntake:");
+    } catch (error) {
+      request.log.error(error);
       return reply.status(500).send({ error: "Internal Server Error" });
     }
   },
