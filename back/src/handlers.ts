@@ -67,7 +67,7 @@ export const handlers: RouteHandlers = {
       await reply.status(201).send(createdUser);
     } catch (error) {
       request.log.error(error);
-      reply.status(400).send({ error: "Bad Requester" });
+      reply.status(400).send({ error: "Bad Request" });
     }
   },
 
