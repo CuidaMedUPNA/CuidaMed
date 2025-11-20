@@ -1,5 +1,5 @@
 import { userHandlers } from "./user/userHandler";
-import { healthHandlers } from "./helth/helthHandler";
+import { healthHandlers } from "./health/healthHandler";
 import { treatmentHandlers } from "./treatment/treatmentHandler";
 import { intakeHandlers } from "./intake/intakeHandler";
 import { medicineHandlers } from "./medicine/medicineHandler";
