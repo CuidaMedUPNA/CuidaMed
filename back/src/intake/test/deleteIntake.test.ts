@@ -1,13 +1,13 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { app } from "./setup";
+import { app } from "../../../test/setup";
 import {
   insertDosingSchedule,
   insertMedicine,
   insertUser,
   insertTreatment,
   clearTestDB,
-} from "./utils/seedTestDB";
-import { getIntakesByTreatmentId } from "../src/repository/intakeRepository";
+} from "../../../test/utils/seedTestDB";
+import { getIntakesByTreatmentId } from "../intakeRepository";
 
 describe("DELETE /treatments/{treatmentId}/intakes/{intakeId}", () => {
   let treatmentId: number;

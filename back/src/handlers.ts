@@ -8,15 +8,14 @@ import {
   getTreatmentById,
   updateTreatmentById,
   deleteTreatmentByTreatmentId,
-} from "./repository/treatmentRepository";
-import { getAllMedicines } from "./repository/medicineRepository";
+} from "./treatment/treatmentRepository";
+import { getAllMedicines } from "./medicine/medicineRepository";
 import {
   insertIntakeToTreatment,
   deleteIntakeFromTreatment,
   getIntakesByTreatmentId,
-} from "./repository/intakeRepository";
-import { createUser } from "./repository/userRepository";
-import { validateCredentials } from "./repository/userRepository";
+} from "./intake/intakeRepository";
+import { createUser, validateCredentials } from "./user/userRepository";
 
 export const handlers: RouteHandlers = {
   healthCheck: async (request, reply) => {
