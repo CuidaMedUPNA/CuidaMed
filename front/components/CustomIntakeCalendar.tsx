@@ -1,5 +1,3 @@
-// src/components/CustomIntakeCalendar.tsx
-
 import React, { useMemo, FC } from "react";
 import { Calendar } from "react-native-calendars";
 import { MarkingProps } from "react-native-calendars/src/calendar/day/marking";
@@ -67,7 +65,7 @@ const CustomIntakeCalendar: FC<CustomIntakeCalendarProps> = ({
     if (selectedDate) {
       marks[selectedDate] = {
         selected: true,
-        selectedColor: "#ff0000ff",
+        selectedColor: "#61adf9ff",
         disableTouchEvent: true,
       };
     }
@@ -75,12 +73,32 @@ const CustomIntakeCalendar: FC<CustomIntakeCalendarProps> = ({
     return marks;
   }, [tomasPorDia, selectedDate]);
 
+  const calendarTheme = {
+    backgroundColor: "#ffffff",
+    calendarBackground: "#ffffff",
+    textSectionTitleColor: "#b6c1cd",
+    textSectionTitleDisabledColor: "#d9e1e8",
+    selectedDayBackgroundColor: "#61adf9ff",
+    selectedDayTextColor: "#ffffff",
+    todayTextColor: "#61adf9ff",
+    dayTextColor: "#2d3436",
+    textDisabledColor: "#d9e1e8",
+    dotColor: "#61adf9ff",
+    selectedDotColor: "#ffffff",
+    arrowColor: "#61adf9ff",
+    disabledArrowColor: "#d9e1e8",
+    monthTextColor: "#2d3436",
+    indicatorColor: "#61adf9ff",
+    weekVerticalMargin: 5,
+  };
+
   return (
     <Calendar
       markingType={"multi-dot"}
       onDayPress={onDayPress}
       markedDates={markedDates}
       current={current}
+      theme={calendarTheme}
     />
   );
 };
