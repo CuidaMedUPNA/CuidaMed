@@ -24,7 +24,7 @@ const DATOS_TOMAS_USUARIO: TomasPorDia = {
 
 export default function CalendarScreen() {
   const { t } = useTranslation();
-  const [selectedDate, setSelectedDate] = useState<string>("");
+  const [selectedDate, setSelectedDate] = useState("");
 
   const handleDayPress = (day: DateData) => {
     setSelectedDate(day.dateString);
@@ -56,10 +56,10 @@ export default function CalendarScreen() {
           <View style={styles.card}>
             <Text style={styles.cardTitle}>
               Tomas del{" "}
-              {new Date(selectedDate + "T00:00:00").toLocaleDateString(
-                "es-ES",
-                { day: "numeric", month: "long" }
-              )}
+              {new Date(selectedDate).toLocaleDateString("es-ES", {
+                day: "numeric",
+                month: "long",
+              })}
             </Text>
             {tomasDelDiaSeleccionado.length > 0 ? (
               tomasDelDiaSeleccionado.map((toma, index) => (
@@ -83,10 +83,10 @@ export default function CalendarScreen() {
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: "#f8f9fa" },
-  container: { flex: 1, padding: 16 },
+  safeArea: { flex: 1, backgroundColor: "#fff" },
+  container: { flex: 1, padding: 16, marginTop: 16 },
   header: { alignItems: "flex-start", marginBottom: 16 },
-  title: { fontSize: 32, fontWeight: "bold", color: "#212529" },
+  title: { fontSize: 32, fontWeight: "bold", color: "#000000ff" },
   card: {
     backgroundColor: "#ffffff",
     borderRadius: 16,
