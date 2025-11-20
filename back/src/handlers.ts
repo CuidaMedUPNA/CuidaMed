@@ -8,15 +8,15 @@ import {
   getTreatmentById,
   updateTreatmentById,
   deleteTreatmentByTreatmentId,
-} from "./repository/treatmentRepository";
-import { getAllMedicines } from "./repository/medicineRepository";
+} from "./treatment/treatmentRepository";
+import { getAllMedicines } from "./medicine/medicineRepository";
 import {
   insertIntakeToTreatment,
   deleteIntakeFromTreatment,
   getIntakesByTreatmentId,
-} from "./repository/intakeRepository";
-import { createUser } from "./repository/userRepository";
-import { validateCredentials } from "./repository/userRepository";
+} from "./intake/intakeRepository";
+import { createUser } from "./user/userRepository";
+import { validateCredentials } from "./user/userRepository";
 
 export const handlers: RouteHandlers = {
   healthCheck: async (request, reply) => {
@@ -67,7 +67,7 @@ export const handlers: RouteHandlers = {
       await reply.status(201).send(createdUser);
     } catch (error) {
       request.log.error(error);
-      reply.status(400).send({ error: "Bad Request" });
+      reply.status(400).send({ error: "Bad Requester" });
     }
   },
 
