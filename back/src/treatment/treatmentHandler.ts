@@ -21,30 +21,38 @@ export const treatmentHandlers: Partial<RouteHandlers> = {
       };
 
       const insertedTreatment = await insertTreatment(newTreatment);
-      await reply.status(200).send(insertedTreatment);
+      return reply.status(200).send(insertedTreatment);
     } catch (err) {
       console.error("Error in createTreatment:", err);
-      await reply.status(500).send({ error: "Internal Server Error" });
+      return reply.status(500).send({ error: "Internal Server Error" });
     }
   },
 
   getTreatments: async (request, reply) => {
-    const userId = request.query.userId;
-
-    const treatments = await getTreatmentsByUserId(userId);
-
-    await reply.status(200).send(treatments);
+    try {
+      const userId = request.query.userId;
+      const treatments = await getTreatmentsByUserId(userId);
+      return reply.status(200).send(treatments);
+    } catch (error) {
+      console.error(error);
+      return reply.status(500).send({ error: "Internal Server Error" });
+    }
   },
 
   getTreatmentById: async (request, reply) => {
-    const treatmentId = request.params.treatmentId;
-    const treatment = await getTreatmentById(treatmentId);
+    try {
+      const treatmentId = request.params.treatmentId;
+      const treatment = await getTreatmentById(treatmentId);
 
-    if (!treatment) {
-      return reply.status(404).send({ error: "Treatment not found" });
+      if (!treatment) {
+        return reply.status(404).send({ error: "Treatment not found" });
+      }
+
+      return reply.status(200).send(treatment);
+    } catch (error) {
+      console.error(error);
+      return reply.status(500).send({ error: "Internal Server Error" });
     }
-
-    reply.status(200).send(treatment);
   },
 
   deleteTreatment: async (request, reply) => {
@@ -52,12 +60,12 @@ export const treatmentHandlers: Partial<RouteHandlers> = {
       const treatmentId = Number(request.params.treatmentId);
       const rowsDeleted = await deleteTreatmentByTreatmentId(treatmentId);
       if (rowsDeleted === 0) {
-        reply.status(404).send({ error: "Treatment not found" });
+        return reply.status(404).send({ error: "Treatment not found" });
       }
-      reply.status(204).send();
+      return reply.status(204).send();
     } catch (error) {
-      request.log.error(error);
-      reply.status(500).send({ error: "Internal Server Error" });
+      console.error(error);
+      return reply.status(500).send({ error: "Internal Server Error" });
     }
   },
 
@@ -86,10 +94,10 @@ export const treatmentHandlers: Partial<RouteHandlers> = {
         endDate: treatmentData.endDate ?? undefined,
       };
 
-      await reply.status(200).send(responseTreatment);
+      return reply.status(200).send(responseTreatment);
     } catch (error) {
-      request.log.error(error);
-      reply.status(500).send({ error: "Internal Server Error" });
+      console.error(error);
+      return reply.status(500).send({ error: "Internal Server Error" });
     }
   },
 };
