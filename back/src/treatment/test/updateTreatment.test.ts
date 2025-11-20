@@ -1,6 +1,10 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { app } from "./setup";
-import { insertUser, insertTreatment, clearTestDB } from "./utils/seedTestDB";
+import { app } from "../../../test/setup";
+import {
+  insertUser,
+  insertTreatment,
+  clearTestDB,
+} from "../../../test/utils/seedTestDB";
 
 describe("PUT /treatments/", () => {
   let defaultUserId: number;
