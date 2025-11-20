@@ -22,12 +22,17 @@ export async function getTreatmentsByUserId(userId: number) {
   const today = new Date();
 
   const treatments = await db
-    .selectFrom("treatment")
-    .selectAll()
-    .where("user_id", "=", userId)
-    .where("end_date", ">", today)
-    .where("start_date", "<=", today)
-    .execute();
+  .selectFrom("treatment")
+  .selectAll()
+  .where("user_id", "=", userId)
+  .where("start_date", "<=", today)
+  .where(eb =>
+    eb.or([
+      eb("end_date", ">", today),
+      eb("end_date", "is", null)
+    ])
+  )
+  .execute();
 
   const treatmentsWithDates: Treatment[] = treatments.map((treatment) => ({
     name: treatment.name,
