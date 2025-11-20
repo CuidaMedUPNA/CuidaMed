@@ -71,6 +71,10 @@ export const handlers: RouteHandlers = {
     }
   },
 
+  getProfile: async (request, reply) => {
+    reply.status(200).send();
+  },
+
   createTreatment: async (request, reply) => {
     try {
       const treatment = request.body;
