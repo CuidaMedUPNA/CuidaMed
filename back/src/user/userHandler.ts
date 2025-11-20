@@ -24,10 +24,10 @@ export const userHandlers: Partial<RouteHandlers> = {
         { expiresIn: "24h" }
       );
 
-      await reply.status(200).send({ token });
+      return reply.status(200).send({ token });
     } catch (error) {
       request.log.error(error);
-      reply.status(400).send({ error: "Bad Request" });
+      return reply.status(400).send({ error: "Bad Request" });
     }
   },
 
@@ -45,14 +45,14 @@ export const userHandlers: Partial<RouteHandlers> = {
       };
 
       const createdUser = await createUser(newUser);
-      await reply.status(201).send(createdUser);
+      return reply.status(201).send(createdUser);
     } catch (error) {
       request.log.error(error);
-      reply.status(400).send({ error: "Bad Request" });
+      return reply.status(400).send({ error: "Bad Request" });
     }
   },
 
   getProfile: async (request, reply) => {
-    reply.status(200).send();
+    return reply.status(200).send();
   },
 };

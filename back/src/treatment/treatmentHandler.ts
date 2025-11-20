@@ -22,8 +22,8 @@ export const treatmentHandlers: Partial<RouteHandlers> = {
 
       const insertedTreatment = await insertTreatment(newTreatment);
       return reply.status(200).send(insertedTreatment);
-    } catch (err) {
-      console.error("Error in createTreatment:", err);
+    } catch (error) {
+      request.log.error(error);
       return reply.status(500).send({ error: "Internal Server Error" });
     }
   },
@@ -34,7 +34,7 @@ export const treatmentHandlers: Partial<RouteHandlers> = {
       const treatments = await getTreatmentsByUserId(userId);
       return reply.status(200).send(treatments);
     } catch (error) {
-      console.error(error);
+      request.log.error(error);
       return reply.status(500).send({ error: "Internal Server Error" });
     }
   },
@@ -50,7 +50,7 @@ export const treatmentHandlers: Partial<RouteHandlers> = {
 
       return reply.status(200).send(treatment);
     } catch (error) {
-      console.error(error);
+      request.log.error(error);
       return reply.status(500).send({ error: "Internal Server Error" });
     }
   },
@@ -64,7 +64,7 @@ export const treatmentHandlers: Partial<RouteHandlers> = {
       }
       return reply.status(204).send();
     } catch (error) {
-      console.error(error);
+      request.log.error(error);
       return reply.status(500).send({ error: "Internal Server Error" });
     }
   },
@@ -96,7 +96,7 @@ export const treatmentHandlers: Partial<RouteHandlers> = {
 
       return reply.status(200).send(responseTreatment);
     } catch (error) {
-      console.error(error);
+      request.log.error(error);
       return reply.status(500).send({ error: "Internal Server Error" });
     }
   },
