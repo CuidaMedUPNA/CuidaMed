@@ -46,7 +46,7 @@ export const treatmentHandlers: Partial<RouteHandlers> = {
 
   getTreatmentById: async (request, reply) => {
     try {
-      const treatmentId = request.params.treatmentId;
+      const treatmentId = Number(request.params.treatmentId);
       const treatment = await getTreatmentById(treatmentId);
 
       if (!treatment) {
