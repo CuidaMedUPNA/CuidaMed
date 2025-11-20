@@ -15,8 +15,7 @@ import {
   deleteIntakeFromTreatment,
   getIntakesByTreatmentId,
 } from "./intake/intakeRepository";
-import { createUser } from "./user/userRepository";
-import { validateCredentials } from "./user/userRepository";
+import { createUser, validateCredentials } from "./user/userRepository";
 
 export const handlers: RouteHandlers = {
   healthCheck: async (request, reply) => {
