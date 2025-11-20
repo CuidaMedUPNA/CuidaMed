@@ -3,6 +3,10 @@ import { Platform } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import { useMutation } from "@tanstack/react-query";
 import { loginMutation, registerUserMutation } from "@cuidamed-api/client";
+import {
+  registerAuthInterceptor,
+  registerErrorInterceptor,
+} from "../api/client";
 
 interface AuthContextType {
   isLogged: boolean;
@@ -10,7 +14,6 @@ interface AuthContextType {
   userEmail: string | null;
   login: (email: string, password: string) => Promise<void>;
   register: (
-    name: string,
     email: string,
     password: string,
     username: string,
@@ -71,6 +74,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const loginMutationQuery = useMutation(loginMutation());
   const registerMutationQuery = useMutation(registerUserMutation());
 
+  // Register auth interceptors on mount
+  React.useEffect(() => {
+    registerAuthInterceptor();
+    registerErrorInterceptor(() => {
+      // Logout callback - when 401 is received
+      setIsLogged(false);
+      setUserEmail(null);
+    });
+  }, []);
+
   React.useEffect(() => {
     checkStoredLogin();
   }, []);
@@ -93,6 +106,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
+      console.log("Attempting login for:", email);
+      console.log("Password:", password);
       const response = await loginMutationQuery.mutateAsync({
         body: {
           email,
@@ -100,6 +115,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         },
       });
       const token = response?.token;
+      console.log("Login successful, received token:", token);
       if (!token) {
         throw new Error("Invalid login response - no token received");
       }
@@ -126,7 +142,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const register = async (
-    name: string,
     email: string,
     username: string,
     password: string,
