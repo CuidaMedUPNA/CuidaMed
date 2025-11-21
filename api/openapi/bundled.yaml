@@ -44,6 +44,9 @@ paths:
                   token:
                     type: string
                     description: JWT token para autenticación
+                  userId:
+                    type: number
+                    description: ID del usuario autenticado
         '400':
           description: Solicitud incorrecta
           content:
