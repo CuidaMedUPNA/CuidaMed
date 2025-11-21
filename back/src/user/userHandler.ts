@@ -1,7 +1,13 @@
 import { RouteHandlers } from "@cuidamed-api/server";
-import { validateCredentials, createUser } from "./userRepository";
+import {
+  validateCredentials,
+  createUser,
+  getUserProfile,
+} from "./userRepository";
 import { NewUser } from "../db/types";
 import jwt from "jsonwebtoken";
+
+type Gender = "male" | "female" | undefined;
 
 export const userHandlers: Partial<RouteHandlers> = {
   login: async (request, reply) => {
@@ -53,6 +59,28 @@ export const userHandlers: Partial<RouteHandlers> = {
   },
 
   getProfile: async (request, reply) => {
-    return reply.status(200).send();
+    const user = (request as any).user;
+
+    if (!user) {
+      return reply.status(401).send({ error: "Unauthorized" });
+    }
+
+    const userId = user.userId;
+    const profile = await getUserProfile(userId);
+
+    if (!profile) {
+      return reply.status(404).send({ error: "User not found" });
+    }
+
+    const mappedProfile = {
+      id: profile.id,
+      name: profile.name,
+      email: profile.email,
+      birthdate: profile.birthdate || undefined,
+      profilePictureUrl: profile.profile_picture || undefined,
+      gender: profile.gender as Gender,
+    };
+
+    return reply.status(200).send(mappedProfile);
   },
 };

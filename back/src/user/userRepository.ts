@@ -45,3 +45,13 @@ export async function validateCredentials(email: string, password: string) {
 
   return user;
 }
+
+export async function getUserProfile(userId: number) {
+  const user = await db
+    .selectFrom("user")
+    .select(["id", "name", "email", "birthdate", "profile_picture", "gender"])
+    .where("id", "=", userId)
+    .executeTakeFirst();
+
+  return user;
+}

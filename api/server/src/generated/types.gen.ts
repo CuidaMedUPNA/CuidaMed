@@ -330,6 +330,12 @@ export type GetProfileErrors = {
     401: {
         error?: string;
     };
+    /**
+     * Usuario no encontrado
+     */
+    404: {
+        error?: string;
+    };
 };
 
 export type GetProfileError = GetProfileErrors[keyof GetProfileErrors];
