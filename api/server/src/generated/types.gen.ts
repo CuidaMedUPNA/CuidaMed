@@ -277,6 +277,10 @@ export type LoginResponses = {
          * JWT token para autenticación
          */
         token?: string;
+        /**
+         * ID del usuario autenticado
+         */
+        userId?: number;
     };
 };
 
