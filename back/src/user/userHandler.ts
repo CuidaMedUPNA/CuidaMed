@@ -61,8 +61,7 @@ export const userHandlers: Partial<RouteHandlers> = {
   getProfile: async (request, reply) => {
     const user = (request as any).user;
 
-    const userId = user.userId;
-    const profile = await getUserProfile(userId);
+    const profile = await getUserProfile(user.id);
 
     if (!profile) {
       return reply.status(404).send({ error: "User not found" });
