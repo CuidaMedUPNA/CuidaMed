@@ -109,8 +109,6 @@ const TreatmentsList = ({
     },
   });
 
-  const deleteTreatmentHandler = (treatmentId: number) => {};
-
   return (
     <View style={styles.listContainer}>
       <ScrollView
