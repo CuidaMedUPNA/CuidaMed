@@ -53,12 +53,12 @@ export default function LoginScreen() {
         contentContainerStyle={styles.content}
       >
         <View style={styles.logoSection}>
-          <Text style={styles.appName}>CuidaMed</Text>
-          <Text style={styles.tagline}>Tu salud, bajo control</Text>
+          <Text style={styles.appName}>{t("appName")}</Text>
+          <Text style={styles.tagline}>{t("login.tagline")}</Text>
         </View>
 
         <View style={styles.formSection}>
-          <Text style={styles.title}>Iniciar Sesión</Text>
+          <Text style={styles.title}>{t("login.title")}</Text>
 
           <View style={styles.inputContainer}>
             <MaterialIcons
@@ -69,7 +69,7 @@ export default function LoginScreen() {
             />
             <TextInput
               style={styles.input}
-              placeholder="Correo electrónico"
+              placeholder={t("login.emailPlaceholder")}
               placeholderTextColor="#999"
               value={email}
               onChangeText={setEmail}
@@ -88,7 +88,7 @@ export default function LoginScreen() {
             />
             <TextInput
               style={styles.input}
-              placeholder="Contraseña"
+              placeholder={t("login.passwordPlaceholder")}
               placeholderTextColor="#999"
               value={password}
               onChangeText={setPassword}
@@ -118,7 +118,9 @@ export default function LoginScreen() {
             {isLoading ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text style={styles.loginButtonText}>Iniciar Sesión</Text>
+              <Text style={styles.loginButtonText}>
+                {t("login.loginButton")}
+              </Text>
             )}
           </TouchableOpacity>
 
@@ -127,18 +129,18 @@ export default function LoginScreen() {
             disabled={isLoading}
           >
             <Text style={styles.forgotPasswordText}>
-              ¿Olvidaste tu contraseña?
+              {t("login.forgotPassword")}
             </Text>
           </TouchableOpacity>
         </View>
 
         <View style={styles.registerSection}>
-          <Text style={styles.registerText}>¿No tienes cuenta?</Text>
+          <Text style={styles.registerText}>{t("login.noAccount")}</Text>
           <TouchableOpacity
             disabled={isLoading}
             onPress={() => router.push("/register")}
           >
-            <Text style={styles.registerLink}>Crear una ahora</Text>
+            <Text style={styles.registerLink}>{t("login.registerHere")}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
