@@ -87,6 +87,8 @@ const CustomNavBar: React.FC<BottomTabBarProps> = ({
         return <MaterialIcons name="person" size={30} color={color} />;
       case "maps":
         return <MaterialIcons name="location-on" size={30} color={color} />;
+      case "calendar":
+        return <MaterialIcons name="calendar-month" size={30} color={color} />;
       default:
         return <MaterialIcons name="circle" size={30} color={color} />;
     }
@@ -99,13 +101,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     backgroundColor: PRIMARY_COLOUR,
-    width: "80%",
+    width: "95%",
     alignSelf: "center",
     bottom: 40,
     borderRadius: 40,
     paddingHorizontal: 12,
     paddingVertical: 15,
-    shadowColor: "#2b00ffff",
+    shadowColor: "#ff0000ff",
     shadowOffset: {
       width: 0,
       height: 5,
