@@ -24,7 +24,8 @@
     "home": "Inicio",
     "treatments": "Tratamientos",
     "profile": "Perfil",
-    "maps": "Mapa"
+    "maps": "Mapa",
+    "calendar": "Calendario"
   },
   "treatments": {
     "treatmentsTitle": "Mis Tratamientos",
