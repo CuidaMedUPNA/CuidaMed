@@ -1,5 +1,6 @@
 {
   "type": "module",
+  "name": "back",
   "scripts": {
     "dev": "nodemon --watch src --ext ts --exec tsx src/index.ts",
     "start": "tsx src/index.ts",
@@ -12,9 +13,11 @@
     "@fastify/static": "^8.2.0",
     "dotenv": "^17.2.2",
     "fastify": "^5.6.0",
+    "typescript": "^5.9.2",
     "fastify-openapi-glue": "^4.9.2",
     "jsonwebtoken": "^9.0.2",
     "kysely": "^0.28.7",
+    "tsx": "^4.20.5",
     "pg": "^8.16.3"
   },
   "devDependencies": {
@@ -28,8 +31,6 @@
     "nodemon": "^3.1.10",
     "pg-mem": "^3.0.5",
     "ts-node": "^10.9.2",
-    "tsx": "^4.20.5",
-    "typescript": "^5.9.2",
     "typescript-eslint": "^8.46.0",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4"
