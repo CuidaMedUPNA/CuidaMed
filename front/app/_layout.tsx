@@ -3,13 +3,8 @@ import { Stack, useRouter, useSegments } from "expo-router";
 import { ActivityIndicator, View } from "react-native";
 import "@/i18n";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { client } from "@cuidamed-api/client";
-import { API_URL } from "@/config";
+import "@/api/client";
 import { useEffect } from "react";
-
-client.setConfig({
-  baseUrl: API_URL,
-});
 
 const queryClient = new QueryClient();
 

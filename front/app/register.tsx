@@ -21,7 +21,7 @@ const logo = require("@/assets/images/logo.png");
 
 export default function RegisterScreen() {
   const { t } = useTranslation();
-  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [birthDate, setBirthDate] = useState<Date | undefined>(undefined);
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -43,7 +43,7 @@ export default function RegisterScreen() {
   };
 
   const handleRegister = async () => {
-    if (!name || !email || !birthDate || !gender || !password) {
+    if (!username || !email || !birthDate || !gender || !password) {
       Alert.alert(t("errors.required"), t("errors.fillAllFields"));
       return;
     }
@@ -60,7 +60,13 @@ export default function RegisterScreen() {
 
     try {
       setIsLoading(true);
-      await register(name, email, password, birthDate.toISOString(), gender);
+      await register(
+        username,
+        email,
+        password,
+        birthDate.toISOString(),
+        gender
+      );
     } catch {
       Alert.alert(t("errors.registerFailed"), t("errors.tryAgain"));
     } finally {
@@ -93,8 +99,8 @@ export default function RegisterScreen() {
               style={styles.input}
               placeholder={t("register.namePlaceholder")}
               placeholderTextColor="#999"
-              value={name}
-              onChangeText={setName}
+              value={username}
+              onChangeText={setUsername}
               editable={!isLoading}
             />
           </View>
