@@ -1,6 +1,5 @@
-import { describe, beforeAll, expect } from "vitest";
+import { describe, beforeAll, expect, it } from "vitest";
 import * as mockInsert from "../../../test/utils/seedTestDB";
-import { it } from "node:test";
 import { app } from "../../../test/setup";
 import jwt from "jsonwebtoken";
 
