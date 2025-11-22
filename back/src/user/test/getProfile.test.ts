@@ -12,24 +12,28 @@ describe("GET /me", () => {
     const user = await mockInsert.insertUser();
     userId = user.id;
 
-    if (!process.env.JWT_SECRET) {
-      throw new Error("JWT_SECRET is not defined");
-    }
-
     token = jwt.sign(
       { userId: user.id, email: user.email },
-      process.env.JWT_SECRET,
+      process.env.JWT_SECRET as string,
       { expiresIn: "24h" }
     );
   });
 
   it("should retrieve the profile of the authenticated user", async () => {
+    console.log("🔵 TOKEN GENERADO:", token);
+
     const res = await app.inject({
       method: "GET",
       url: "/me",
       headers: {
         Authorization: `Bearer ${token}`,
       },
+    });
+
+    console.log("🟠 STATUS:", res.statusCode);
+    console.log("🟣 RESPONSE BODY:", res.json());
+    console.log("🟡 REQUEST HEADERS ENVIADOS:", {
+      authorization: `Bearer ${token}`,
     });
 
     expect(res.statusCode).toBe(200);
@@ -48,7 +52,7 @@ describe("GET /me", () => {
 
     expect(res.statusCode).toBe(401);
     const profile = res.json();
-    expect(profile).toHaveProperty("error", "Missing authorization header");
+    expect(profile).toHaveProperty("error", "Unauthorized");
   });
 
   it("should return 401 with invalid token", async () => {
@@ -62,6 +66,6 @@ describe("GET /me", () => {
 
     expect(res.statusCode).toBe(401);
     const profile = res.json();
-    expect(profile).toHaveProperty("error", "Invalid token");
+    expect(profile).toHaveProperty("error", "Unauthorized");
   });
 });

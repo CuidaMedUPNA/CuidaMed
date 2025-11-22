@@ -17,7 +17,10 @@ export async function authMiddleware(
   }
 
   try {
+    console.log("🔹 AUTH MIDDLEWARE EJECUTADO");
+    console.log("🔹 HEADERS RECIBIDOS:", request.headers);
     const authHeader = request.headers.authorization;
+    console.log("🔹 AUTH HEADER:", authHeader);
 
     if (!authHeader) {
       console.log("Missing authorization header");
@@ -39,6 +42,9 @@ export async function authMiddleware(
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET) as JWTPayload;
+
+    console.log("🔸 TOKEN DECODIFICADO:", decoded);
+    console.log("🔸 USER ASIGNADO A REQUEST:", request.user);
 
     Object.assign(request, { user: decoded });
   } catch (error) {
