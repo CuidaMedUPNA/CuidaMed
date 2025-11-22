@@ -20,6 +20,7 @@ export async function authMiddleware(
     const authHeader = request.headers.authorization;
 
     if (!authHeader) {
+      console.log("Missing authorization header");
       return reply.status(401).send({ error: "Missing authorization header" });
     }
 
@@ -28,10 +29,12 @@ export async function authMiddleware(
       : authHeader;
 
     if (!token) {
+      console.log("Missing token");
       return reply.status(401).send({ error: "Missing token" });
     }
 
     if (!process.env.JWT_SECRET) {
+      console.log("JWT_SECRET is not defined");
       throw new Error("JWT_SECRET is not defined");
     }
 
