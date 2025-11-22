@@ -109,12 +109,12 @@ export const getProfileOptions = (options?: Options<GetProfileData>) => queryOpt
     queryKey: getProfileQueryKey(options)
 });
 
-export const getTreatmentsQueryKey = (options: Options<GetTreatmentsData>) => createQueryKey('getTreatments', options);
+export const getTreatmentsQueryKey = (options?: Options<GetTreatmentsData>) => createQueryKey('getTreatments', options);
 
 /**
- * Obtener todos los tratamientos de un usuario
+ * Obtener todos los tratamientos activos de un usuario
  */
-export const getTreatmentsOptions = (options: Options<GetTreatmentsData>) => queryOptions<GetTreatmentsResponse, GetTreatmentsError, GetTreatmentsResponse, ReturnType<typeof getTreatmentsQueryKey>>({
+export const getTreatmentsOptions = (options?: Options<GetTreatmentsData>) => queryOptions<GetTreatmentsResponse, GetTreatmentsError, GetTreatmentsResponse, ReturnType<typeof getTreatmentsQueryKey>>({
     queryFn: async ({ queryKey, signal }) => {
         const { data } = await getTreatments({
             ...options,

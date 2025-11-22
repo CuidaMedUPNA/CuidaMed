@@ -350,26 +350,15 @@ export type GetProfileResponse = GetProfileResponses[keyof GetProfileResponses];
 export type GetTreatmentsData = {
     body?: never;
     path?: never;
-    query: {
-        /**
-         * ID del usuario para filtrar tratamientos
-         */
-        userId: number;
-    };
+    query?: never;
     url: '/treatments';
 };
 
 export type GetTreatmentsErrors = {
     /**
-     * Solicitud incorrecta
+     * No autorizado
      */
-    400: {
-        error?: string;
-    };
-    /**
-     * Usuario no encontrado
-     */
-    404: {
+    401: {
         error?: string;
     };
     /**
@@ -409,6 +398,12 @@ export type CreateTreatmentErrors = {
         error?: string;
     };
     /**
+     * No autorizado
+     */
+    401: {
+        error?: string;
+    };
+    /**
      * Error interno del servidor
      */
     500: {
@@ -440,6 +435,12 @@ export type DeleteTreatmentData = {
 };
 
 export type DeleteTreatmentErrors = {
+    /**
+     * No autorizado
+     */
+    401: {
+        error?: string;
+    };
     /**
      * Tratamiento no encontrado
      */
@@ -479,9 +480,9 @@ export type GetTreatmentByIdData = {
 
 export type GetTreatmentByIdErrors = {
     /**
-     * Solicitud incorrecta
+     * No autorizado
      */
-    400: {
+    401: {
         error?: string;
     };
     /**
@@ -529,6 +530,12 @@ export type UpdateTreatmentErrors = {
      * Solicitud incorrecta
      */
     400: {
+        error?: string;
+    };
+    /**
+     * No autorizado
+     */
+    401: {
         error?: string;
     };
     /**

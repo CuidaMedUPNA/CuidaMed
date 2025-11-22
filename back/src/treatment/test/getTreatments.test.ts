@@ -4,14 +4,19 @@ import {
   clearTestDB,
   insertUser,
   insertTreatment,
+  generateTestToken,
 } from "../../../test/utils/seedTestDB";
 
-describe("GET /treatments?userId={userId}", () => {
+describe("GET /treatments", () => {
   let testUserId: number;
+  let testToken: string;
 
   beforeAll(async () => {
     const user = await insertUser();
     testUserId = user.id;
+    testToken = generateTestToken(testUserId, "user@example.com");
+
+    process.env.DISABLE_AUTH = "false";
 
     await insertTreatment({
       user_id: testUserId,
@@ -22,43 +27,28 @@ describe("GET /treatments?userId={userId}", () => {
     });
   });
 
-  it("returns the list of active treatments for a userId", async () => {
+  it("returns the list of active treatments for authenticated user", async () => {
     const res = await app.inject({
       method: "GET",
-      url: `/treatments?userId=${testUserId}`,
+      url: `/treatments`,
+      headers: {
+        authorization: `Bearer ${testToken}`,
+      },
     });
+
     expect(res.statusCode).toBe(200);
     const data = res.json();
     expect(Array.isArray(data)).toBe(true);
     expect(data.length).toBe(2);
   });
 
-  it("returns 400 if userId is not provided", async () => {
+  it("returns 401 if no auth token is provided", async () => {
     const res = await app.inject({
       method: "GET",
       url: `/treatments`,
     });
 
-    expect(res.statusCode).toBe(400);
-  });
-
-  it("returns 400 if userId is invalid", async () => {
-    const res = await app.inject({
-      method: "GET",
-      url: `/treatments?userId=abc`,
-    });
-
-    expect(res.statusCode).toBe(400);
-  });
-
-  it("returns 404 if user does not exist", async () => {
-    const res = await app.inject({
-      method: "GET",
-      url: `/treatments?userId=9999`,
-    });
-
-    expect(res.statusCode).toBe(404);
-    expect(res.json().error).toBe("User not found");
+    expect(res.statusCode).toBe(401);
   });
 
   afterAll(async () => {

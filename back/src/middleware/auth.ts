@@ -8,6 +8,12 @@ export interface JWTPayload {
   exp: number;
 }
 
+declare module "fastify" {
+  interface FastifyRequest {
+    user?: JWTPayload;
+  }
+}
+
 export async function authMiddleware(
   request: FastifyRequest,
   reply: FastifyReply

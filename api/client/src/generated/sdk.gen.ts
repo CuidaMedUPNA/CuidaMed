@@ -53,9 +53,9 @@ export const registerUser = <ThrowOnError extends boolean = false>(options: Opti
 export const getProfile = <ThrowOnError extends boolean = false>(options?: Options<GetProfileData, ThrowOnError>) => (options?.client ?? client).get<GetProfileResponses, GetProfileErrors, ThrowOnError>({ url: '/me', ...options });
 
 /**
- * Obtener todos los tratamientos de un usuario
+ * Obtener todos los tratamientos activos de un usuario
  */
-export const getTreatments = <ThrowOnError extends boolean = false>(options: Options<GetTreatmentsData, ThrowOnError>) => (options.client ?? client).get<GetTreatmentsResponses, GetTreatmentsErrors, ThrowOnError>({ url: '/treatments', ...options });
+export const getTreatments = <ThrowOnError extends boolean = false>(options?: Options<GetTreatmentsData, ThrowOnError>) => (options?.client ?? client).get<GetTreatmentsResponses, GetTreatmentsErrors, ThrowOnError>({ url: '/treatments', ...options });
 
 /**
  * Crear tratamiento

@@ -134,15 +134,8 @@ paths:
                     example: Unauthorized
   /treatments:
     get:
-      summary: Obtener todos los tratamientos de un usuario
+      summary: Obtener todos los tratamientos activos de un usuario
       operationId: getTreatments
-      parameters:
-        - in: query
-          name: userId
-          schema:
-            type: number
-          required: true
-          description: ID del usuario para filtrar tratamientos
       responses:
         '200':
           description: Lista de tratamientos
@@ -152,8 +145,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Treatment'
-        '400':
-          description: Solicitud incorrecta
+        '401':
+          description: No autorizado
           content:
             application/json:
               schema:
@@ -161,17 +154,7 @@ paths:
                 properties:
                   error:
                     type: string
-                    example: Bad Request
-        '404':
-          description: Usuario no encontrado
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: User not found
+                    example: Unauthorized
         '500':
           description: Error interno del servidor
           content:
@@ -209,6 +192,16 @@ paths:
                   error:
                     type: string
                     example: Bad Request
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Unauthorized
         '500':
           description: Error interno del servidor
           content:
@@ -237,8 +230,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Treatment'
-        '400':
-          description: Solicitud incorrecta
+        '401':
+          description: No autorizado
           content:
             application/json:
               schema:
@@ -246,7 +239,7 @@ paths:
                 properties:
                   error:
                     type: string
-                    example: Bad Request
+                    example: Unauthorized
         '404':
           description: Tratamiento no encontrado
           content:
@@ -301,6 +294,16 @@ paths:
                   error:
                     type: string
                     example: Bad Request
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Unauthorized
         '404':
           description: Tratamiento no encontrado
           content:
@@ -334,6 +337,16 @@ paths:
       responses:
         '204':
           description: Tratamiento eliminado exitosamente
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Unauthorized
         '404':
           description: Tratamiento no encontrado
           content:
