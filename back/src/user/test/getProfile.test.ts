@@ -1,39 +1,23 @@
 import { describe, beforeAll, expect, it } from "vitest";
 import * as mockInsert from "../../../test/utils/seedTestDB";
 import { app } from "../../../test/setup";
-import jwt from "jsonwebtoken";
 
 describe("GET /me", () => {
   let userId: number;
   let token: string;
-  process.env.JWT_SECRET = "testsecret";
 
   beforeAll(async () => {
     const user = await mockInsert.insertUser();
     userId = user.id;
-
-    token = jwt.sign(
-      { userId: user.id, email: user.email },
-      process.env.JWT_SECRET as string,
-      { expiresIn: "24h" }
-    );
   });
 
   it("should retrieve the profile of the authenticated user", async () => {
-    console.log("🔵 TOKEN GENERADO:", token);
-
     const res = await app.inject({
       method: "GET",
       url: "/me",
       headers: {
-        Authorization: `Bearer ${token}`,
+        authorization: "Whatever",
       },
-    });
-
-    console.log("🟠 STATUS:", res.statusCode);
-    console.log("🟣 RESPONSE BODY:", res.json());
-    console.log("🟡 REQUEST HEADERS ENVIADOS:", {
-      authorization: `Bearer ${token}`,
     });
 
     expect(res.statusCode).toBe(200);

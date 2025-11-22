@@ -54,8 +54,6 @@ export const userHandlers: Partial<RouteHandlers> = {
   },
 
   getProfile: async (request, reply) => {
-    console.log("🟢 HANDLER /me EJECUTADO");
-    console.log("🟢 REQUEST.USER:", request.user);
     const user = request.user;
 
     if (!user) {

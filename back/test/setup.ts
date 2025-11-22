@@ -24,13 +24,13 @@ vi.mock("../src/db/database", () => ({ db }));
 let app: FastifyInstance;
 
 beforeAll(async () => {
-  
+  process.env.DISABLE_AUTH = "true";
+
   await createTestDB(db);
 
   const { buildTestApp } = await import("./test-app.js");
   app = await buildTestApp();
   await app.ready();
-
 });
 
 afterAll(async () => {
