@@ -90,7 +90,7 @@ paths:
                     type: string
                     example: "Internal Server Error"
 
-  /me:
+  /me/{userId}:
     get:
       summary: Obtener datos del usuario autenticado
       operationId: getProfile

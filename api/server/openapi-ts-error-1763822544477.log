@@ -1,0 +1,13 @@
+[2025-11-22T14:42:24.477Z] Error: Missing $ref pointer "#/paths/~1me". Token "/me" does not exist.
+Stack:
+JSONParserError: Missing $ref pointer "#/paths/~1me". Token "/me" does not exist.
+    at Pointer.resolve (/home/alex/.npm/_npx/a3521d5d8f143c4a/node_modules/@hey-api/json-schema-ref-parser/dist/lib/pointer.js:113:23)
+    at $Ref.resolve (/home/alex/.npm/_npx/a3521d5d8f143c4a/node_modules/@hey-api/json-schema-ref-parser/dist/lib/ref.js:79:24)
+    at $Refs._resolve (/home/alex/.npm/_npx/a3521d5d8f143c4a/node_modules/@hey-api/json-schema-ref-parser/dist/lib/refs.js:168:21)
+    at inventory$Ref (/home/alex/.npm/_npx/a3521d5d8f143c4a/node_modules/@hey-api/json-schema-ref-parser/dist/lib/bundle.js:136:25)
+    at crawl (/home/alex/.npm/_npx/a3521d5d8f143c4a/node_modules/@hey-api/json-schema-ref-parser/dist/lib/bundle.js:266:21)
+    at crawl (/home/alex/.npm/_npx/a3521d5d8f143c4a/node_modules/@hey-api/json-schema-ref-parser/dist/lib/bundle.js:281:21)
+    at bundle (/home/alex/.npm/_npx/a3521d5d8f143c4a/node_modules/@hey-api/json-schema-ref-parser/dist/lib/bundle.js:557:5)
+    at $RefParser.bundle (/home/alex/.npm/_npx/a3521d5d8f143c4a/node_modules/@hey-api/json-schema-ref-parser/dist/lib/index.js:143:32)
+    at async G (file:///home/alex/.npm/_npx/a3521d5d8f143c4a/node_modules/@hey-api/openapi-ts/dist/src-C88NdVoQ.js:1:12959)
+    at async file:///home/alex/.npm/_npx/a3521d5d8f143c4a/node_modules/@hey-api/openapi-ts/dist/src-C88NdVoQ.js:10:2578

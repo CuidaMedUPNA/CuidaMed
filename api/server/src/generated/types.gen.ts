@@ -70,7 +70,7 @@ export type AuthUserProfile = {
 
 export type Auth1Login = unknown;
 
-export type Auth1Me = unknown;
+export type Auth1Me1UserId = unknown;
 
 export type Auth1Register = unknown;
 
@@ -329,7 +329,7 @@ export type GetProfileData = {
         userId: number;
     };
     query?: never;
-    url: '/me';
+    url: '/me/{userId}';
 };
 
 export type GetProfileErrors = {

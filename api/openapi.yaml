@@ -31,8 +31,8 @@ paths:
   /register:
     $ref: "./openapi/auth.yaml#/paths/~1register"
 
-  /me:
-    $ref: "./openapi/auth.yaml#/paths/~1me"
+  /me/{userId}:
+    $ref: "./openapi/auth.yaml#/paths/~1me~1{userId}"
 
   /treatments:
     $ref: "./openapi/treatments.yaml#/paths/~1treatments"
