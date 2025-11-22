@@ -11,11 +11,9 @@ describe("GET /me", () => {
     const user = await mockInsert.insertUser();
     userId = user.id;
 
-    token = jwt.sign(
-      { userId: user.id, email: user.email },
-      process.env.JWT_SECRET!,
-      { expiresIn: "24h" }
-    );
+    token = jwt.sign({ userId: userId, email: user.email }, "testsecret", {
+      expiresIn: "24h",
+    });
   });
 
   it("should retrieve the profile of the authenticated user", async () => {
