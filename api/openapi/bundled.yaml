@@ -44,6 +44,9 @@ paths:
                   token:
                     type: string
                     description: JWT token para autenticación
+                  userId:
+                    type: number
+                    description: ID del usuario autenticado
         '400':
           description: Solicitud incorrecta
           content:
@@ -169,6 +172,16 @@ paths:
                   error:
                     type: string
                     example: Bad Request
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: User not found
         '500':
           description: Error interno del servidor
           content:

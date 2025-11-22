@@ -25,16 +25,18 @@ export async function getTreatmentsByUserId(userId: number) {
     .selectFrom("treatment")
     .selectAll()
     .where("user_id", "=", userId)
-    .where("end_date", ">", today)
     .where("start_date", "<=", today)
+    .where((eb) =>
+      eb.or([eb("end_date", ">", today), eb("end_date", "is", null)])
+    )
     .execute();
 
   const treatmentsWithDates: Treatment[] = treatments.map((treatment) => ({
     name: treatment.name,
     userId: treatment.user_id,
     id: treatment.id,
-    startDate: treatment.start_date?.toDateString() || "",
-    endDate: treatment.end_date?.toDateString() || "",
+    startDate: treatment.start_date?.toISOString().split("T")[0] || "",
+    endDate: treatment.end_date?.toISOString().split("T")[0] || "",
   }));
 
   return treatmentsWithDates;

@@ -97,5 +97,15 @@
     "registerButton": "Registrarse",
     "haveAccount": "¿Ya tienes una cuenta?",
     "loginHere": "Inicia sesión aquí"
+  },
+  "login": {
+    "title": "Iniciar sesión",
+    "tagline": "Tu salud, bajo control",
+    "emailPlaceholder": "Correo electrónico",
+    "passwordPlaceholder": "Contraseña",
+    "loginButton": "Iniciar sesión",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "noAccount": "¿No tienes una cuenta?",
+    "registerHere": "Regístrate aquí"
   }
 }

@@ -277,6 +277,10 @@ export type LoginResponses = {
          * JWT token para autenticación
          */
         token?: string;
+        /**
+         * ID del usuario autenticado
+         */
+        userId?: number;
     };
 };
 
@@ -366,6 +370,12 @@ export type GetTreatmentsErrors = {
      * Solicitud incorrecta
      */
     400: {
+        error?: string;
+    };
+    /**
+     * Usuario no encontrado
+     */
+    404: {
         error?: string;
     };
     /**
