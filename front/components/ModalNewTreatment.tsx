@@ -46,8 +46,6 @@ export const ModalNewTreatment = ({
   initialStartDate,
   initialEndDate,
 }: Props) => {
-  const userId = 1;
-
   const queryClient = useQueryClient();
 
   const [treatmentName, setTreatmentName] = useState("");
@@ -60,7 +58,7 @@ export const ModalNewTreatment = ({
     onSuccess: () => {
       console.log("✅ Tratamiento creado con éxito.");
       queryClient.invalidateQueries({
-        queryKey: getTreatmentsQueryKey({ query: { userId } }),
+        queryKey: getTreatmentsQueryKey(),
       });
       onClose();
     },
@@ -94,15 +92,14 @@ export const ModalNewTreatment = ({
       return new Date(dateString).toISOString().split("T")[0];
     };
 
-    const finalEndDate = isPermanent ? startDate! : endDate!;
+    const finalEndDate = isPermanent ? startDate : endDate!;
     const stringStartDate = startDate.toISOString();
     const stringFinalEndDate = finalEndDate.toISOString();
 
     const treatmentData = {
       name: treatmentName,
-      userId: userId,
       startDate: formatDate(stringStartDate!),
-      endDate: formatDate(stringFinalEndDate),
+      endDate: isPermanent ? undefined : formatDate(stringFinalEndDate),
     };
 
     mutation.mutate({ body: treatmentData });

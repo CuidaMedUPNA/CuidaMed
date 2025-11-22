@@ -15,7 +15,7 @@ export const treatmentHandlers: Partial<RouteHandlers> = {
 
       const newTreatment: NewTreatment = {
         name: treatment.name,
-        user_id: Number(treatment.userId),
+        user_id: request.user!.userId,
         start_date: treatment.startDate,
         end_date: treatment.endDate,
       };
@@ -89,7 +89,7 @@ export const treatmentHandlers: Partial<RouteHandlers> = {
       const responseTreatment = {
         id: treatmentId,
         name: treatmentData.name,
-        userId: treatmentData.userId,
+        userId: request.user!.userId,
         startDate: treatmentData.startDate,
         endDate: treatmentData.endDate ?? undefined,
       };

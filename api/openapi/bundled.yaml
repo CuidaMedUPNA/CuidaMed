@@ -552,8 +552,6 @@ components:
       properties:
         name:
           type: string
-        userId:
-          type: number
         startDate:
           type: string
           format: date
@@ -562,7 +560,6 @@ components:
           format: date
       required:
         - name
-        - userId
         - startDate
     LoginCredentials:
       type: object

@@ -197,7 +197,6 @@ export type Medicines1Medicines = unknown;
 
 export type TreatmentsNewTreatment = {
     name: string;
-    userId: number;
     startDate: string;
     endDate?: string;
 };

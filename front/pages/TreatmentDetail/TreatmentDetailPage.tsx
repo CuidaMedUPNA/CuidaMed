@@ -19,11 +19,7 @@ export const TreatmentDetailPage = ({
   const router = useRouter();
   const [modalVisible, setModalVisible] = useState(false);
 
-  const { data: treatments } = useQuery(
-    getTreatmentsOptions({
-      query: { userId: 1 },
-    })
-  );
+  const { data: treatments } = useQuery(getTreatmentsOptions());
 
   const treatment = treatments?.find((t) => t.id === treatmentId);
 
