@@ -12,9 +12,15 @@ describe("GET /me", () => {
     const user = await mockInsert.insertUser();
     userId = user.id;
 
-    token = jwt.sign({ userId: userId, email: user.email }, "testsecret", {
-      expiresIn: "24h",
-    });
+    if (!process.env.JWT_SECRET) {
+      throw new Error("JWT_SECRET is not defined");
+    }
+
+    token = jwt.sign(
+      { userId: user.id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "24h" }
+    );
   });
 
   it("should retrieve the profile of the authenticated user", async () => {
@@ -34,7 +40,7 @@ describe("GET /me", () => {
     expect(profile).toHaveProperty("email");
   });
 
-  /*it("should return 401 without authorization header", async () => {
+  it("should return 401 without authorization header", async () => {
     const res = await app.inject({
       method: "GET",
       url: "/me",
@@ -57,5 +63,5 @@ describe("GET /me", () => {
     expect(res.statusCode).toBe(401);
     const profile = res.json();
     expect(profile).toHaveProperty("error", "Invalid token");
-  });*/
+  });
 });

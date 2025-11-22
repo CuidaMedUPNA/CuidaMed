@@ -55,7 +55,6 @@ export const userHandlers: Partial<RouteHandlers> = {
 
   getProfile: async (request, reply) => {
     const user = request.user;
-    console.log("Authenticated user:", user);
 
     if (!user) {
       return reply.status(401).send({ error: "Unauthorized" });
