@@ -54,14 +54,9 @@ export const userHandlers: Partial<RouteHandlers> = {
   },
 
   getProfile: async (request, reply) => {
-    const user = request.user;
+    const userId = Number(request.params.userId);
 
-    if (!user) {
-      return reply.status(401).send({ error: "Unauthorized" });
-    }
-
-    const profile = await getUserById(user.userId);
-
+    const profile = await getUserById(userId);
     if (!profile) {
       return reply.status(404).send({ error: "User not found" });
     }

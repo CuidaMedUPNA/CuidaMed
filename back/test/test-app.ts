@@ -16,24 +16,6 @@ const __dirname = dirname(__filename);
 export async function buildTestApp() {
   const app = Fastify({ logger: false });
 
-  if (process.env.DISABLE_AUTH === "true") {
-    app.addHook("onRequest", (req, reply, done) => {
-      const auth = req.headers.authorization;
-
-      if (!auth) {
-        req.user = undefined;
-        return done();
-      }
-
-      req.user = {
-        userId: 1,
-        email: "test@example.com",
-      };
-
-      done();
-    });
-  }
-
   const options = {
     specification: path.resolve(__dirname, "../../api/openapi/bundled.yaml"),
     serviceHandlers: handlers,

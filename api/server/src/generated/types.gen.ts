@@ -322,7 +322,12 @@ export type RegisterUserResponses = {
 
 export type GetProfileData = {
     body?: never;
-    path?: never;
+    path: {
+        /**
+         * ID del usuario
+         */
+        userId: number;
+    };
     query?: never;
     url: '/me';
 };

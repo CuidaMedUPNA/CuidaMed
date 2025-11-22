@@ -2,7 +2,7 @@ import { describe, beforeAll, expect, it } from "vitest";
 import * as mockInsert from "../../../test/utils/seedTestDB";
 import { app } from "../../../test/setup";
 
-describe("GET /me", () => {
+describe("GET /me/{userId}", () => {
   let userId: number;
 
   beforeAll(async () => {
@@ -10,13 +10,10 @@ describe("GET /me", () => {
     userId = user.id;
   });
 
-  it("should retrieve the profile of the authenticated user", async () => {
+  it("should retrieve the profile of the user", async () => {
     const res = await app.inject({
       method: "GET",
-      url: "/me",
-      headers: {
-        authorization: "Whatever",
-      },
+      url: `/me/${userId}`,
     });
 
     expect(res.statusCode).toBe(200);
@@ -27,28 +24,14 @@ describe("GET /me", () => {
     expect(profile).toHaveProperty("email");
   });
 
-  it("should return 401 without authorization header", async () => {
+  it("should return 404 if user does not exist", async () => {
     const res = await app.inject({
       method: "GET",
-      url: "/me",
+      url: `/me/999999`,
     });
 
-    expect(res.statusCode).toBe(401);
-    const profile = res.json();
-    expect(profile).toHaveProperty("error", "Unauthorized");
-  });
-
-  it("should return 401 with invalid token", async () => {
-    const res = await app.inject({
-      method: "GET",
-      url: "/me",
-      headers: {
-        authorization: "Bearer invalid-token",
-      },
-    });
-
-    expect(res.statusCode).toBe(401);
-    const profile = res.json();
-    expect(profile).toHaveProperty("error", "Unauthorized");
+    expect(res.statusCode).toBe(404);
+    const errorResponse = res.json();
+    expect(errorResponse).toHaveProperty("error", "User not found");
   });
 });
