@@ -4,15 +4,20 @@ import {
   insertUser,
   insertTreatment,
   clearTestDB,
+  generateTestToken,
 } from "../../../test/utils/seedTestDB";
 
 describe("PUT /treatments/", () => {
   let defaultUserId: number;
+  let testToken: string;
   let treatmentId: number;
 
   beforeAll(async () => {
     const user = await insertUser();
     defaultUserId = user.id;
+    testToken = generateTestToken(defaultUserId, "user@example.com");
+
+    process.env.DISABLE_AUTH = "false";
 
     const treatment = await insertTreatment({
       name: "Tratamiento inicial",
@@ -27,7 +32,6 @@ describe("PUT /treatments/", () => {
   it("returns infor from the successful treatment update", async () => {
     const updatedTreatment = {
       name: "Tratamiento actualizado",
-      userId: defaultUserId,
       startDate: "2025-02-01",
       endDate: "2027-02-01",
     };
@@ -37,6 +41,7 @@ describe("PUT /treatments/", () => {
       url: `/treatments/${treatmentId}`,
       headers: {
         "Content-Type": "application/json",
+        authorization: `Bearer ${testToken}`,
       },
       body: JSON.stringify(updatedTreatment),
     });
@@ -44,7 +49,6 @@ describe("PUT /treatments/", () => {
     expect(res.statusCode).toBe(200);
     const data = res.json();
     expect(data.name).toBe(updatedTreatment.name);
-    expect(data.userId).toBe(updatedTreatment.userId);
     expect(data.startDate).toBe(updatedTreatment.startDate);
     expect(data.endDate).toBe(updatedTreatment.endDate);
   });
@@ -52,7 +56,6 @@ describe("PUT /treatments/", () => {
   it("returns 400 for a treatment update with invalid data", async () => {
     const invalidTreatment = {
       name: "",
-      userId: defaultUserId,
       startDate: "invalid-date",
       endDate: "2027-02-01",
     };
@@ -62,6 +65,7 @@ describe("PUT /treatments/", () => {
       url: `/treatments/${treatmentId}`,
       headers: {
         "Content-Type": "application/json",
+        authorization: `Bearer ${testToken}`,
       },
       body: JSON.stringify(invalidTreatment),
     });
@@ -74,7 +78,6 @@ describe("PUT /treatments/", () => {
 
     const updatedTreatment = {
       name: "Tratamiento inexistente",
-      userId: defaultUserId,
       startDate: "2025-02-01",
       endDate: "2027-02-01",
     };
@@ -84,6 +87,7 @@ describe("PUT /treatments/", () => {
       url: `/treatments/${invalidTreatmentId}`,
       headers: {
         "Content-Type": "application/json",
+        authorization: `Bearer ${testToken}`,
       },
       body: JSON.stringify(updatedTreatment),
     });
