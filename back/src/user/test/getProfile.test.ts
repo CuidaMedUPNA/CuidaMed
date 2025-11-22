@@ -4,7 +4,6 @@ import { app } from "../../../test/setup";
 
 describe("GET /me", () => {
   let userId: number;
-  let token: string;
 
   beforeAll(async () => {
     const user = await mockInsert.insertUser();
