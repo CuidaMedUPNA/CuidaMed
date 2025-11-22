@@ -11,10 +11,11 @@ describe("GET /me", () => {
     const user = await mockInsert.insertUser();
     userId = user.id;
 
-    const secret = process.env.JWT_SECRET || "defaultsecret";
-    token = jwt.sign({ userId: user.id, email: user.email }, secret, {
-      expiresIn: "24h",
-    });
+    token = jwt.sign(
+      { userId: user.id, email: user.email },
+      process.env.JWT_SECRET!,
+      { expiresIn: "24h" }
+    );
   });
 
   it("should retrieve the profile of the authenticated user", async () => {
