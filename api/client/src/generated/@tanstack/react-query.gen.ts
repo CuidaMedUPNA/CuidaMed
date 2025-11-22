@@ -91,12 +91,12 @@ export const registerUserMutation = (options?: Partial<Options<RegisterUserData>
     return mutationOptions;
 };
 
-export const getProfileQueryKey = (options?: Options<GetProfileData>) => createQueryKey('getProfile', options);
+export const getProfileQueryKey = (options: Options<GetProfileData>) => createQueryKey('getProfile', options);
 
 /**
  * Obtener datos del usuario autenticado
  */
-export const getProfileOptions = (options?: Options<GetProfileData>) => queryOptions<GetProfileResponse, GetProfileError, GetProfileResponse, ReturnType<typeof getProfileQueryKey>>({
+export const getProfileOptions = (options: Options<GetProfileData>) => queryOptions<GetProfileResponse, GetProfileError, GetProfileResponse, ReturnType<typeof getProfileQueryKey>>({
     queryFn: async ({ queryKey, signal }) => {
         const { data } = await getProfile({
             ...options,

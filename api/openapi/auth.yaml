@@ -90,10 +90,17 @@ paths:
                     type: string
                     example: "Internal Server Error"
 
-  /me:
+  /me/{userId}:
     get:
       summary: Obtener datos del usuario autenticado
       operationId: getProfile
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: number
+          required: true
+          description: ID del usuario
       responses:
         "200":
           description: Datos del usuario
@@ -111,6 +118,16 @@ paths:
                   error:
                     type: string
                     example: "Unauthorized"
+        "404":
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "User not found"
 
 components:
   schemas:

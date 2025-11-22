@@ -50,7 +50,7 @@ export const registerUser = <ThrowOnError extends boolean = false>(options: Opti
 /**
  * Obtener datos del usuario autenticado
  */
-export const getProfile = <ThrowOnError extends boolean = false>(options?: Options<GetProfileData, ThrowOnError>) => (options?.client ?? client).get<GetProfileResponses, GetProfileErrors, ThrowOnError>({ url: '/me', ...options });
+export const getProfile = <ThrowOnError extends boolean = false>(options: Options<GetProfileData, ThrowOnError>) => (options.client ?? client).get<GetProfileResponses, GetProfileErrors, ThrowOnError>({ url: '/me/{userId}', ...options });
 
 /**
  * Obtener todos los tratamientos de un usuario
