@@ -60,10 +60,8 @@ export const userHandlers: Partial<RouteHandlers> = {
     if (!user) {
       return reply.status(401).send({ error: "Unauthorized" });
     }
-    console.log("Fetching profile for user ID:", user.userId);
 
     const profile = await getUserById(user.userId);
-    console.log("Retrieved profile:", profile);
 
     if (!profile) {
       return reply.status(404).send({ error: "User not found" });

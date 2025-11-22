@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 describe("GET /me", () => {
   let userId: number;
   let token: string;
+  process.env.JWT_SECRET = "testsecret";
 
   beforeAll(async () => {
     const user = await mockInsert.insertUser();
@@ -21,7 +22,7 @@ describe("GET /me", () => {
       method: "GET",
       url: "/me",
       headers: {
-        authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
 
