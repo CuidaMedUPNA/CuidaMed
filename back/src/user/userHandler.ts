@@ -6,8 +6,7 @@ import {
 } from "./userRepository";
 import { NewUser } from "../db/types";
 import jwt from "jsonwebtoken";
-
-type Gender = "male" | "female" | undefined;
+import { Gender } from "../types/domain";
 
 export const userHandlers: Partial<RouteHandlers> = {
   login: async (request, reply) => {
@@ -59,7 +58,11 @@ export const userHandlers: Partial<RouteHandlers> = {
   },
 
   getProfile: async (request, reply) => {
-    const user = (request as any).user;
+    const user = request.user;
+
+    if (!user) {
+      return reply.status(401).send({ error: "Unauthorized" });
+    }
 
     const profile = await getUserProfile(user.id);
 
