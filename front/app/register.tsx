@@ -60,12 +60,20 @@ export default function RegisterScreen() {
 
     try {
       setIsLoading(true);
-      await register(
+      const formattedEmail = email.toLowerCase().trim();
+      const payload = {
         username,
-        email,
+        email: formattedEmail,
         password,
-        birthDate.toISOString(),
-        gender
+        birthdate: new Date(birthDate).toISOString().split("T")[0],
+        gender,
+      };
+      await register(
+        payload.username,
+        payload.email,
+        payload.password,
+        payload.birthdate,
+        payload.gender
       );
     } catch {
       Alert.alert(t("errors.registerFailed"), t("errors.tryAgain"));
@@ -155,15 +163,15 @@ export default function RegisterScreen() {
               <TouchableOpacity
                 style={[
                   styles.genderButton,
-                  gender === "M" && styles.genderButtonActive,
+                  gender === "male" && styles.genderButtonActive,
                 ]}
-                onPress={() => setGender("M")}
+                onPress={() => setGender("male")}
                 disabled={isLoading}
               >
                 <Text
                   style={[
                     styles.genderButtonText,
-                    gender === "M" && styles.genderButtonTextActive,
+                    gender === "male" && styles.genderButtonTextActive,
                   ]}
                 >
                   {t("register.male")}
@@ -172,15 +180,15 @@ export default function RegisterScreen() {
               <TouchableOpacity
                 style={[
                   styles.genderButton,
-                  gender === "F" && styles.genderButtonActive,
+                  gender === "female" && styles.genderButtonActive,
                 ]}
-                onPress={() => setGender("F")}
+                onPress={() => setGender("female")}
                 disabled={isLoading}
               >
                 <Text
                   style={[
                     styles.genderButtonText,
-                    gender === "F" && styles.genderButtonTextActive,
+                    gender === "female" && styles.genderButtonTextActive,
                   ]}
                 >
                   {t("register.female")}
