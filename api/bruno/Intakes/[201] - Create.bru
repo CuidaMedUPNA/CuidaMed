@@ -2,7 +2,6 @@ meta {
   name: [201] - Create
   type: http
   seq: 11
-  description: Añadir una toma de medicamento a un tratamiento
 }
 
 post {
@@ -12,24 +11,23 @@ post {
 }
 
 params:path {
-  treatmentId: 1
+  treatmentId: 286
 }
 
 body:json {
   {
-    "medicineId": 5,
-    "treatmentId": 1,
+    "medicineId": 1,
+    "treatmentId": 286,
     "startDate": "2025-01-15",
-    "endDate": "2025-12-31",
     "doseAmount": 500,
     "doseUnit": "mg",
     "dosingTimes": [
       {
-        "scheduledTime": "08:00",
+        "scheduledTime": "16:30",
         "dayOfWeek": null
       },
       {
-        "scheduledTime": "20:00",
+        "scheduledTime": "16:31",
         "dayOfWeek": null
       }
     ]

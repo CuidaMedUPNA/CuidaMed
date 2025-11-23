@@ -9,11 +9,16 @@ import { fileURLToPath } from "url";
 import { dirname } from "path";
 import { authMiddleware } from "./middleware/auth";
 import fastifyCron from "fastify-cron";
+import { notifyScheduledIntakes } from "./treatment/notificationService";
+import { initializeFirebase } from "./services/firebase";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const fastify = Fastify({ logger: true });
+
+// Inicializar Firebase
+initializeFirebase();
 
 fastify.addHook("preHandler", async (request, reply) => {
   const publicPaths = ["/login", "/register", "/health", "/documentation"];
@@ -35,9 +40,13 @@ fastify.register(fastifyStatic, {
 fastify.register(fastifyCron, {
   jobs: [
     {
-      cronTime: "0 * * * * *",
+      cronTime: "* * * * *", // Cada minuto
       onTick: async () => {
-        fastify.log.info("Mandando notificaciones...");
+        try {
+          await notifyScheduledIntakes();
+        } catch (error) {
+          fastify.log.error({ error }, "Error en cron de notificaciones");
+        }
       },
     },
   ],
