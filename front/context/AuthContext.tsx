@@ -18,6 +18,7 @@ interface AuthContextType {
     password: string,
     username: string,
     birthDate: string,
+    profilePictureUrl: string,
     gender: string
   ) => Promise<void>;
   logout: () => Promise<void>;
@@ -145,7 +146,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     email: string,
     username: string,
     password: string,
-    birthDate: string,
+    birthdate: string,
+    profilePictureUrl: string,
     gender: string
   ) => {
     try {
@@ -154,7 +156,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           username,
           email,
           password,
-          birthdate: birthDate,
+          birthdate,
+          profilePictureUrl,
           gender: gender as "male" | "female",
         },
       });

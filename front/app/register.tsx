@@ -60,19 +60,22 @@ export default function RegisterScreen() {
 
     try {
       setIsLoading(true);
-      const formattedEmail = email.toLowerCase().trim();
       const payload = {
         username,
-        email: formattedEmail,
+        email: email.toLocaleLowerCase().trim(),
         password,
-        birthdate: new Date(birthDate).toISOString().split("T")[0],
+        birthdate: birthDate.toISOString().split("T")[0],
+        profilePictureUrl:
+          "https://www.transparentpng.com/thumb/user/gray-user-profile-icon-png-fP8Q1P.png",
         gender,
       };
+      console.log("Register payload:", payload);
       await register(
-        payload.username,
         payload.email,
+        payload.username,
         payload.password,
         payload.birthdate,
+        payload.profilePictureUrl,
         payload.gender
       );
     } catch {
