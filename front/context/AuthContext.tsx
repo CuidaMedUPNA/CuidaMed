@@ -15,8 +15,8 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (
     email: string,
-    password: string,
     username: string,
+    password: string,
     birthdate: string,
     profilePictureUrl: string,
     gender: string
