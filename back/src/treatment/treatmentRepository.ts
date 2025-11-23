@@ -33,7 +33,7 @@ export async function getTreatmentsByUserId(userId: number) {
 
   const treatmentsWithDates: Treatment[] = treatments.map((treatment) => ({
     name: treatment.name,
-    userId: treatment.user_id,
+    userId: userId,
     id: treatment.id,
     startDate: treatment.start_date?.toISOString().split("T")[0] || "",
     endDate: treatment.end_date?.toISOString().split("T")[0] || "",

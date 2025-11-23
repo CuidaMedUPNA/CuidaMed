@@ -5,9 +5,9 @@ import type { FastifyInstance } from "fastify";
 import { Database } from "../src/db/types";
 import { createTestDB } from "./utils/seedTestDB.js";
 
-/*
-  Mock de DB en memoria
-*/
+process.env.JWT_SECRET =
+  "your_super_secret_key_that_is_at_least_32_characters_long_for_secure_jwt_signing_purposes_12345";
+
 const mem = newDb({
   autoCreateForeignKeyIndices: true,
 });
@@ -24,13 +24,12 @@ vi.mock("../src/db/database", () => ({ db }));
 let app: FastifyInstance;
 
 beforeAll(async () => {
-  
+  process.env.DISABLE_AUTH = "true";
   await createTestDB(db);
 
   const { buildTestApp } = await import("./test-app.js");
   app = await buildTestApp();
   await app.ready();
-
 });
 
 afterAll(async () => {

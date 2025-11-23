@@ -1,19 +1,26 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { app } from "../../../test/setup";
-import { clearTestDB, insertUser } from "../../../test/utils/seedTestDB";
+import {
+  clearTestDB,
+  insertUser,
+  generateTestToken,
+} from "../../../test/utils/seedTestDB";
 
 describe("POST /treatments/", () => {
-  let defaultUserId: number;
+  let testUserId: number;
+  let testToken: string;
 
   beforeAll(async () => {
     const user = await insertUser();
-    defaultUserId = user.id;
+    testUserId = user.id;
+    testToken = generateTestToken(testUserId, "user@example.com");
+
+    process.env.DISABLE_AUTH = "false";
   });
 
   it("returns 200 for a succesfully treatment creation", async () => {
     const newTreatment = {
       name: "Tratamiento antibiótico",
-      userId: defaultUserId,
       startDate: "2024-01-01",
       endDate: "2024-02-01",
     };
@@ -23,6 +30,7 @@ describe("POST /treatments/", () => {
       url: `/treatments`,
       headers: {
         "Content-Type": "application/json",
+        authorization: `Bearer ${testToken}`,
       },
       body: JSON.stringify(newTreatment),
     });
@@ -30,7 +38,6 @@ describe("POST /treatments/", () => {
     expect(res.statusCode).toBe(200);
     const data = res.json();
     expect(data.name).toBe(newTreatment.name);
-    expect(data.userId).toBe(newTreatment.userId);
     expect(data.startDate).toBe(newTreatment.startDate);
     expect(data.endDate).toBe(newTreatment.endDate);
   });
@@ -45,6 +52,7 @@ describe("POST /treatments/", () => {
       url: `/treatments`,
       headers: {
         "Content-Type": "application/json",
+        authorization: `Bearer ${testToken}`,
       },
       body: JSON.stringify(incompleteTreatment),
     });

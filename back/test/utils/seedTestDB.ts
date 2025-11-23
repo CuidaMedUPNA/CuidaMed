@@ -2,6 +2,7 @@ import { Insertable } from "kysely";
 import { db } from "../setup";
 import { Kysely } from "kysely";
 import { Database } from "../../src/db/types";
+import jwt from "jsonwebtoken";
 
 export async function createTestDB(db: Kysely<Database>) {
   await db.schema
@@ -191,4 +192,13 @@ export async function clearTestDB() {
     await db.deleteFrom("user").execute();
 }
 
+export function generateTestToken(userId: number, email: string): string {
+    const JWT_SECRET = process.env.JWT_SECRET || "your_super_secret_key_that_is_at_least_32_characters_long_for_secure_jwt_signing_purposes_12345";
+    
+    return jwt.sign(
+        { userId, email },
+        JWT_SECRET,
+        { expiresIn: "24h" }
+    );
+}
 

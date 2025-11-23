@@ -26,11 +26,7 @@ export const MyTreatmentsPage = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const router = useRouter();
 
-  const { data: treatments, isLoading } = useQuery(
-    getTreatmentsOptions({
-      query: { userId: 1 },
-    })
-  );
+  const { data: treatments, isLoading } = useQuery(getTreatmentsOptions());
 
   const handleTreatmentPress = (treatmentId: number) => {
     router.push({
@@ -100,7 +96,7 @@ const TreatmentsList = ({
     onSuccess: () => {
       console.log("✅ Tratamiento eliminado con éxito.");
       queryClient.invalidateQueries({
-        queryKey: getTreatmentsQueryKey({ query: { userId: 1 } }),
+        queryKey: getTreatmentsQueryKey(),
       });
     },
     onError: (error) => {
@@ -108,8 +104,6 @@ const TreatmentsList = ({
       Alert.alert(t("error"), t("treatments.delete.errorAlert"));
     },
   });
-
-  const deleteTreatmentHandler = (treatmentId: number) => {};
 
   return (
     <View style={styles.listContainer}>
