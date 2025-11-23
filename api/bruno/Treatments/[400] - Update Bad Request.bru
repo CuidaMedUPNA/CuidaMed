@@ -1,0 +1,27 @@
+meta {
+  name: [400] - Update Bad Request
+  type: http
+  seq: 23
+}
+
+put {
+  url: {{baseUrl}}/treatments/:treatmentId
+  body: json
+  auth: inherit
+}
+
+params:path {
+  treatmentId: 1
+}
+
+body:json {
+  {
+    "name": "Updated Name"
+  }
+}
+
+tests {
+  test("should return 400 Bad Request", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+}

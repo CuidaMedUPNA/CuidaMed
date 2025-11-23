@@ -1,0 +1,21 @@
+meta {
+  name: [404] - Get by ID Not Found
+  type: http
+  seq: 20
+}
+
+get {
+  url: {{baseUrl}}/treatments/:treatmentId
+  body: none
+  auth: inherit
+}
+
+params:path {
+  treatmentId: 999999
+}
+
+tests {
+  test("should return 404 Not Found", function() {
+    expect(res.getStatus()).to.equal(404);
+  });
+}

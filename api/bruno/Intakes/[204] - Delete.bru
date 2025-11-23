@@ -1,0 +1,16 @@
+meta {
+  name: [204] - Delete
+  type: http
+  seq: 12
+}
+
+delete {
+  url: {{baseUrl}}/treatments/:treatmentId/intakes/:intakeId
+  body: none
+  auth: inherit
+}
+
+params:path {
+  treatmentId: 1
+  intakeId: 5
+}

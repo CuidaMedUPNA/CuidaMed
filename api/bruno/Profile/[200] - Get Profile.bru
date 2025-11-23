@@ -1,0 +1,22 @@
+meta {
+  name: [200] - Get Profile
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/me
+  body: none
+  auth: inherit
+}
+
+tests {
+  test("should return 200 OK", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("should return user profile", function() {
+    expect(res.body.email).to.be.a('string');
+    expect(res.body.id).to.be.a('number');
+  });
+}

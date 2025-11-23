@@ -1,0 +1,17 @@
+meta {
+  name: [400] - List Bad Request
+  type: http
+  seq: 18
+}
+
+get {
+  url: {{baseUrl}}/treatments
+  body: none
+  auth: inherit
+}
+
+tests {
+  test("should return 400 Bad Request", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+}

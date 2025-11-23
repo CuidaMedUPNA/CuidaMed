@@ -1,0 +1,31 @@
+meta {
+  name: [201] - Register
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/register
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "username": "Javier Merino",
+    "email": "prueba@gmail.com",
+    "password": "Admin1234",
+    "birthdate": "2025-11-20",
+    "gender": "male"
+  }
+}
+
+tests {
+  test("should return 201 Created", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+  
+  test("should return user data", function() {
+    expect(res.body.email).to.equal("manex@example.com");
+  });
+}

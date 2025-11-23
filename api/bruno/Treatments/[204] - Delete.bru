@@ -1,0 +1,21 @@
+meta {
+  name: [204] - Delete
+  type: http
+  seq: 9
+}
+
+delete {
+  url: {{baseUrl}}/treatments/:treatmentId
+  body: none
+  auth: inherit
+}
+
+params:path {
+  treatmentId: 1
+}
+
+tests {
+  test("should return 204 No Content", function() {
+    expect(res.getStatus()).to.equal(204);
+  });
+}

@@ -1,0 +1,31 @@
+meta {
+  name: [200] - Update
+  type: http
+  seq: 8
+}
+
+put {
+  url: {{baseUrl}}/treatments/:treatmentId
+  body: json
+  auth: inherit
+}
+
+params:path {
+  treatmentId: 1
+}
+
+body:json {
+    "endDate": "2025-12-31"
+  }
+}
+
+tests {
+  test("should return 200 OK", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("should return updated treatment", function() {
+    expect(res.body.id).to.equal(1);
+    expect(res.body.name).to.equal("Diabetes Tipo 2 - Control");
+  });
+}
