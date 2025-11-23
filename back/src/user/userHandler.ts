@@ -1,12 +1,17 @@
 import { RouteHandlers } from "@cuidamed-api/server";
-import { validateCredentials, createUser } from "./userRepository";
+import {
+  validateCredentials,
+  createUser,
+  saveDeviceToken,
+} from "./userRepository";
 import { NewUser } from "../db/types";
 import jwt from "jsonwebtoken";
 
 export const userHandlers: Partial<RouteHandlers> = {
   login: async (request, reply) => {
     try {
-      const { email, password } = request.body;
+      const { email, password, firebaseToken, platform, deviceId } =
+        request.body;
 
       const user = await validateCredentials(email, password);
 
@@ -18,6 +23,14 @@ export const userHandlers: Partial<RouteHandlers> = {
         throw new Error("JWT_SECRET is not defined");
       }
 
+      // Por ahora guardamos siempre el token del dispositivo
+      await saveDeviceToken(
+        user.id,
+        firebaseToken,
+        platform as "android" | "ios" | "web",
+        deviceId
+      );
+
       const token = jwt.sign(
         { userId: user.id, email: user.email },
         process.env.JWT_SECRET,
@@ -27,6 +40,14 @@ export const userHandlers: Partial<RouteHandlers> = {
       return reply.status(200).send({ token });
     } catch (error) {
       request.log.error(error);
+
+      if (
+        error instanceof Error &&
+        error.message === "JWT_SECRET is not defined"
+      ) {
+        return reply.status(500).send({ error: "Internal Server Error" });
+      }
+
       return reply.status(400).send({ error: "Bad Request" });
     }
   },

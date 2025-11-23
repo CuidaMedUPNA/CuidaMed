@@ -33,6 +33,18 @@ export type AuthLoginCredentials = {
      * Contraseña del usuario
      */
     password: string;
+    /**
+     * Token de Firebase para notificaciones push
+     */
+    firebaseToken: string;
+    /**
+     * Plataforma del dispositivo (android, ios, web)
+     */
+    platform: 'android' | 'ios' | 'web';
+    /**
+     * ID único del dispositivo (para distinguir múltiples devices por plataforma)
+     */
+    deviceId: string;
 };
 
 export type AuthNewUser = {
@@ -276,10 +288,6 @@ export type LoginResponses = {
          * JWT token para autenticación
          */
         token?: string;
-        /**
-         * ID del usuario autenticado
-         */
-        userId?: number;
     };
 };
 

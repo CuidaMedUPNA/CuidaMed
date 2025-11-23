@@ -8,6 +8,7 @@ import {
 
 export interface Database {
   user: UserTable;
+  user_device: UserDeviceTable;
   medicine: MedicineTable;
   treatment: TreatmentTable;
   medicine_ingredient: MedicineIngredientTable;
@@ -28,6 +29,20 @@ export interface UserTable {
 export type User = Selectable<UserTable>;
 export type NewUser = Insertable<UserTable>;
 export type UserUpdate = Updateable<UserTable>;
+
+export interface UserDeviceTable {
+  id: Generated<number>;
+  user_id: number;
+  firebase_token: string;
+  platform: "android" | "ios" | "web";
+  device_id: string;
+  created_at: ColumnType<Date, string | undefined, string | undefined>;
+  updated_at: ColumnType<Date, string | undefined, string | undefined>;
+}
+
+export type UserDevice = Selectable<UserDeviceTable>;
+export type NewUserDevice = Insertable<UserDeviceTable>;
+export type UserDeviceUpdate = Updateable<UserDeviceTable>;
 
 export interface MedicineTable {
   id: Generated<number>;

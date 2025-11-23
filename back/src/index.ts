@@ -25,7 +25,7 @@ fastify.addHook("preHandler", async (request, reply) => {
 
 const options = {
   specification: path.resolve(__dirname, "../../api/openapi/bundled.yaml"),
-  service: handlers,
+  serviceHandlers: handlers,
 };
 fastify.register(openapiGlue, options);
 fastify.register(fastifyCors, { origin: "*" });
