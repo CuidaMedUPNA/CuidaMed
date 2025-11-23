@@ -107,5 +107,8 @@
     "forgotPassword": "¿Olvidaste tu contraseña?",
     "noAccount": "¿No tienes una cuenta?",
     "registerHere": "Regístrate aquí"
+  },
+  "common": {
+    "done": "Hecho"
   }
 }
