@@ -69,7 +69,6 @@ export default function RegisterScreen() {
           "https://www.transparentpng.com/thumb/user/gray-user-profile-icon-png-fP8Q1P.png",
         gender,
       };
-      console.log("Register payload:", payload);
       await register(
         payload.email,
         payload.username,

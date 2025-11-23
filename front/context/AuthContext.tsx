@@ -17,7 +17,7 @@ interface AuthContextType {
     email: string,
     password: string,
     username: string,
-    birthDate: string,
+    birthdate: string,
     profilePictureUrl: string,
     gender: string
   ) => Promise<void>;
