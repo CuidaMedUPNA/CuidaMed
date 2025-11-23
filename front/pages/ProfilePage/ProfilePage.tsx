@@ -140,6 +140,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f8f9fa",
     padding: 20,
+    paddingTop: 40,
   },
   header: {
     justifyContent: "center",
