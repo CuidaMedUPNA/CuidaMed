@@ -1,20 +1,46 @@
+import admin from "firebase-admin";
+
 export interface FirebaseNotificationPayload {
   title: string;
   body: string;
   data?: Record<string, string>;
 }
 
-// Mock para desarrollo - en producción usarías firebase-admin
 let firebaseInitialized = false;
+
+function getServiceAccount(): admin.ServiceAccount {
+  if (!process.env.FIREBASE_CREDENTIALS) {
+    throw new Error(
+      "FIREBASE_CREDENTIALS environment variable is not set. Please set it with the Firebase service account JSON."
+    );
+  }
+
+  try {
+    const credentials = JSON.parse(process.env.FIREBASE_CREDENTIALS);
+    console.log("📂 Credenciales cargadas desde FIREBASE_CREDENTIALS env");
+    return credentials;
+  } catch (error) {
+    throw new Error(
+      `Error parseando FIREBASE_CREDENTIALS: ${
+        error instanceof Error ? error.message : String(error)
+      }`
+    );
+  }
+}
 
 export function initializeFirebase() {
   try {
-    // Aquí irían las inicializaciones de Firebase Admin SDK
+    const serviceAccount = getServiceAccount();
+
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount),
+    });
+
     firebaseInitialized = true;
-    console.log("✅ Firebase inicializado");
+    console.log("✅ Firebase inicializado correctamente");
   } catch (error) {
-    console.warn("⚠️ No se pudo inicializar Firebase:", error);
-    firebaseInitialized = false;
+    console.error("❌ Error inicializando Firebase:", error);
+    throw error;
   }
 }
 
@@ -24,13 +50,24 @@ export async function sendFirebaseNotification(
 ): Promise<boolean> {
   try {
     if (!firebaseInitialized) {
-      console.warn("Firebase no inicializado, notificación no se envió");
-      return false;
+      throw new Error("Firebase no inicializado");
     }
 
-    // TODO: Implementar envío real con firebase-admin
+    const message = {
+      token: firebaseToken,
+      notification: {
+        title: payload.title,
+        body: payload.body,
+      },
+      ...(payload.data && { data: payload.data }),
+    };
+
+    const response = await admin.messaging().send(message);
     console.log(
-      `📨 Enviando notificación a token: ${firebaseToken.slice(0, 20)}...`
+      `📨 Notificación enviada a ${firebaseToken.slice(
+        0,
+        20
+      )}... - Response: ${response}`
     );
     console.log(`   Título: ${payload.title}`);
     console.log(`   Cuerpo: ${payload.body}`);
@@ -38,7 +75,7 @@ export async function sendFirebaseNotification(
     return true;
   } catch (error) {
     console.error("❌ Error enviando notificación:", error);
-    return false;
+    throw error;
   }
 }
 
@@ -48,21 +85,45 @@ export async function sendMultipleNotifications(
 ): Promise<number> {
   try {
     if (!firebaseInitialized) {
-      console.warn("Firebase no inicializado");
+      throw new Error("Firebase no inicializado");
+    }
+
+    if (firebaseTokens.length === 0) {
+      console.log("ℹ️ No hay tokens para enviar notificaciones");
       return 0;
     }
 
-    let successCount = 0;
-    for (const token of firebaseTokens) {
-      const success = await sendFirebaseNotification(token, payload);
-      if (success) {
-        successCount++;
-      }
+    console.log(
+      `📨 Enviando notificación a ${firebaseTokens.length} dispositivo(s)...`
+    );
+
+    const messages = firebaseTokens.map((token) => ({
+      token,
+      notification: {
+        title: payload.title,
+        body: payload.body,
+      },
+      ...(payload.data && { data: payload.data }),
+    }));
+
+    const response = await admin.messaging().sendAll(messages);
+
+    console.log(
+      `✅ Notificaciones enviadas: ${response.successCount}/${firebaseTokens.length}`
+    );
+
+    if (response.failureCount > 0) {
+      console.warn(`⚠️ Fallos en envío: ${response.failureCount}`);
+      response.responses.forEach((resp, index) => {
+        if (!resp.success) {
+          console.warn(`   Token ${index}: ${resp.error?.message}`);
+        }
+      });
     }
 
-    return successCount;
+    return response.successCount;
   } catch (error) {
     console.error("❌ Error enviando notificaciones:", error);
-    return 0;
+    throw error;
   }
 }
