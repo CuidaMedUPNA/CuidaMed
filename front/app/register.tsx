@@ -62,7 +62,7 @@ export default function RegisterScreen() {
       setIsLoading(true);
       const payload = {
         username,
-        email: email.toLocaleLowerCase().trim(),
+        email: email.toLowerCase().trim(),
         password,
         birthdate: birthDate.toISOString().split("T")[0],
         profilePictureUrl:
