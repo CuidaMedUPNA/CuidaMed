@@ -1,0 +1,28 @@
+meta {
+  name: [404] - Update Not Found
+  type: http
+  seq: 22
+}
+
+put {
+  url: {{baseUrl}}/treatments/:treatmentId
+  body: json
+  auth: inherit
+}
+
+params:path {
+  treatmentId: 999999
+}
+
+body:json {
+  {
+    "name": "Updated Name",
+    "startDate": "2025-01-01"
+  }
+}
+
+tests {
+  test("should return 404 Not Found", function() {
+    expect(res.getStatus()).to.equal(404);
+  });
+}

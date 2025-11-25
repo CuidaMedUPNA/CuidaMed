@@ -1,0 +1,21 @@
+meta {
+  name: [401] - Get Profile Unauthorized
+  type: http
+  seq: 17
+}
+
+get {
+  url: {{baseUrl}}/me
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: invalid_token
+}
+
+tests {
+  test("should return 401 Unauthorized", function() {
+    expect(res.getStatus()).to.equal(401);
+  });
+}

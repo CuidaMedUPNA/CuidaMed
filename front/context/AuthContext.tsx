@@ -113,6 +113,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         body: {
           email,
           password,
+          firebaseToken: "your_firebase_token_here",
+          platform: "android",
+          deviceId: "your_device_id_here",
         },
       });
       const token = response?.token;

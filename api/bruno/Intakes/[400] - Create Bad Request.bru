@@ -1,0 +1,27 @@
+meta {
+  name: [400] - Create Bad Request
+  type: http
+  seq: 26
+}
+
+post {
+  url: {{baseUrl}}/treatments/:treatmentId/intakes
+  body: json
+  auth: inherit
+}
+
+params:path {
+  treatmentId: 1
+}
+
+body:json {
+  {
+    "medicineId": 5
+  }
+}
+
+tests {
+  test("should return 400 Bad Request", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+}

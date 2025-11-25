@@ -44,9 +44,6 @@ paths:
                   token:
                     type: string
                     description: JWT token para autenticación
-                  userId:
-                    type: number
-                    description: ID del usuario autenticado
         '400':
           description: Solicitud incorrecta
           content:
@@ -571,9 +568,25 @@ components:
         password:
           type: string
           description: Contraseña del usuario
+        firebaseToken:
+          type: string
+          description: Token de Firebase para notificaciones push
+        platform:
+          type: string
+          description: Plataforma del dispositivo (android, ios, web)
+          enum:
+            - android
+            - ios
+            - web
+        deviceId:
+          type: string
+          description: ID único del dispositivo (para distinguir múltiples devices por plataforma)
       required:
         - email
         - password
+        - firebaseToken
+        - platform
+        - deviceId
     NewUser:
       type: object
       properties:

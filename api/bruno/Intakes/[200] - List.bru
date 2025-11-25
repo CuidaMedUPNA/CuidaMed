@@ -1,0 +1,25 @@
+meta {
+  name: [200] - List
+  type: http
+  seq: 10
+}
+
+get {
+  url: {{baseUrl}}/treatments/:treatmentId/intakes
+  body: none
+  auth: inherit
+}
+
+params:path {
+  treatmentId: 1
+}
+
+tests {
+  test("should return 200 OK", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("should return array of intakes", function() {
+    expect(res.body).to.be.an('array');
+  });
+}

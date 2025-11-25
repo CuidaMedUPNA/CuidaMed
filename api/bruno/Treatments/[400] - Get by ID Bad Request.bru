@@ -1,0 +1,21 @@
+meta {
+  name: [400] - Get by ID Bad Request
+  type: http
+  seq: 21
+}
+
+get {
+  url: {{baseUrl}}/treatments/:treatmentId
+  body: none
+  auth: inherit
+}
+
+params:path {
+  treatmentId: invalid
+}
+
+tests {
+  test("should return 400 Bad Request", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+}
