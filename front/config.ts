@@ -12,7 +12,7 @@ const getApiUrl = () => {
   }
 
   // Fallback para web o producción
-  return "https://cuidamed-sveo.onrender.com";
+  return "https://cuidamed-1e81b121bd5d.herokuapp.com";
 };
 
 export const API_URL = getApiUrl();

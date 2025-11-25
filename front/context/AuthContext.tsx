@@ -1,12 +1,12 @@
 import * as React from "react";
-import { Platform } from "react-native";
-import * as SecureStore from "expo-secure-store";
 import { useMutation } from "@tanstack/react-query";
 import { loginMutation, registerUserMutation } from "@cuidamed-api/client";
 import {
   registerAuthInterceptor,
   registerErrorInterceptor,
 } from "../api/client";
+import { getPushCredentials } from "../config/pushNotifications";
+import { storageHelper } from "../config/storage";
 
 interface AuthContextType {
   isLogged: boolean;
@@ -25,47 +25,6 @@ interface AuthContextType {
 }
 
 const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
-
-// Storage helper functions that work on both web and mobile
-const storageHelper = {
-  setItem: async (key: string, value: string) => {
-    try {
-      if (Platform.OS === "web") {
-        localStorage.setItem(key, value);
-      } else {
-        await SecureStore.setItemAsync(key, value);
-      }
-    } catch (error) {
-      console.error(`Error setting ${key}:`, error);
-      throw error;
-    }
-  },
-
-  getItem: async (key: string): Promise<string | null> => {
-    try {
-      if (Platform.OS === "web") {
-        return localStorage.getItem(key);
-      } else {
-        return await SecureStore.getItemAsync(key);
-      }
-    } catch (error) {
-      console.error(`Error getting ${key}:`, error);
-      return null;
-    }
-  },
-
-  removeItem: async (key: string) => {
-    try {
-      if (Platform.OS === "web") {
-        localStorage.removeItem(key);
-      } else {
-        await SecureStore.deleteItemAsync(key);
-      }
-    } catch (error) {
-      console.error(`Error removing ${key}:`, error);
-    }
-  },
-};
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLogged, setIsLogged] = React.useState(false);
@@ -108,14 +67,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (email: string, password: string) => {
     try {
       console.log("Attempting login for:", email);
-      console.log("Password:", password);
+
+      const pushCredentials = await getPushCredentials();
+      console.log("Push credentials:", {
+        platform: pushCredentials.platform,
+        deviceId: pushCredentials.deviceId,
+        hasToken: !!pushCredentials.firebaseToken,
+      });
+
       const response = await loginMutationQuery.mutateAsync({
         body: {
           email,
           password,
-          firebaseToken: "your_firebase_token_here",
-          platform: "android",
-          deviceId: "your_device_id_here",
+          firebaseToken: pushCredentials.firebaseToken,
+          platform: pushCredentials.platform,
+          deviceId: pushCredentials.deviceId,
         },
       });
       const token = response?.token;
