@@ -1,5 +1,6 @@
 {
   "type": "module",
+  "name": "back",
   "scripts": {
     "dev": "nodemon --watch src --ext ts --exec tsx src/index.ts",
     "start": "tsx src/index.ts",
@@ -17,11 +18,13 @@
     "firebase-admin": "^12.0.0",
     "jsonwebtoken": "^9.0.2",
     "kysely": "^0.28.7",
-    "pg": "^8.16.3"
+    "pg": "^8.16.3",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^24.4.0",
+    "@types/node": "^24.10.1",
     "@types/pg": "^8.15.5",
     "@typescript-eslint/eslint-plugin": "^8.46.0",
     "@typescript-eslint/parser": "^8.46.0",
@@ -30,8 +33,6 @@
     "nodemon": "^3.1.10",
     "pg-mem": "^3.0.5",
     "ts-node": "^10.9.2",
-    "tsx": "^4.20.5",
-    "typescript": "^5.9.2",
     "typescript-eslint": "^8.46.0",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4"
