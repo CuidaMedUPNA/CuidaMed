@@ -1,0 +1,35 @@
+meta {
+  name: [201] - Create
+  type: http
+  seq: 11
+}
+
+post {
+  url: {{baseUrl}}/treatments/:treatmentId/intakes
+  body: json
+  auth: inherit
+}
+
+params:path {
+  treatmentId: 286
+}
+
+body:json {
+  {
+    "medicineId": 1,
+    "treatmentId": 286,
+    "startDate": "2025-01-15",
+    "doseAmount": 500,
+    "doseUnit": "mg",
+    "dosingTimes": [
+      {
+        "scheduledTime": "16:30",
+        "dayOfWeek": null
+      },
+      {
+        "scheduledTime": "16:31",
+        "dayOfWeek": null
+      }
+    ]
+  }
+}

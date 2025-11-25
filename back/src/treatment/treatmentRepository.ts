@@ -89,3 +89,82 @@ export async function deleteTreatmentByTreatmentId(treatmentId: number) {
 
   return result.numDeletedRows || 0;
 }
+
+interface ScheduledIntake {
+  medicineName: string;
+  doseAmount: number;
+  doseUnit: string;
+}
+
+export async function getScheduledIntakesForNow(): Promise<
+  Map<number, ScheduledIntake[]>
+> {
+  const now = new Date();
+  const currentTime = now.toTimeString().slice(0, 5); // Formato HH:mm
+
+  // Convertir getDay() a formato BD: 0 (dom) -> 7, 1 (lun) -> 1, etc.
+  let dayOfWeek = now.getDay();
+  dayOfWeek = dayOfWeek === 0 ? 7 : dayOfWeek;
+
+  const intakes = await db
+    .selectFrom("dosing_time")
+    .innerJoin(
+      "dosing_schedule",
+      "dosing_time.dosing_schedule_id",
+      "dosing_schedule.id"
+    )
+    .innerJoin("medicine", "dosing_schedule.medicine_id", "medicine.id")
+    .innerJoin("treatment", "dosing_schedule.treatment_id", "treatment.id")
+    .select([
+      "treatment.user_id",
+      "medicine.trade_name as medicineName",
+      "dosing_schedule.dose_amount as doseAmount",
+      "dosing_schedule.dose_unit as doseUnit",
+    ])
+    .where("dosing_time.scheduled_time", "=", currentTime)
+    .where((eb) =>
+      eb.or([
+        eb("dosing_time.day_of_week", "is", null),
+        eb(
+          "dosing_time.day_of_week",
+          "=",
+          dayOfWeek as 1 | 2 | 3 | 4 | 5 | 6 | 7
+        ),
+      ])
+    )
+    .where((eb) =>
+      eb.and([
+        eb("dosing_schedule.start_date", "<=", now),
+        eb.or([
+          eb("dosing_schedule.end_date", "is", null),
+          eb("dosing_schedule.end_date", ">=", now),
+        ]),
+      ])
+    )
+    .execute();
+
+  // Agrupar por userId
+  const grouped = new Map<number, ScheduledIntake[]>();
+  for (const intake of intakes) {
+    if (!grouped.has(intake.user_id)) {
+      grouped.set(intake.user_id, []);
+    }
+    grouped.get(intake.user_id)!.push({
+      medicineName: intake.medicineName,
+      doseAmount: Number(intake.doseAmount),
+      doseUnit: intake.doseUnit,
+    });
+  }
+
+  return grouped;
+}
+
+export async function getUserDevices(userId: number) {
+  const devices = await db
+    .selectFrom("user_device")
+    .select(["firebase_token", "platform", "device_id"])
+    .where("user_id", "=", userId)
+    .execute();
+
+  return devices;
+}

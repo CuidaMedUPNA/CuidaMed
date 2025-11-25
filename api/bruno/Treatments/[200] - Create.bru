@@ -1,0 +1,31 @@
+meta {
+  name: [200] - Create
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/treatments
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "Diabetes Tipo 2",
+    "userId": 1,
+    "startDate": "2025-01-15",
+    "endDate": "2026-01-15"
+  }
+}
+
+tests {
+  test("should return 200 OK", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("should return created treatment", function() {
+    expect(res.body.name).to.equal("Diabetes Tipo 2");
+    expect(res.body.id).to.be.a('number');
+  });
+}

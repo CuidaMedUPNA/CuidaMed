@@ -1,0 +1,22 @@
+meta {
+  name: [404] - Delete Not Found
+  type: http
+  seq: 27
+}
+
+delete {
+  url: {{baseUrl}}/treatments/:treatmentId/intakes/:intakeId
+  body: none
+  auth: inherit
+}
+
+params:path {
+  treatmentId: 1
+  intakeId: 999999
+}
+
+tests {
+  test("should return 404 Not Found", function() {
+    expect(res.getStatus()).to.equal(404);
+  });
+}

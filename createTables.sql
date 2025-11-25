@@ -55,3 +55,16 @@ CREATE TABLE dosing_time (
 
     FOREIGN KEY (dosing_schedule_id) REFERENCES dosing_schedule(id) ON DELETE CASCADE
 );
+
+CREATE TABLE user_device (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    firebase_token TEXT NOT NULL,
+    platform VARCHAR(20) NOT NULL CHECK (platform IN ('android', 'ios', 'web')),
+    device_id VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (user_id) REFERENCES "user"(id) ON DELETE CASCADE,
+    UNIQUE (user_id, platform, device_id)
+);

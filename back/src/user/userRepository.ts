@@ -55,3 +55,54 @@ export async function getUserById(id: number) {
 
   return user;
 }
+export async function saveDeviceToken(
+  userId: number,
+  firebaseToken: string,
+  platform: "android" | "ios" | "web",
+  deviceId: string
+): Promise<boolean> {
+  try {
+    const existingDevice = await db
+      .selectFrom("user_device")
+      .where("user_id", "=", userId)
+      .where("platform", "=", platform)
+      .where("device_id", "=", deviceId)
+      .selectAll()
+      .executeTakeFirst();
+
+    if (existingDevice) {
+      // Solo actualizar si el token es diferente
+      if (existingDevice.firebase_token !== firebaseToken) {
+        await db
+          .updateTable("user_device")
+          .set({
+            firebase_token: firebaseToken,
+            updated_at: new Date().toISOString(),
+          })
+          .where("user_id", "=", userId)
+          .where("platform", "=", platform)
+          .where("device_id", "=", deviceId)
+          .execute();
+        console.log(
+          `✅ Token de Firebase actualizado para ${platform} (${deviceId})`
+        );
+      }
+      return true;
+    }
+
+    await db
+      .insertInto("user_device")
+      .values({
+        user_id: userId,
+        firebase_token: firebaseToken,
+        platform,
+        device_id: deviceId,
+      })
+      .execute();
+    console.log(`✨ Nuevo device registrado: ${platform} (${deviceId})`);
+    return true;
+  } catch (error) {
+    console.error("Error guardando token de Firebase:", error);
+    return false;
+  }
+}

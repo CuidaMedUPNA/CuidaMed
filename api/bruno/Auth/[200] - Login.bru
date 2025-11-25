@@ -1,0 +1,35 @@
+meta {
+  name: [200] - Login
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "manex@example.com",
+    "password": "1234",
+    "firebaseToken": "eOx08a:APA91bHn5q-KT5nrCqiMqM3Z4Z_QbF5qM0aB1Z2",
+    "platform": "android",
+    "deviceId": "emulator-5554"
+  }
+}
+
+script:post-response {
+  bru.setEnvVar("token", res.body.token);
+}
+
+tests {
+  test("should return 200 OK", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("should return token", function() {
+    expect(res.body.token).to.be.a('string');
+  });
+}
