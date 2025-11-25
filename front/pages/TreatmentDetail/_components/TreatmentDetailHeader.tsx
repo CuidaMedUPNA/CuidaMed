@@ -28,7 +28,7 @@ export const TreatmentDetailHeader = ({
           gap: 24,
         }}
       >
-        <TouchableOpacity onPress={() => router.push("/treatments")}>
+        <TouchableOpacity onPress={() => router.back()}>
           <AntDesign name="arrow-left" size={24} color="#6b6b6bff" />
         </TouchableOpacity>
         <View style={{ width: 220 }}>
