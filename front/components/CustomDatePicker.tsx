@@ -7,11 +7,19 @@ import {
   Platform,
   Modal,
   Button,
+  UIManager,
 } from "react-native";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import { useTranslation } from "react-i18next";
+
+if (
+  Platform.OS === "ios" &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 export interface CustomDatePickerProps {
   label: string;
@@ -65,6 +73,7 @@ export const CustomDatePicker = ({
             display="spinner"
             onChange={handleDateChange}
             locale={t("treatments.datePicker.locale") || "es-ES"}
+            textColor="#000000"
           />
           <Button
             title={t("common.done")}
@@ -132,7 +141,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    backgroundColor: "white",
+    backgroundColor: "#FFFFFF",
     padding: 20,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
