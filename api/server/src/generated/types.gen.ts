@@ -186,6 +186,8 @@ export type IntakesNewDosingTime = {
     dayOfWeek?: number | null;
 };
 
+export type Intakes1Intakes = unknown;
+
 export type Intakes1Treatments1TreatmentId1Intakes = unknown;
 
 export type Intakes1Treatments1TreatmentId1Intakes1IntakeId = unknown;
@@ -428,6 +430,45 @@ export type CreateTreatmentResponses = {
 };
 
 export type CreateTreatmentResponse = CreateTreatmentResponses[keyof CreateTreatmentResponses];
+
+export type GetIntakesByUserData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/intakes';
+};
+
+export type GetIntakesByUserErrors = {
+    /**
+     * Solicitud incorrecta
+     */
+    400: {
+        error?: string;
+    };
+    /**
+     * Usuario no encontrado
+     */
+    404: {
+        error?: string;
+    };
+    /**
+     * Error interno del servidor
+     */
+    500: {
+        error?: string;
+    };
+};
+
+export type GetIntakesByUserError = GetIntakesByUserErrors[keyof GetIntakesByUserErrors];
+
+export type GetIntakesByUserResponses = {
+    /**
+     * Lista de tomas del usuario
+     */
+    200: Array<IntakesDosingSchedule>;
+};
+
+export type GetIntakesByUserResponse = GetIntakesByUserResponses[keyof GetIntakesByUserResponses];
 
 export type DeleteTreatmentData = {
     body?: never;

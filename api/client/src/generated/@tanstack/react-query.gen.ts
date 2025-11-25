@@ -3,8 +3,8 @@
 import { type DefaultError, queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { createIntake, createTreatment, deleteIntake, deleteTreatment, getAllMedicines, getIntakesByTreatment, getProfile, getTreatmentById, getTreatments, healthCheck, login, type Options, registerUser, updateTreatment } from '../sdk.gen';
-import type { CreateIntakeData, CreateIntakeError, CreateIntakeResponse, CreateTreatmentData, CreateTreatmentError, CreateTreatmentResponse, DeleteIntakeData, DeleteIntakeError, DeleteIntakeResponse, DeleteTreatmentData, DeleteTreatmentError, DeleteTreatmentResponse, GetAllMedicinesData, GetAllMedicinesError, GetAllMedicinesResponse, GetIntakesByTreatmentData, GetIntakesByTreatmentError, GetIntakesByTreatmentResponse, GetProfileData, GetProfileError, GetProfileResponse, GetTreatmentByIdData, GetTreatmentByIdError, GetTreatmentByIdResponse, GetTreatmentsData, GetTreatmentsError, GetTreatmentsResponse, HealthCheckData, HealthCheckResponse, LoginData, LoginError, LoginResponse, RegisterUserData, RegisterUserError, UpdateTreatmentData, UpdateTreatmentError, UpdateTreatmentResponse } from '../types.gen';
+import { createIntake, createTreatment, deleteIntake, deleteTreatment, getAllMedicines, getIntakesByTreatment, getIntakesByUser, getProfile, getTreatmentById, getTreatments, healthCheck, login, type Options, registerUser, updateTreatment } from '../sdk.gen';
+import type { CreateIntakeData, CreateIntakeError, CreateIntakeResponse, CreateTreatmentData, CreateTreatmentError, CreateTreatmentResponse, DeleteIntakeData, DeleteIntakeError, DeleteIntakeResponse, DeleteTreatmentData, DeleteTreatmentError, DeleteTreatmentResponse, GetAllMedicinesData, GetAllMedicinesError, GetAllMedicinesResponse, GetIntakesByTreatmentData, GetIntakesByTreatmentError, GetIntakesByTreatmentResponse, GetIntakesByUserData, GetIntakesByUserError, GetIntakesByUserResponse, GetProfileData, GetProfileError, GetProfileResponse, GetTreatmentByIdData, GetTreatmentByIdError, GetTreatmentByIdResponse, GetTreatmentsData, GetTreatmentsError, GetTreatmentsResponse, HealthCheckData, HealthCheckResponse, LoginData, LoginError, LoginResponse, RegisterUserData, RegisterUserError, UpdateTreatmentData, UpdateTreatmentError, UpdateTreatmentResponse } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -143,6 +143,24 @@ export const createTreatmentMutation = (options?: Partial<Options<CreateTreatmen
     };
     return mutationOptions;
 };
+
+export const getIntakesByUserQueryKey = (options?: Options<GetIntakesByUserData>) => createQueryKey('getIntakesByUser', options);
+
+/**
+ * Obtener todas las tomas de un usuario
+ */
+export const getIntakesByUserOptions = (options?: Options<GetIntakesByUserData>) => queryOptions<GetIntakesByUserResponse, GetIntakesByUserError, GetIntakesByUserResponse, ReturnType<typeof getIntakesByUserQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getIntakesByUser({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getIntakesByUserQueryKey(options)
+});
 
 /**
  * Eliminar un tratamiento
