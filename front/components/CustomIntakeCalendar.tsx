@@ -4,9 +4,9 @@ import { MarkingProps } from "react-native-calendars/src/calendar/day/marking";
 import { DateData } from "react-native-calendars/src/types";
 
 export const TRAMOS_HORARIOS_CONFIG = {
-  manana: { key: "manana", color: "#ffa200ff" },
-  tarde: { key: "tarde", color: "#18fc03ff" },
-  noche: { key: "noche", color: "#038cfcff" },
+  manana: { key: "manana", color: "#f59e0b" },
+  tarde: { key: "tarde", color: "#3b82f6" },
+  noche: { key: "noche", color: "#8b5cf6" },
 };
 type TramoKey = keyof typeof TRAMOS_HORARIOS_CONFIG;
 
@@ -65,7 +65,7 @@ const CustomIntakeCalendar: FC<CustomIntakeCalendarProps> = ({
     if (selectedDate) {
       marks[selectedDate] = {
         selected: true,
-        selectedColor: "#61adf9ff",
+        selectedColor: "#e63946",
         disableTouchEvent: true,
       };
     }
@@ -76,19 +76,19 @@ const CustomIntakeCalendar: FC<CustomIntakeCalendarProps> = ({
   const calendarTheme = {
     backgroundColor: "#ffffff",
     calendarBackground: "#ffffff",
-    textSectionTitleColor: "#b6c1cd",
-    textSectionTitleDisabledColor: "#d9e1e8",
-    selectedDayBackgroundColor: "#61adf9ff",
+    textSectionTitleColor: "#e63946",
+    textSectionTitleDisabledColor: "#ffcdd2",
+    selectedDayBackgroundColor: "#e63946",
     selectedDayTextColor: "#ffffff",
-    todayTextColor: "#61adf9ff",
+    todayTextColor: "#e63946",
     dayTextColor: "#2d3436",
-    textDisabledColor: "#d9e1e8",
-    dotColor: "#61adf9ff",
+    textDisabledColor: "#ffcdd2",
+    dotColor: "#e63946",
     selectedDotColor: "#ffffff",
-    arrowColor: "#61adf9ff",
-    disabledArrowColor: "#d9e1e8",
-    monthTextColor: "#2d3436",
-    indicatorColor: "#61adf9ff",
+    arrowColor: "#e63946",
+    disabledArrowColor: "#ffcdd2",
+    monthTextColor: "#e63946",
+    indicatorColor: "#e63946",
     weekVerticalMargin: 5,
   };
 
