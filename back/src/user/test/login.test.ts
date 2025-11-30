@@ -1,10 +1,10 @@
-import { describe, it, expect, beforeAll } from "vitest";
+import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { app } from "../../../test/setup";
-import * as mockInsert from "../../../test/utils/seedTestDB";
+import { clearTestDB, insertUser } from "../../../test/utils/seedTestDB";
 
 describe("POST /login", () => {
   beforeAll(async () => {
-    await mockInsert.insertUser();
+    await insertUser();
   });
 
   it("returns 200 for a successful login", async () => {
@@ -47,5 +47,9 @@ describe("POST /login", () => {
     expect(res.statusCode).toBe(401);
     const body = res.json();
     expect(body).toHaveProperty("error");
+  });
+
+  afterAll(async () => {
+    await clearTestDB();
   });
 });
