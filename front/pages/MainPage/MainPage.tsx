@@ -10,9 +10,9 @@ import {
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { navigate } from "expo-router/build/global-state/routing";
 import { IntakeCard } from "./_components/IntakeCard";
 import { HeaderMainPage } from "./_components/HeaderMainPage";
+import { useRouter } from "expo-router";
 
 interface Toma {
   id: string;
@@ -40,23 +40,23 @@ async function fetchTomasDeHoy(): Promise<Toma[]> {
     },
     {
       id: "3",
-      medicamento: "Ibuprofeno",
-      dosis: "200mg",
-      hora: "12:00 PM",
+      medicamento: "Amoxicilina",
+      dosis: "500mg",
+      hora: "03:00 PM",
       tomada: false,
     },
     {
       id: "4",
-      medicamento: "Ibuprofeno",
-      dosis: "200mg",
-      hora: "12:00 PM",
+      medicamento: "Loratadina",
+      dosis: "10mg",
+      hora: "06:00 PM",
       tomada: false,
     },
     {
       id: "5",
-      medicamento: "Ibuprofeno",
-      dosis: "200mg",
-      hora: "12:00 PM",
+      medicamento: "Metformina",
+      dosis: "850mg",
+      hora: "09:00 PM",
       tomada: false,
     },
   ];
@@ -67,11 +67,13 @@ export const MainPage = () => {
     data: tomas,
     isLoading,
     error,
+    refetch,
   } = useQuery({
     queryKey: ["tomasHoy"],
     queryFn: fetchTomasDeHoy,
   });
 
+  const router = useRouter();
   const tomasPendientes = tomas?.filter((t) => !t.tomada).length ?? 0;
   const tomasCompletadas = tomas?.filter((t) => t.tomada).length ?? 0;
   const totalTomas = (tomas?.length ?? 0) || 1;
@@ -140,7 +142,7 @@ export const MainPage = () => {
               <TouchableOpacity
                 style={styles.verTodoBtn}
                 onPress={() => {
-                  navigate("/(tabs)/calendar");
+                  router.push("/(tabs)/calendar");
                 }}
               >
                 <Text style={styles.verTodoText}>Ver todo</Text>
@@ -179,7 +181,7 @@ export const MainPage = () => {
                 <TouchableOpacity
                   style={styles.retryButton}
                   onPress={() => {
-                    window.location.reload();
+                    refetch();
                   }}
                 >
                   <Text style={styles.retryText}>Reintentar</Text>
@@ -206,7 +208,7 @@ export const MainPage = () => {
                 <TouchableOpacity
                   style={styles.addButton}
                   onPress={() => {
-                    navigate("/treatments");
+                    router.push("/treatments");
                   }}
                 >
                   <MaterialIcons

@@ -1,5 +1,5 @@
 import { MaterialIcons } from "@expo/vector-icons";
-import { navigate } from "expo-router/build/global-state/routing";
+import { useRouter } from "expo-router";
 import { View, TouchableOpacity, Text, Image, StyleSheet } from "react-native";
 
 const logo = require("@/assets/images/logo.png");
@@ -11,6 +11,7 @@ export const HeaderMainPage = ({
   todayDate: string;
   progreso: number;
 }) => {
+  const router = useRouter();
   return (
     <View>
       <View style={styles.headerTop}>
@@ -21,7 +22,7 @@ export const HeaderMainPage = ({
         <TouchableOpacity
           style={styles.profileButton}
           onPress={() => {
-            navigate("/(tabs)/profile");
+            router.push("/(tabs)/profile");
           }}
         >
           <MaterialIcons name="person" size={24} color="#FFF" />

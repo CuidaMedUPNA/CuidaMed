@@ -46,14 +46,7 @@ export const IntakeCard = ({ toma }: { toma: Toma }) => {
           >
             {toma.medicamento}
           </Text>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 6,
-              marginTop: 4,
-            }}
-          >
+          <View style={styles.intakeDosisContainer}>
             <MaterialIcons
               name="medication"
               size={14}
@@ -166,6 +159,12 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: "700",
     color: "#1A1A2E",
+  },
+  intakeDosisContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    marginTop: 4,
   },
   intakeDosis: {
     fontSize: 13,
