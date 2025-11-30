@@ -345,6 +345,12 @@ export type GetProfileErrors = {
     401: {
         error?: string;
     };
+    /**
+     * Error interno del servidor
+     */
+    500: {
+        error?: string;
+    };
 };
 
 export type GetProfileError = GetProfileErrors[keyof GetProfileErrors];
