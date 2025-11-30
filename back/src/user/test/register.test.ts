@@ -14,8 +14,8 @@ describe("POST /register", () => {
         email: "newuser@example.com",
         password: "newpassword",
         firebaseToken: "someFirebaseToken",
-        platform: "ios",
-        deviceId: "device-1234",
+        platform: "android",
+        deviceId: "emulator-5554",
       }),
     });
 
@@ -36,8 +36,8 @@ describe("POST /register", () => {
         email: "",
         password: "newpassword",
         firebaseToken: "someFirebaseToken",
-        platform: "ios",
-        deviceId: "device-1234",
+        platform: "android",
+        deviceId: "emulator-5554",
       }),
     });
 
