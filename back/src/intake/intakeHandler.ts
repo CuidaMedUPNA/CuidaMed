@@ -83,6 +83,6 @@ export const intakeHandlers: Partial<RouteHandlers> = {
     }
   },
   getIntakesByUser: async (request, reply) => {
-    reply.status(501).send({ error: "Not Implemented" });
+    reply.status(200).send();
   },
 };
