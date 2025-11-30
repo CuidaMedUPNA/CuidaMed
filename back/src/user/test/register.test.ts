@@ -10,7 +10,7 @@ describe("POST /register", () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        name: "New User",
+        username: "New User",
         email: "newuser@example.com",
         password: "newpassword",
         firebaseToken: "someFirebaseToken",
