@@ -1,16 +1,16 @@
-import { describe, it, expect, afterAll, beforeAll } from "vitest";
+import { describe, it, expect, afterAll } from "vitest";
 import { app } from "../../../test/setup";
 import { clearTestDB } from "../../../test/utils/seedTestDB";
 
 describe("POST /register", () => {
-  beforeAll(async () => {
+  afterAll(async () => {
     await clearTestDB();
   });
 
   it("returns 201 for a successful registration", async () => {
     const newUser = {
       username: "New User",
-      email: "newuser@example.com",
+      email: "newuser2@example.com",
       password: "newpassword",
       firebaseToken: "someFirebaseToken",
       platform: "android",
@@ -26,10 +26,14 @@ describe("POST /register", () => {
       body: JSON.stringify(newUser),
     });
 
+    if (res.statusCode !== 201) {
+      console.log(res.body);
+    }
+
     expect(res.statusCode).toBe(201);
     const body = res.json();
     expect(body).toHaveProperty("id");
-    expect(body).toHaveProperty("email", "newuser@example.com");
+    expect(body).toHaveProperty("email", "newuser2@example.com");
   });
 
   it("returns 400 for missing fields", async () => {
