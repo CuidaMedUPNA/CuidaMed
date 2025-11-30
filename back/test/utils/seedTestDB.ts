@@ -12,6 +12,9 @@ export async function createTestDB(db: Kysely<Database>) {
     .addColumn("name", "varchar")
     .addColumn("email", "varchar")
     .addColumn("password", "varchar")
+    .addColumn("birthdate", "date")
+    .addColumn("profile_picture", "varchar")
+    .addColumn("gender", "varchar")
     .execute();
 
   await db.schema
