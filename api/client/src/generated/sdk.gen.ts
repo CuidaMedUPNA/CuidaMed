@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { CreateIntakeData, CreateIntakeErrors, CreateIntakeResponses, CreateTreatmentData, CreateTreatmentErrors, CreateTreatmentResponses, DeleteIntakeData, DeleteIntakeErrors, DeleteIntakeResponses, DeleteTreatmentData, DeleteTreatmentErrors, DeleteTreatmentResponses, GetAllMedicinesData, GetAllMedicinesErrors, GetAllMedicinesResponses, GetIntakesByTreatmentData, GetIntakesByTreatmentErrors, GetIntakesByTreatmentResponses, GetIntakesByUserData, GetIntakesByUserErrors, GetIntakesByUserResponses, GetProfileData, GetProfileErrors, GetProfileResponses, GetTreatmentByIdData, GetTreatmentByIdErrors, GetTreatmentByIdResponses, GetTreatmentsData, GetTreatmentsErrors, GetTreatmentsResponses, HealthCheckData, HealthCheckResponses, LoginData, LoginErrors, LoginResponses, RegisterUserData, RegisterUserErrors, RegisterUserResponses, UpdateTreatmentData, UpdateTreatmentErrors, UpdateTreatmentResponses } from './types.gen';
+import type { CreateIntakeData, CreateIntakeErrors, CreateIntakeResponses, CreateTreatmentData, CreateTreatmentErrors, CreateTreatmentResponses, DeleteIntakeData, DeleteIntakeErrors, DeleteIntakeResponses, DeleteTreatmentData, DeleteTreatmentErrors, DeleteTreatmentResponses, GetAllMedicinesData, GetAllMedicinesErrors, GetAllMedicinesResponses, GetIntakesByTreatmentData, GetIntakesByTreatmentErrors, GetIntakesByTreatmentResponses, GetIntakesByUserData, GetIntakesByUserErrors, GetIntakesByUserResponses, GetProfileData, GetProfileErrors, GetProfileResponses, GetTodayIntakesData, GetTodayIntakesErrors, GetTodayIntakesResponses, GetTreatmentByIdData, GetTreatmentByIdErrors, GetTreatmentByIdResponses, GetTreatmentsData, GetTreatmentsErrors, GetTreatmentsResponses, HealthCheckData, HealthCheckResponses, LoginData, LoginErrors, LoginResponses, RegisterUserData, RegisterUserErrors, RegisterUserResponses, UpdateTreatmentData, UpdateTreatmentErrors, UpdateTreatmentResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -73,6 +73,11 @@ export const createTreatment = <ThrowOnError extends boolean = false>(options: O
  * Obtener todas las tomas de un usuario
  */
 export const getIntakesByUser = <ThrowOnError extends boolean = false>(options?: Options<GetIntakesByUserData, ThrowOnError>) => (options?.client ?? client).get<GetIntakesByUserResponses, GetIntakesByUserErrors, ThrowOnError>({ url: '/intakes', ...options });
+
+/**
+ * Obtener las tomas programadas para hoy
+ */
+export const getTodayIntakes = <ThrowOnError extends boolean = false>(options?: Options<GetTodayIntakesData, ThrowOnError>) => (options?.client ?? client).get<GetTodayIntakesResponses, GetTodayIntakesErrors, ThrowOnError>({ url: '/todayIntakes', ...options });
 
 /**
  * Eliminar un tratamiento

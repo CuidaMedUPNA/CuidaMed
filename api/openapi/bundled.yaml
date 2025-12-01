@@ -252,6 +252,39 @@ paths:
                   error:
                     type: string
                     example: Internal Server Error
+  /todayIntakes:
+    get:
+      summary: Obtener las tomas programadas para hoy
+      operationId: getTodayIntakes
+      responses:
+        '200':
+          description: Lista de tomas programadas para hoy
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DosingSchedule'
+        '400':
+          description: Solicitud incorrecta
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Bad Request
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal Server Error
   /treatments/{treatmentId}:
     get:
       summary: Obtener datos de un tratamiento específico
