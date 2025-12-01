@@ -493,6 +493,18 @@ export type GetTodayIntakesErrors = {
         error?: string;
     };
     /**
+     * No autorizado
+     */
+    401: {
+        error?: string;
+    };
+    /**
+     * Usuario no encontrado
+     */
+    404: {
+        error?: string;
+    };
+    /**
      * Error interno del servidor
      */
     500: {
