@@ -97,16 +97,15 @@ const CustomNavBar: React.FC<BottomTabBarProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    position: "absolute",
     flexDirection: "row",
     justifyContent: "center",
     backgroundColor: PRIMARY_COLOUR,
-    width: "95%",
-    alignSelf: "center",
-    bottom: 40,
-    borderRadius: 40,
     paddingHorizontal: 12,
     paddingVertical: 15,
+    width: "95%",
+    alignSelf: "center",
+    borderRadius: 40,
+    marginBottom: 20,
     shadowColor: "#ff0000ff",
     shadowOffset: {
       width: 0,
