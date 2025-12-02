@@ -82,7 +82,12 @@ export const intakeHandlers: Partial<RouteHandlers> = {
       return reply.status(500).send({ error: "Internal Server Error" });
     }
   },
+
   getIntakesByUser: async (request, reply) => {
+    reply.status(200).send();
+  },
+
+  getTodayIntakes: async (request, reply) => {
     reply.status(200).send();
   },
 };

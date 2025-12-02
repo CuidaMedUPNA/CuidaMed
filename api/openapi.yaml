@@ -40,6 +40,9 @@ paths:
   /intakes:
     $ref: "./openapi/intakes.yaml#/paths/~1intakes"
 
+  /todayIntakes:
+    $ref: "./openapi/intakes.yaml#/paths/~1todayIntakes"
+
   /treatments/{treatmentId}:
     $ref: "./openapi/treatments.yaml#/paths/~1treatments~1{treatmentId}"
 

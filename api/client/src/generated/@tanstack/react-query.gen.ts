@@ -3,8 +3,8 @@
 import { type DefaultError, queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { createIntake, createTreatment, deleteIntake, deleteTreatment, getAllMedicines, getIntakesByTreatment, getIntakesByUser, getProfile, getTreatmentById, getTreatments, healthCheck, login, type Options, registerUser, updateTreatment } from '../sdk.gen';
-import type { CreateIntakeData, CreateIntakeError, CreateIntakeResponse, CreateTreatmentData, CreateTreatmentError, CreateTreatmentResponse, DeleteIntakeData, DeleteIntakeError, DeleteIntakeResponse, DeleteTreatmentData, DeleteTreatmentError, DeleteTreatmentResponse, GetAllMedicinesData, GetAllMedicinesError, GetAllMedicinesResponse, GetIntakesByTreatmentData, GetIntakesByTreatmentError, GetIntakesByTreatmentResponse, GetIntakesByUserData, GetIntakesByUserError, GetIntakesByUserResponse, GetProfileData, GetProfileError, GetProfileResponse, GetTreatmentByIdData, GetTreatmentByIdError, GetTreatmentByIdResponse, GetTreatmentsData, GetTreatmentsError, GetTreatmentsResponse, HealthCheckData, HealthCheckResponse, LoginData, LoginError, LoginResponse, RegisterUserData, RegisterUserError, UpdateTreatmentData, UpdateTreatmentError, UpdateTreatmentResponse } from '../types.gen';
+import { createIntake, createTreatment, deleteIntake, deleteTreatment, getAllMedicines, getIntakesByTreatment, getIntakesByUser, getProfile, getTodayIntakes, getTreatmentById, getTreatments, healthCheck, login, type Options, registerUser, updateTreatment } from '../sdk.gen';
+import type { CreateIntakeData, CreateIntakeError, CreateIntakeResponse, CreateTreatmentData, CreateTreatmentError, CreateTreatmentResponse, DeleteIntakeData, DeleteIntakeError, DeleteIntakeResponse, DeleteTreatmentData, DeleteTreatmentError, DeleteTreatmentResponse, GetAllMedicinesData, GetAllMedicinesError, GetAllMedicinesResponse, GetIntakesByTreatmentData, GetIntakesByTreatmentError, GetIntakesByTreatmentResponse, GetIntakesByUserData, GetIntakesByUserError, GetIntakesByUserResponse, GetProfileData, GetProfileError, GetProfileResponse, GetTodayIntakesData, GetTodayIntakesError, GetTodayIntakesResponse, GetTreatmentByIdData, GetTreatmentByIdError, GetTreatmentByIdResponse, GetTreatmentsData, GetTreatmentsError, GetTreatmentsResponse, HealthCheckData, HealthCheckResponse, LoginData, LoginError, LoginResponse, RegisterUserData, RegisterUserError, UpdateTreatmentData, UpdateTreatmentError, UpdateTreatmentResponse } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -160,6 +160,24 @@ export const getIntakesByUserOptions = (options?: Options<GetIntakesByUserData>)
         return data;
     },
     queryKey: getIntakesByUserQueryKey(options)
+});
+
+export const getTodayIntakesQueryKey = (options?: Options<GetTodayIntakesData>) => createQueryKey('getTodayIntakes', options);
+
+/**
+ * Obtener las tomas programadas para hoy
+ */
+export const getTodayIntakesOptions = (options?: Options<GetTodayIntakesData>) => queryOptions<GetTodayIntakesResponse, GetTodayIntakesError, GetTodayIntakesResponse, ReturnType<typeof getTodayIntakesQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getTodayIntakes({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getTodayIntakesQueryKey(options)
 });
 
 /**

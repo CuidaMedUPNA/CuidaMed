@@ -188,6 +188,8 @@ export type IntakesNewDosingTime = {
 
 export type Intakes1Intakes = unknown;
 
+export type Intakes1TodayIntakes = unknown;
+
 export type Intakes1Treatments1TreatmentId1Intakes = unknown;
 
 export type Intakes1Treatments1TreatmentId1Intakes1IntakeId = unknown;
@@ -469,6 +471,39 @@ export type GetIntakesByUserResponses = {
 };
 
 export type GetIntakesByUserResponse = GetIntakesByUserResponses[keyof GetIntakesByUserResponses];
+
+export type GetTodayIntakesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/todayIntakes';
+};
+
+export type GetTodayIntakesErrors = {
+    /**
+     * Solicitud incorrecta
+     */
+    400: {
+        error?: string;
+    };
+    /**
+     * Error interno del servidor
+     */
+    500: {
+        error?: string;
+    };
+};
+
+export type GetTodayIntakesError = GetTodayIntakesErrors[keyof GetTodayIntakesErrors];
+
+export type GetTodayIntakesResponses = {
+    /**
+     * Lista de tomas programadas para hoy
+     */
+    200: Array<IntakesDosingSchedule>;
+};
+
+export type GetTodayIntakesResponse = GetTodayIntakesResponses[keyof GetTodayIntakesResponses];
 
 export type DeleteTreatmentData = {
     body?: never;
