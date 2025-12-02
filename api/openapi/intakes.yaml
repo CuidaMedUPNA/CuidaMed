@@ -22,6 +22,16 @@ paths:
                   error:
                     type: string
                     example: "Bad Request"
+        "401":
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Unauthorized"
         "404":
           description: Usuario no encontrado
           content:
