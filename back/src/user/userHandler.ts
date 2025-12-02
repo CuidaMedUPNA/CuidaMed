@@ -3,9 +3,12 @@ import {
   validateCredentials,
   createUser,
   saveDeviceToken,
+  getUserById,
 } from "./userRepository";
 import { NewUser } from "../db/types";
 import jwt from "jsonwebtoken";
+
+export type Gender = "male" | "female";
 
 export const userHandlers: Partial<RouteHandlers> = {
   login: async (request, reply) => {
@@ -74,6 +77,29 @@ export const userHandlers: Partial<RouteHandlers> = {
   },
 
   getProfile: async (request, reply) => {
-    return reply.status(200).send();
+    try {
+      const userId = request.user?.userId;
+
+      if (!userId) {
+        return reply.status(401).send({ error: "Unauthorized" });
+      }
+
+      const user = await getUserById(userId);
+      if (!user) {
+        return reply.status(401).send({ error: "Unauthorized" });
+      }
+      const mappedUser = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        birthdate: user.birthdate || undefined,
+        gender: (user.gender as Gender) || undefined,
+        profilePictureUrl: user.profile_picture || undefined,
+      };
+      return reply.status(200).send(mappedUser);
+    } catch (error) {
+      request.log.error(error);
+      return reply.status(500).send({ error: "Internal Server Error" });
+    }
   },
 };

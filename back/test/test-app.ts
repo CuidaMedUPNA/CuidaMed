@@ -15,7 +15,7 @@ const __dirname = dirname(__filename);
  * Instancia de Fastify para pruebas sin iniciar el servidor.
  */
 export async function buildTestApp() {
-  const app = Fastify({ logger: false });
+  const app = Fastify({ logger: true });
 
   app.addHook("preHandler", async (request, reply) => {
     const publicPaths = ["/login", "/register", "/health", "/documentation"];
