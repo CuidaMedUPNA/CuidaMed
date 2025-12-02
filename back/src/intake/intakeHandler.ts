@@ -107,6 +107,8 @@ export const intakeHandlers: Partial<RouteHandlers> = {
   getTodayIntakes: async (request, reply) => {
     const userId = request.user?.userId;
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     const todayIntakes = [];
 
     try {
@@ -124,9 +126,20 @@ export const intakeHandlers: Partial<RouteHandlers> = {
           const intakeEndDate = intake.endDate
             ? new Date(intake.endDate)
             : null;
+
+          const todayDayOfWeek = today.getDay() === 0 ? 7 : today.getDay();
+
+          const hasScheduleForToday =
+            Array.isArray(intake.dosingTimes) &&
+            intake.dosingTimes.some(
+              (dosingTime) =>
+                dosingTime.dayOfWeek === null ||
+                dosingTime.dayOfWeek === todayDayOfWeek
+            );
           if (
             intakeStartDate <= today &&
-            (intakeEndDate === null || intakeEndDate >= today)
+            (intakeEndDate === null || intakeEndDate >= today) &&
+            hasScheduleForToday
           ) {
             todayIntakes.push(intake);
           }
