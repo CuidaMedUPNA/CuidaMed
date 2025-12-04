@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll, vi } from "vitest";
-import { app, db } from "../../../test/setup";
+import { app } from "../../../test/setup";
 import * as intakeRepo from "../intakeRepository";
 import * as mockInsert from "../../../test/utils/seedTestDB";
 
@@ -110,10 +110,6 @@ describe("GET /treatments/{treatmentId}/intakes", () => {
   });
 
   afterAll(async () => {
-    await db.deleteFrom("dosing_time").execute();
-    await db.deleteFrom("dosing_schedule").execute();
-    await db.deleteFrom("treatment").execute();
-    await db.deleteFrom("medicine").execute();
-    await db.deleteFrom("user").execute();
+    await mockInsert.clearTestDB();
   });
 });

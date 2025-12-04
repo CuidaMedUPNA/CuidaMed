@@ -454,9 +454,9 @@ export type GetIntakesByUserErrors = {
         error?: string;
     };
     /**
-     * Usuario no encontrado
+     * No autorizado
      */
-    404: {
+    401: {
         error?: string;
     };
     /**

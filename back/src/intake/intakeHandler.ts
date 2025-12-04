@@ -5,6 +5,7 @@ import {
   getIntakesByTreatmentId,
   insertIntakeToTreatment,
 } from "./intakeRepository";
+import { getTreatmentsByUserId } from "../treatment/treatmentRepository";
 
 export const intakeHandlers: Partial<RouteHandlers> = {
   createIntake: async (request, reply) => {
@@ -84,7 +85,23 @@ export const intakeHandlers: Partial<RouteHandlers> = {
   },
 
   getIntakesByUser: async (request, reply) => {
-    reply.status(200).send();
+    try {
+      const userId = request.user?.userId;
+
+      if (!userId) {
+        return reply.status(401).send({ error: "Unauthorized" });
+      }
+
+      const treatments = await getTreatmentsByUserId(userId);
+
+      const intakes = await Promise.all(
+        treatments.map((t) => getIntakesByTreatmentId(t.id))
+      );
+      return reply.status(200).send(intakes.flat());
+    } catch (error) {
+      request.log.error(error);
+      return reply.status(500).send({ error: "Internal Server Error" });
+    }
   },
 
   getTodayIntakes: async (request, reply) => {
