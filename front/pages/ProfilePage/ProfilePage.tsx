@@ -9,6 +9,7 @@ import {
   ScrollView,
 } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
 import { useTranslation } from "react-i18next";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useAuth } from "@/context/AuthContext";
@@ -51,36 +52,36 @@ export function ProfilePage() {
 
   return (
     <SafeAreaProvider>
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        {/* Encabezado con gradiente */}
-        <View style={styles.headerContainer}>
-          <View style={styles.headerGradient}>
-            <View style={styles.decorationCircle1} />
-            <View style={styles.decorationCircle2} />
-          </View>
-          
-          <View style={styles.headerContent}>
-            <View style={styles.profileImageContainer}>
-              {userData?.profilePictureUrl ? (
-                <Image
-                  source={{ uri: userData.profilePictureUrl }}
-                  style={styles.profileImage}
-                />
-              ) : (
-                <View style={styles.profileImagePlaceholder}>
-                  <MaterialIcons name="account-circle" size={100} color="#fff" />
-                </View>
-              )}
-              <View style={styles.statusBadge}>
-                <View style={styles.statusDot} />
+      <LinearGradient
+        colors={["#FF6B6B", "#FF8E53", "#FFA07A"]}
+        style={styles.heroHeader}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      >
+        <View style={styles.headerContent}>
+          <View style={styles.profileImageContainer}>
+            {userData?.profilePictureUrl ? (
+              <Image
+                source={{ uri: userData.profilePictureUrl }}
+                style={styles.profileImage}
+              />
+            ) : (
+              <View style={styles.profileImagePlaceholder}>
+                <MaterialIcons name="account-circle" size={90} color="#fff" />
               </View>
-            </View>
-            <Text style={styles.title}>
-              {userData?.name || t("tabs.profile")}
-            </Text>
+            )}
+          </View>
+          <Text style={styles.title}>
+            {userData?.name || t("tabs.profile")}
+          </Text>
+          <View style={styles.subtitleContainer}>
+            <MaterialIcons name="verified-user" size={16} color="rgba(255,255,255,0.9)" />
             <Text style={styles.subtitle}>Perfil de Usuario</Text>
           </View>
         </View>
+      </LinearGradient>
+
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
 
         {/* Información del perfil en tarjetas */}
         {userData && !isLoading && (
@@ -88,9 +89,14 @@ export function ProfilePage() {
             <Text style={styles.sectionTitle}>Información Personal</Text>
             
             <View style={styles.infoCard}>
-              <View style={styles.cardIconContainer}>
-                <MaterialIcons name="email" size={24} color="#F23728" />
-              </View>
+              <LinearGradient
+                colors={["#FF6B6B", "#FF8E53"]}
+                style={styles.cardIconContainer}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+              >
+                <MaterialIcons name="email" size={24} color="#fff" />
+              </LinearGradient>
               <View style={styles.cardContent}>
                 <Text style={styles.cardLabel}>Correo Electrónico</Text>
                 <Text style={styles.cardValue}>{userData.email}</Text>
@@ -98,9 +104,14 @@ export function ProfilePage() {
             </View>
 
             <View style={styles.infoCard}>
-              <View style={styles.cardIconContainer}>
-                <MaterialIcons name="cake" size={24} color="#F23728" />
-              </View>
+              <LinearGradient
+                colors={["#FF6B6B", "#FF8E53"]}
+                style={styles.cardIconContainer}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+              >
+                <MaterialIcons name="cake" size={24} color="#fff" />
+              </LinearGradient>
               <View style={styles.cardContent}>
                 <Text style={styles.cardLabel}>Fecha de Nacimiento</Text>
                 <Text style={styles.cardValue}>{userData.birthdate}</Text>
@@ -108,9 +119,14 @@ export function ProfilePage() {
             </View>
 
             <View style={styles.infoCard}>
-              <View style={styles.cardIconContainer}>
-                <MaterialIcons name="wc" size={24} color="#F23728" />
-              </View>
+              <LinearGradient
+                colors={["#FF6B6B", "#FF8E53"]}
+                style={styles.cardIconContainer}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+              >
+                <MaterialIcons name="wc" size={24} color="#fff" />
+              </LinearGradient>
               <View style={styles.cardContent}>
                 <Text style={styles.cardLabel}>Género</Text>
                 <Text style={styles.cardValue}>
@@ -166,149 +182,92 @@ export function ProfilePage() {
 }
 
 const styles = StyleSheet.create({
+  heroHeader: {
+    paddingTop: 60,
+    paddingBottom: 40,
+    paddingHorizontal: 24,
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
+  },
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
-    paddingBottom: 100,
-  },
-  // Encabezado
-  headerContainer: {
-    position: "relative",
-    paddingBottom: 40,
-    overflow: "hidden",
-  },
-  headerGradient: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 250,
-    backgroundColor: "#F23728",
-  },
-  decorationCircle1: {
-    position: "absolute",
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-    top: -50,
-    right: -30,
-  },
-  decorationCircle2: {
-    position: "absolute",
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: "rgba(255, 255, 255, 0.08)",
-    bottom: 20,
-    left: -20,
+    backgroundColor: "#F5F7FA",
+    marginTop: -20,
   },
   headerContent: {
     alignItems: "center",
     justifyContent: "center",
-    paddingTop: 20,
-    paddingHorizontal: 20,
-    zIndex: 10,
+  },
+  subtitleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    marginTop: 4,
   },
   profileImageContainer: {
-    position: "relative",
-    marginBottom: 16,
+    marginBottom: 20,
+    padding: 4,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    borderRadius: 64,
   },
   profileImage: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    borderWidth: 4,
+    width: 110,
+    height: 110,
+    borderRadius: 55,
+    borderWidth: 3,
     borderColor: "#fff",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
   },
   profileImagePlaceholder: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    borderWidth: 4,
+    width: 110,
+    height: 110,
+    borderRadius: 55,
+    borderWidth: 3,
     borderColor: "#fff",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.2)",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  statusBadge: {
-    position: "absolute",
-    bottom: 0,
-    right: 0,
-    backgroundColor: "#fff",
-    borderRadius: 20,
-    width: 40,
-    height: 40,
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 3,
-    borderColor: "#F23728",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  statusDot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    backgroundColor: "#4CAF50",
+    backgroundColor: "rgba(255,255,255,0.2)",
   },
   title: {
-    fontSize: 32,
-    fontWeight: "bold",
+    fontSize: 28,
+    fontWeight: "800",
     color: "#fff",
     textAlign: "center",
-    marginBottom: 4,
   },
   subtitle: {
     fontSize: 14,
-    color: "rgba(255, 255, 255, 0.8)",
+    color: "rgba(255, 255, 255, 0.9)",
     fontWeight: "500",
   },
   // Información del perfil
   profileInfo: {
     paddingHorizontal: 20,
     paddingVertical: 24,
-    marginTop: -20,
+    paddingTop: 34,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: "700",
-    color: "#333",
+    color: "#1A1A2E",
     marginBottom: 16,
-    marginTop: 0,
   },
   infoCard: {
     flexDirection: "row",
     backgroundColor: "#fff",
-    borderRadius: 16,
-    paddingVertical: 16,
+    borderRadius: 20,
+    paddingVertical: 18,
     paddingHorizontal: 16,
     marginBottom: 12,
     alignItems: "center",
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 5,
   },
   cardIconContainer: {
-    width: 50,
-    height: 50,
-    borderRadius: 12,
-    backgroundColor: "rgba(242, 55, 40, 0.1)",
+    width: 48,
+    height: 48,
+    borderRadius: 14,
     justifyContent: "center",
     alignItems: "center",
     marginRight: 16,
@@ -317,17 +276,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cardLabel: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: "#999",
+    fontSize: 13,
+    fontWeight: "500",
+    color: "#666",
     marginBottom: 4,
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
   },
   cardValue: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#333",
+    fontSize: 17,
+    fontWeight: "700",
+    color: "#1A1A2E",
   },
   // Acciones
   actions: {
@@ -381,19 +338,19 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   logoutButton: {
-    backgroundColor: "#F23728",
-    borderRadius: 14,
-    paddingVertical: 14,
-    paddingHorizontal: 20,
+    backgroundColor: "#FF6B6B",
+    borderRadius: 16,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 12,
-    shadowColor: "#F23728",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
+    gap: 10,
+    shadowColor: "#FF6B6B",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.35,
+    shadowRadius: 12,
+    elevation: 8,
   },
   logoutButtonText: {
     color: "#fff",
@@ -450,8 +407,8 @@ const styles = StyleSheet.create({
   modalConfirmButton: {
     paddingVertical: 12,
     paddingHorizontal: 20,
-    borderRadius: 10,
-    backgroundColor: "#F23728",
+    borderRadius: 12,
+    backgroundColor: "#FF6B6B",
   },
   modalConfirmButtonText: {
     color: "#fff",
