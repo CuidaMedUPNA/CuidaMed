@@ -7,33 +7,41 @@ import {
   TouchableOpacity,
   TextInput,
   Platform,
+  ActivityIndicator,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { ModalAddMedicine } from "./_components/ModalAddMedicine";
 import { useMutation } from "@tanstack/react-query";
-import { useLocalSearchParams } from "expo-router/build/hooks";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { createIntakeMutation, getAllMedicines } from "@cuidamed-api/client";
+import { LinearGradient } from "expo-linear-gradient";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { t } from "i18next";
 
 export const AddMedicinePage = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [selectedMedicine, setSelectedMedicine] = useState<number | null>(null);
   const [allMedicines, setAllMedicines] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { treatmentId: treatmentIdStr } = useLocalSearchParams();
   const treatmentId = treatmentIdStr
     ? parseInt(treatmentIdStr as string, 10)
     : undefined;
+  const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     const loadMedicines = async () => {
       try {
+        setIsLoading(true);
         const response = await getAllMedicines({ throwOnError: true });
-        console.log("All medicines:", response.data);
         setAllMedicines(response.data || []);
       } catch (error) {
         console.error("Error loading medicines:", error);
         setAllMedicines([]);
+      } finally {
+        setIsLoading(false);
       }
     };
     loadMedicines();
@@ -80,69 +88,126 @@ export const AddMedicinePage = () => {
     setOpenModal(false);
   };
 
-  const renderItem = ({ item }: { item: any }) => (
+  const filteredMedicines = allMedicines.filter((medicine) =>
+    medicine.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const renderItem = ({ item, index }: { item: any; index: number }) => (
     <TouchableOpacity
-      style={styles.item}
+      style={styles.medicineItem}
       onPress={() => {
         setSelectedMedicine(Number(item.id));
-        console.log("Selected medicine:", selectedMedicine);
         setOpenModal(true);
       }}
+      activeOpacity={0.6}
       accessibilityRole="button"
     >
-      <View style={styles.itemText}>
-        <Text style={styles.name}>{item.name}</Text>
-        <Text style={styles.presentation}>{item.pictureUrl || ""}</Text>
+      <View style={styles.medicineContent}>
+        <View style={[styles.medicineIndex, { backgroundColor: getColorForIndex(index) }]}>
+          <Text style={styles.medicineIndexText}>
+            {item.name.charAt(0).toUpperCase()}
+          </Text>
+        </View>
+        <View style={styles.medicineTextContainer}>
+          <Text style={styles.medicineName} numberOfLines={1}>{item.name}</Text>
+          {item.pictureUrl ? (
+            <Text style={styles.medicineSubtext} numberOfLines={1}>{item.pictureUrl}</Text>
+          ) : null}
+        </View>
       </View>
-      <View style={styles.addCircle}>
-        <Text style={styles.addCircleText}>+</Text>
-      </View>
+      <MaterialIcons name="add-circle" size={28} color="#FF6B6B" />
     </TouchableOpacity>
   );
 
+  const getColorForIndex = (index: number) => {
+    const colors = ["#FF6B6B", "#FF8E53", "#FFA07A", "#FF7043", "#E57373", "#FF5722", "#FF8A65"];
+    return colors[index % colors.length];
+  };
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Selecciona un medicamento</Text>
-      <View style={styles.searchContainer}>
-        <View
-          style={[
-            styles.searchInputContainer,
-            isSearchFocused && styles.searchInputContainerFocused,
-          ]}
+    <View style={[styles.container, { paddingTop: insets.top }]}>
+      {/* Header compacto */}
+      <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.back()}
         >
-          <Ionicons
-            name="search-outline"
-            size={20}
-            color="#f23728"
-            style={styles.searchIcon}
-          />
-          <TextInput
-            style={[
-              styles.searchInput,
-              // remove web focus outline via inline style (cast to any to satisfy TS)
-              Platform.OS === "web"
-                ? ({ outlineWidth: 0, outlineColor: "transparent" } as any)
-                : {},
-            ]}
-            placeholder="Buscar medicamento..."
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            autoCapitalize="none"
-            autoCorrect={false}
-            placeholderTextColor="#666"
-            selectionColor="#f23728"
-            onFocus={() => setIsSearchFocused(true)}
-            onBlur={() => setIsSearchFocused(false)}
-          />
-        </View>
+          <MaterialIcons name="arrow-back" size={24} color="#1A1A2E" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>
+          {t("treatments.addMedicine.title", { defaultValue: "Añadir medicamento" })}
+        </Text>
+        <View style={styles.headerSpacer} />
       </View>
-      <FlatList
-        data={allMedicines}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={styles.listContainer}
-        showsVerticalScrollIndicator={false}
-      />
+
+      {/* Barra de búsqueda destacada */}
+      <View style={styles.searchSection}>
+        <LinearGradient
+          colors={["#FF6B6B", "#FF8E53"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.searchGradientBorder}
+        >
+          <View style={styles.searchInputWrapper}>
+            <MaterialIcons name="search" size={24} color="#FF6B6B" />
+            <TextInput
+              style={[
+                styles.searchInput,
+                Platform.OS === "web"
+                  ? ({ outlineWidth: 0, outlineColor: "transparent" } as any)
+                  : {},
+              ]}
+              placeholder={t("treatments.addMedicine.searchPlaceholder", { defaultValue: "Buscar medicamento..." })}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              autoCapitalize="none"
+              autoCorrect={false}
+              placeholderTextColor="#999"
+              selectionColor="#FF6B6B"
+            />
+            {searchQuery.length > 0 && (
+              <TouchableOpacity onPress={() => setSearchQuery("")}>
+                <MaterialIcons name="cancel" size={20} color="#CCC" />
+              </TouchableOpacity>
+            )}
+          </View>
+        </LinearGradient>
+        
+        <Text style={styles.resultsText}>
+          {filteredMedicines.length} {filteredMedicines.length === 1 ? "resultado" : "resultados"}
+        </Text>
+      </View>
+
+      {/* Lista de medicamentos */}
+      {isLoading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#FF6B6B" />
+          <Text style={styles.loadingText}>Cargando medicamentos...</Text>
+        </View>
+      ) : filteredMedicines.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <MaterialCommunityIcons name="magnify-close" size={64} color="#DDD" />
+          <Text style={styles.emptyTitle}>
+            {searchQuery ? "Sin resultados" : "No hay medicamentos"}
+          </Text>
+          <Text style={styles.emptyText}>
+            {searchQuery 
+              ? `No se encontraron medicamentos con "${searchQuery}"`
+              : "No se pudieron cargar los medicamentos"
+            }
+          </Text>
+        </View>
+      ) : (
+        <FlatList
+          data={filteredMedicines}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id.toString()}
+          contentContainerStyle={styles.listContainer}
+          showsVerticalScrollIndicator={false}
+          ItemSeparatorComponent={() => <View style={styles.separator} />}
+        />
+      )}
+
       <ModalAddMedicine
         visible={openModal}
         onClose={() => setOpenModal(false)}
@@ -157,83 +222,134 @@ export const AddMedicinePage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#e9e9ef",
-    paddingTop: 16,
+    backgroundColor: "#FAFAFA",
   },
-  searchContainer: {
-    paddingHorizontal: 16,
-    marginBottom: 12,
-  },
-  searchInputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#ffffff",
-    borderRadius: 22,
-  },
-  searchInputContainerFocused: {
-    backgroundColor: "transparent",
-  },
-  searchIcon: {
-    marginLeft: 20,
-  },
-  searchInput: {
-    flex: 1,
-    paddingHorizontal: 8,
-    paddingVertical: 12,
-    fontSize: 16,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "600",
-    marginHorizontal: 16,
-    marginBottom: 12,
-  },
-  listContainer: {
-    paddingBottom: 24,
-  },
-  item: {
+  header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#ffffff",
-    marginHorizontal: 16,
-    marginBottom: 12,
+    paddingHorizontal: 16,
     paddingVertical: 12,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-    shadowColor: "#000",
-    shadowOpacity: 0.03,
-    shadowRadius: 4,
-    elevation: 1,
   },
-  itemText: {
+  backButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#F0F0F0",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#1A1A2E",
+  },
+  headerSpacer: {
+    width: 40,
+  },
+  searchSection: {
+    paddingHorizontal: 20,
+    paddingBottom: 16,
+  },
+  searchGradientBorder: {
+    borderRadius: 16,
+    padding: 2,
+  },
+  searchInputWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#FFF",
+    borderRadius: 14,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    gap: 12,
+  },
+  searchInput: {
     flex: 1,
-    paddingRight: 8,
+    fontSize: 16,
+    color: "#1A1A2E",
   },
-  name: {
+  resultsText: {
+    fontSize: 13,
+    color: "#8E8E93",
+    marginTop: 10,
+    marginLeft: 4,
+  },
+  listContainer: {
+    paddingHorizontal: 20,
+    paddingBottom: 100,
+  },
+  medicineItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: "#FFF",
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderRadius: 14,
+  },
+  medicineContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+    marginRight: 12,
+  },
+  medicineIndex: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 14,
+  },
+  medicineIndexText: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#FFF",
+  },
+  medicineTextContainer: {
+    flex: 1,
+  },
+  medicineName: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#222",
+    color: "#1A1A2E",
   },
-  presentation: {
+  medicineSubtext: {
     fontSize: 13,
-    color: "#666",
+    color: "#8E8E93",
     marginTop: 2,
   },
-  addCircle: {
-    width: 34,
-    height: 34,
-    borderRadius: 16,
-    backgroundColor: "#f23728",
-    alignItems: "center",
-    justifyContent: "center",
+  separator: {
+    height: 10,
   },
-  addCircleText: {
-    color: "#fff",
-    fontSize: 22,
-    fontWeight: "600",
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 16,
+  },
+  loadingText: {
+    fontSize: 15,
+    color: "#8E8E93",
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 40,
+  },
+  emptyTitle: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#1A1A2E",
+    marginTop: 16,
+  },
+  emptyText: {
+    fontSize: 15,
+    color: "#8E8E93",
     textAlign: "center",
-    textAlignVertical: "center",
-    transform: [{ translateY: -2 }],
+    marginTop: 8,
+    lineHeight: 22,
   },
 });
