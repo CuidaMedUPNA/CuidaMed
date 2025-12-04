@@ -113,6 +113,7 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.3,
     shadowRadius: 5,
+    marginTop: 10,
   },
   tabItem: {
     flexDirection: "row",
