@@ -106,16 +106,15 @@ export const intakeHandlers: Partial<RouteHandlers> = {
 
   getTodayIntakes: async (request, reply) => {
     const userId = request.user?.userId;
+    if (!userId) {
+      return reply.status(401).send({ error: "Unauthorized" });
+    }
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
     const todayIntakes = [];
 
     try {
-      if (!userId) {
-        return reply.status(401).send({ error: "Unauthorized" });
-      }
-
       const treatments = await getTreatmentsByUserId(userId);
 
       for (const treatment of treatments) {
@@ -129,13 +128,11 @@ export const intakeHandlers: Partial<RouteHandlers> = {
 
           const todayDayOfWeek = today.getDay() === 0 ? 7 : today.getDay();
 
-          const hasScheduleForToday =
-            Array.isArray(intake.dosingTimes) &&
-            intake.dosingTimes.some(
-              (dosingTime) =>
-                dosingTime.dayOfWeek === null ||
-                dosingTime.dayOfWeek === todayDayOfWeek
-            );
+          const hasScheduleForToday = intake.dosingTimes.some(
+            (dosingTime) =>
+              dosingTime.dayOfWeek === null ||
+              dosingTime.dayOfWeek === todayDayOfWeek
+          );
           if (
             intakeStartDate <= today &&
             (intakeEndDate === null || intakeEndDate >= today) &&
