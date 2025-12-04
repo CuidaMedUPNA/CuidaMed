@@ -114,7 +114,7 @@ export function ProfilePage() {
               </LinearGradient>
               <View style={styles.cardContent}>
                 <Text style={styles.cardLabel}>Fecha de Nacimiento</Text>
-                <Text style={styles.cardValue}>{userData.birthdate}</Text>
+                <Text style={styles.cardValue}>{userData.birthdate ? new Date(userData.birthdate).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-'}</Text>
               </View>
             </View>
 
