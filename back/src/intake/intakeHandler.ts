@@ -87,7 +87,6 @@ export const intakeHandlers: Partial<RouteHandlers> = {
   getIntakesByUser: async (request, reply) => {
     try {
       const userId = request.user?.userId;
-      const intakes = [];
 
       if (!userId) {
         return reply.status(401).send({ error: "Unauthorized" });
@@ -95,10 +94,9 @@ export const intakeHandlers: Partial<RouteHandlers> = {
 
       const treatments = await getTreatmentsByUserId(userId);
 
-      for (const treatment of treatments) {
-        intakes.push(await getIntakesByTreatmentId(treatment.id));
-      }
-
+      const intakes = await Promise.all(
+        treatments.map((t) => getIntakesByTreatmentId(t.id))
+      );
       return reply.status(200).send(intakes.flat());
     } catch (error) {
       request.log.error(error);
