@@ -2,11 +2,10 @@ import {
   View,
   Text,
   StyleSheet,
-  Pressable,
   ScrollView,
-  Image,
+  RefreshControl,
+  TouchableOpacity,
 } from "react-native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import React, { useState, useMemo } from "react";
 import CustomIntakeCalendar, {
@@ -14,153 +13,262 @@ import CustomIntakeCalendar, {
 } from "@/components/CustomIntakeCalendar";
 import { DateData } from "react-native-calendars/src/types";
 import { navigate } from "expo-router/build/global-state/routing";
-
-const logo = require("@/assets/images/logo.png");
-
-const DATOS_TOMAS_USUARIO: TomasPorDia = {
-  "2025-11-15": [
-    ["paracetamol", "21:00"],
-    ["ibuprofeno", "08:00"],
-  ],
-  "2025-11-17": [["morfina", "14:30"]],
-  "2025-11-18": [
-    ["paracetamol", "09:00"],
-    ["morfina", "15:00"],
-    ["ibuprofeno", "21:00"],
-  ],
-  "2025-11-19": [["paracetamol", "10:00"]],
-};
+import { getIntakesByUser } from "@cuidamed-api/client";
+import { useQuery } from "@tanstack/react-query";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { MaterialIcons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 
 const getTimeSlotColor = (time: string) => {
   const hour = parseInt(time.split(":")[0], 10);
 
   if (hour >= 6 && hour < 12) {
-    return { bg: "#fef3c7", accent: "#f59e0b", label: "Mañana", icon: "🌅" };
+    return {
+      bg: "#FFF8E1",
+      accent: "#FF8E53",
+      label: "Mañana",
+      icon: "wb-sunny",
+    };
   } else if (hour >= 12 && hour < 20) {
-    return { bg: "#dbeafe", accent: "#3b82f6", label: "Tarde", icon: "☀️" };
+    return {
+      bg: "#E3F2FD",
+      accent: "#42A5F5",
+      label: "Tarde",
+      icon: "wb-cloudy",
+    };
   } else {
-    return { bg: "#ede9fe", accent: "#8b5cf6", label: "Noche", icon: "🌙" };
+    return {
+      bg: "#EDE7F6",
+      accent: "#7E57C2",
+      label: "Noche",
+      icon: "nightlight-round",
+    };
   }
 };
 
+// Tipo para las tomas con información adicional
+type TomaConDosis = [string, string, string, string]; // [medicineName, scheduledTime, doseAmount, doseUnit]
+
 export default function CalendarScreen() {
+  const {
+    data: intakes,
+    refetch,
+    isRefetching,
+  } = useQuery({
+    queryKey: ["intakes"],
+    queryFn: () => getIntakesByUser(),
+  });
+
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const [selectedDate, setSelectedDate] = useState("");
 
   const handleDayPress = (day: DateData) => {
     setSelectedDate(day.dateString);
   };
 
+  // Transformar los datos de intakes al formato TomasPorDia
+  const tomasPorDia: TomasPorDia = useMemo(() => {
+    if (!intakes?.data) return {};
+
+    const result: TomasPorDia = {};
+
+    intakes.data.forEach((intake) => {
+      const startDate = new Date(intake.startDate);
+      const endDate = intake.endDate ? new Date(intake.endDate) : null;
+      const today = new Date();
+      const finalDate =
+        endDate ||
+        new Date(today.getFullYear(), today.getMonth() + 3, today.getDate());
+
+      // Generar fechas desde startDate hasta endDate (o 3 meses si no hay endDate)
+      const currentDate = new Date(startDate);
+      while (currentDate <= finalDate) {
+        const dateString = currentDate.toISOString().split("T")[0];
+
+        if (!result[dateString]) {
+          result[dateString] = [];
+        }
+
+        // Agregar cada hora de dosificación para este día
+        intake.dosingTimes?.forEach((dosingTime) => {
+          result[dateString].push([
+            intake.medicineName,
+            dosingTime.scheduledTime,
+          ]);
+        });
+
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+    });
+
+    return result;
+  }, [intakes]);
+
+  // Mapa de dosis por medicamento para mostrar en las tarjetas
+  const dosisPorMedicamento = useMemo(() => {
+    if (!intakes?.data) return {};
+    const result: Record<string, { amount: number; unit: string }> = {};
+    intakes.data.forEach((intake) => {
+      result[intake.medicineName] = {
+        amount: intake.doseAmount,
+        unit: intake.doseUnit,
+      };
+    });
+    return result;
+  }, [intakes]);
+
   const tomasDelDiaSeleccionado = useMemo(() => {
     if (!selectedDate) return [];
-    const tomas = DATOS_TOMAS_USUARIO[selectedDate] || [];
+    const tomas = tomasPorDia[selectedDate] || [];
     return tomas.sort((a, b) => a[1].localeCompare(b[1]));
-  }, [selectedDate]);
+  }, [selectedDate, tomasPorDia]);
+
+  const totalTomasHoy = tomasDelDiaSeleccionado.length;
+  const todayString = new Date().toISOString().split("T")[0];
+  const isToday = selectedDate === todayString;
+
+  const handleGoToToday = () => {
+    setSelectedDate(todayString);
+  };
 
   return (
-    <View style={styles.gradient}>
-      <SafeAreaProvider style={styles.safeArea}>
-        <View style={styles.header}>
-          <View style={styles.headerTop}>
-            <View>
-              <Text style={[styles.title, { color: "#1f2937" }]}>
-                {t("tabs.calendar")}
-              </Text>
-            </View>
-            <View style={styles.avatarContainer}>
-              <View style={styles.avatar}>
-                <Image source={logo} style={styles.logo} />
+    <View style={styles.mainContainer}>
+      <LinearGradient
+        colors={["#FF6B6B", "#FF8E53", "#FFA07A"]}
+        style={[styles.heroHeader, { paddingTop: insets.top + 16 }]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      >
+        <View style={styles.headerContent}>
+          <View style={styles.headerTextContainer}>
+            <Text style={styles.headerTitle}>{t("tabs.calendar")}</Text>
+            {selectedDate && (
+              <View style={styles.subtitleContainer}>
+                <View style={styles.subtitleBadge}>
+                  <Text style={styles.subtitleBadgeText}>{totalTomasHoy}</Text>
+                </View>
+                <Text style={styles.headerSubtitle}>
+                  {totalTomasHoy === 1 ? "toma" : "tomas"}
+                </Text>
+              </View>
+            )}
+          </View>
+          <View style={styles.headerButtons}>
+            {!isToday && (
+              <TouchableOpacity
+                style={styles.todayButton}
+                onPress={handleGoToToday}
+                activeOpacity={0.8}
+              >
+                <MaterialIcons name="today" size={20} color="#FFF" />
+                <Text style={styles.todayButtonText}>Hoy</Text>
+              </TouchableOpacity>
+            )}
+            <View style={styles.headerIconContainer}>
+              <View style={styles.headerIconBg}>
+                <MaterialIcons
+                  name="calendar-month"
+                  size={28}
+                  color="#FF6B6B"
+                />
               </View>
             </View>
           </View>
         </View>
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-        >
-          <View style={styles.container}>
-            <View style={styles.glassCard}>
-              <CustomIntakeCalendar
-                tomasPorDia={DATOS_TOMAS_USUARIO}
-                selectedDate={selectedDate}
-                onDayPress={handleDayPress}
-                current={Object.keys(DATOS_TOMAS_USUARIO)[0]}
-              />
-            </View>
+      </LinearGradient>
 
-            {selectedDate && (
-              <View style={styles.glassCard}>
-                <View style={styles.cardHeader}>
-                  <View style={styles.dateBadge}>
-                    <Text style={styles.dateBadgeDay}>
-                      {new Date(selectedDate).toLocaleDateString("es-ES", {
-                        day: "numeric",
-                      })}
-                    </Text>
-                    <Text style={styles.dateBadgeMonth}>
-                      {new Date(selectedDate)
-                        .toLocaleDateString("es-ES", {
-                          month: "short",
-                        })
-                        .toUpperCase()}
-                    </Text>
-                  </View>
-                  <View style={styles.headerTextContainer}>
-                    <Text style={styles.cardTitle}>Tomas</Text>
-                    <Text style={styles.cardSubtitle}>
-                      {new Date(selectedDate).toLocaleDateString("es-ES", {
-                        weekday: "long",
-                        day: "numeric",
-                        month: "long",
-                      })}
-                    </Text>
-                  </View>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefetching}
+            onRefresh={refetch}
+            colors={["#FF6B6B"]}
+            tintColor="#FF6B6B"
+          />
+        }
+      >
+        <View style={styles.content}>
+          <View style={styles.calendarCard}>
+            <CustomIntakeCalendar
+              tomasPorDia={tomasPorDia}
+              selectedDate={selectedDate}
+              onDayPress={handleDayPress}
+              current={
+                Object.keys(tomasPorDia)[0] ||
+                new Date().toISOString().split("T")[0]
+              }
+            />
+          </View>
+
+          {selectedDate && (
+            <View style={styles.tomasSection}>
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>Tomas del día</Text>
+                <View style={styles.dateChip}>
+                  <MaterialIcons name="event" size={16} color="#FF6B6B" />
+                  <Text style={styles.dateChipText}>
+                    {new Date(selectedDate).toLocaleDateString("es-ES", {
+                      day: "numeric",
+                      month: "short",
+                    })}
+                  </Text>
                 </View>
+              </View>
 
-                {tomasDelDiaSeleccionado.length > 0 ? (
-                  <View style={styles.medicationList}>
-                    {tomasDelDiaSeleccionado.map((toma, index) => {
-                      const timeSlot = getTimeSlotColor(toma[1]);
-                      return (
-                        <Pressable
-                          key={index}
-                          style={({ pressed }) => [
-                            styles.medicationItem,
-                            pressed && styles.medicationItemPressed,
-                          ]}
+              {tomasDelDiaSeleccionado.length > 0 ? (
+                <View style={styles.medicationList}>
+                  {tomasDelDiaSeleccionado.map((toma, index) => {
+                    const timeSlot = getTimeSlotColor(toma[1]);
+                    const dosis = dosisPorMedicamento[toma[0]];
+                    return (
+                      <View key={index} style={styles.medicationCard}>
+                        <LinearGradient
+                          colors={["#FFFFFF", "#FAFAFA"]}
+                          style={styles.medicationGradient}
                         >
                           <View
                             style={[
-                              styles.medicationIndicator,
-                              { backgroundColor: timeSlot.accent },
-                            ]}
-                          />
-                          <View
-                            style={[
-                              styles.medicationIcon,
+                              styles.medicationIconContainer,
                               { backgroundColor: timeSlot.bg },
                             ]}
                           >
-                            <Text style={styles.medicationIconText}>
-                              {timeSlot.icon}
-                            </Text>
+                            <MaterialIcons
+                              name={timeSlot.icon as any}
+                              size={24}
+                              color={timeSlot.accent}
+                            />
                           </View>
                           <View style={styles.medicationInfo}>
-                            <Text style={styles.medicationText}>
+                            <Text style={styles.medicationName}>
                               {toma[0].charAt(0).toUpperCase() +
                                 toma[0].slice(1)}
                             </Text>
                             <View style={styles.medicationMeta}>
+                              {dosis && (
+                                <View style={styles.doseBadge}>
+                                  <MaterialIcons
+                                    name="medication"
+                                    size={12}
+                                    color="#666"
+                                  />
+                                  <Text style={styles.doseText}>
+                                    {dosis.amount} {dosis.unit}
+                                  </Text>
+                                </View>
+                              )}
                               <View
                                 style={[
-                                  styles.doseBadge,
+                                  styles.timeBadge,
                                   { backgroundColor: timeSlot.bg },
                                 ]}
                               >
                                 <Text
                                   style={[
-                                    styles.doseText,
+                                    styles.timeBadgeText,
                                     { color: timeSlot.accent },
                                   ]}
                                 >
@@ -171,256 +279,311 @@ export default function CalendarScreen() {
                           </View>
                           <View style={styles.timeContainer}>
                             <Text style={styles.medicationTime}>{toma[1]}</Text>
-                            {/* <View style={styles.statusIndicator}>
-                              <View style={styles.statusDot} />
-                              <Text style={styles.statusText}>Pendiente</Text>
-                            </View> */}
                           </View>
-                        </Pressable>
-                      );
-                    })}
-                  </View>
-                ) : (
-                  <View style={styles.emptyState}>
-                    <Text style={styles.noMedicationText}>
-                      Sin medicación programada
+                        </LinearGradient>
+                      </View>
+                    );
+                  })}
+                </View>
+              ) : (
+                <View style={styles.emptyContainer}>
+                  <LinearGradient
+                    colors={["#fff0f0", "#fee0e0"]}
+                    style={styles.emptyIconBg}
+                  >
+                    <MaterialIcons
+                      name="event-available"
+                      size={56}
+                      color="#FF6B6B"
+                    />
+                  </LinearGradient>
+                  <Text style={styles.emptyTitle}>Sin medicación</Text>
+                  <Text style={styles.emptyText}>
+                    No hay tomas registradas para esta fecha
+                  </Text>
+                  <TouchableOpacity
+                    style={styles.addButton}
+                    onPress={() => {
+                      navigate("/treatments");
+                    }}
+                  >
+                    <MaterialIcons
+                      name="add-circle-outline"
+                      size={20}
+                      color="#FFF"
+                    />
+                    <Text style={styles.addButtonText}>
+                      Agregar tratamiento
                     </Text>
-                    <Text style={styles.noMedicationSubtext}>
-                      No hay tomas registradas para esta fecha
-                    </Text>
-                    <Pressable
-                      style={styles.addButton}
-                      onPress={() => {
-                        navigate("/treatments");
-                      }}
-                    >
-                      <Text style={styles.addButtonText}>
-                        Agregar Medicación
-                      </Text>
-                    </Pressable>
-                  </View>
-                )}
-              </View>
-            )}
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
+          )}
 
-            {!selectedDate && (
-              <View style={styles.hintCard}>
-                <Text style={styles.hintIcon}>👆</Text>
-                <Text style={styles.hintText}>
-                  Selecciona un día en el calendario para ver tus medicamentos
-                </Text>
-              </View>
-            )}
-          </View>
-        </ScrollView>
-      </SafeAreaProvider>
+          {!selectedDate && (
+            <View style={styles.hintCard}>
+              {Object.keys(tomasPorDia).length > 0 ? (
+                <>
+                  <LinearGradient
+                    colors={["#E3F2FD", "#BBDEFB"]}
+                    style={styles.hintIconBg}
+                  >
+                    <MaterialIcons name="touch-app" size={40} color="#42A5F5" />
+                  </LinearGradient>
+                  <Text style={styles.hintTitle}>Selecciona un día</Text>
+                  <Text style={styles.hintText}>
+                    Toca en el calendario para ver tus medicamentos programados
+                  </Text>
+                  <TouchableOpacity
+                    style={styles.todayButtonAlt}
+                    onPress={handleGoToToday}
+                    activeOpacity={0.8}
+                  >
+                    <MaterialIcons name="today" size={18} color="#FFF" />
+                    <Text style={styles.todayButtonAltText}>Ver hoy</Text>
+                  </TouchableOpacity>
+                </>
+              ) : (
+                <>
+                  <LinearGradient
+                    colors={["#E8F5E9", "#C8E6C9"]}
+                    style={styles.hintIconBg}
+                  >
+                    <MaterialIcons
+                      name="medication"
+                      size={40}
+                      color="#4CAF50"
+                    />
+                  </LinearGradient>
+                  <Text style={styles.hintTitle}>
+                    ¡Comienza tu tratamiento!
+                  </Text>
+                  <Text style={styles.hintText}>
+                    Aún no tienes medicamentos programados. Añade tu primer
+                    tratamiento para empezar a gestionar tu salud.
+                  </Text>
+                  <TouchableOpacity
+                    style={styles.addButton}
+                    onPress={() => navigate("/treatments")}
+                    activeOpacity={0.8}
+                  >
+                    <MaterialIcons
+                      name="add-circle-outline"
+                      size={20}
+                      color="#FFF"
+                    />
+                    <Text style={styles.addButtonText}>Añadir tratamiento</Text>
+                  </TouchableOpacity>
+                </>
+              )}
+            </View>
+          )}
+        </View>
+      </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  gradient: {
+  mainContainer: {
     flex: 1,
+    backgroundColor: "#F5F7FA",
   },
-  safeArea: {
-    marginTop: 30,
-    flex: 1,
-    backgroundColor: "transparent",
+  heroHeader: {
+    paddingBottom: 24,
+    paddingHorizontal: 24,
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
   },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    paddingBottom: 40,
-  },
-  container: {
-    flex: 1,
-    padding: 20,
-    paddingTop: 16,
-  },
-  header: {
-    padding: 20,
-    paddingTop: 16,
-  },
-  headerTop: {
+  headerContent: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "flex-start",
-  },
-  greeting: {
-    fontSize: 14,
-    color: "rgba(255, 255, 255, 0.8)",
-    fontWeight: "500",
-    letterSpacing: 0.5,
-    textTransform: "uppercase",
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: "800",
-    color: "#ffffff",
-    letterSpacing: -0.5,
-    marginTop: 4,
-  },
-  avatarContainer: {
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#ffffffff",
-  },
-  logo: {
-    width: 80,
-    height: 80,
-    resizeMode: "contain",
-  },
-  statsRow: {
-    flexDirection: "row",
-    gap: 12,
-    marginTop: 24,
-  },
-  statCard: {
-    flex: 1,
-    backgroundColor: "rgba(255, 255, 255, 0.15)",
-    borderRadius: 16,
-    padding: 16,
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.2)",
-  },
-  statNumber: {
-    fontSize: 24,
-    fontWeight: "800",
-    color: "#ffffff",
-  },
-  statLabel: {
-    fontSize: 12,
-    color: "rgba(255, 255, 255, 0.8)",
-    marginTop: 4,
-    fontWeight: "500",
-  },
-  glassCard: {
-    backgroundColor: "#ffffff",
-    borderRadius: 28,
-    padding: 24,
-    marginBottom: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 5,
-  },
-  cardHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 24,
-    gap: 16,
-  },
-  dateBadge: {
-    width: 64,
-    height: 64,
-    borderRadius: 20,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#dc2626",
-    shadowColor: "#dc2626",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  dateBadgeDay: {
-    fontSize: 26,
-    fontWeight: "800",
-    color: "#ffffff",
-    lineHeight: 30,
-  },
-  dateBadgeMonth: {
-    fontSize: 11,
-    fontWeight: "700",
-    color: "rgba(255, 255, 255, 0.9)",
-    letterSpacing: 1,
   },
   headerTextContainer: {
     flex: 1,
   },
-  cardTitle: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: "#1f2937",
-  },
-  cardSubtitle: {
-    fontSize: 14,
-    color: "#6b7280",
-    marginTop: 4,
-    textTransform: "capitalize",
-    fontWeight: "500",
-  },
-  medicationList: {
-    gap: 14,
-  },
-  medicationItem: {
+  headerButtons: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#f9fafb",
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: "#e5e7eb",
-    overflow: "hidden",
+    gap: 12,
   },
-  medicationItemPressed: {
-    backgroundColor: "#f3f4f6",
-    transform: [{ scale: 0.98 }],
+  todayButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: "rgba(255,255,255,0.25)",
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 12,
   },
-  medicationIndicator: {
-    position: "absolute",
-    left: 0,
-    top: 0,
-    bottom: 0,
-    width: 4,
-    borderTopLeftRadius: 20,
-    borderBottomLeftRadius: 20,
+  todayButtonText: {
+    color: "#FFF",
+    fontWeight: "600",
+    fontSize: 14,
   },
-  medicationIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 14,
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: "800",
+    color: "#FFF",
+    marginBottom: 8,
+  },
+  subtitleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  subtitleBadge: {
+    backgroundColor: "rgba(255,255,255,0.25)",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  subtitleBadgeText: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#FFF",
+  },
+  headerSubtitle: {
+    fontSize: 15,
+    color: "rgba(255,255,255,0.9)",
+    fontWeight: "500",
+  },
+  headerIconContainer: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: "rgba(255,255,255,0.25)",
     justifyContent: "center",
     alignItems: "center",
-    marginRight: 14,
   },
-  medicationIconText: {
+  headerIconBg: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: "#FFF",
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  container: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 120,
+  },
+  content: {
+    paddingTop: 24,
+    paddingHorizontal: 20,
+  },
+  calendarCard: {
+    backgroundColor: "#FFF",
+    borderRadius: 24,
+    padding: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
+    elevation: 4,
+    marginBottom: 24,
+  },
+  tomasSection: {
+    marginBottom: 24,
+  },
+  sectionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  sectionTitle: {
     fontSize: 22,
+    fontWeight: "700",
+    color: "#1A1A2E",
+  },
+  dateChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    backgroundColor: "#FFF",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  dateChipText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#1A1A2E",
+  },
+  medicationList: {
+    gap: 12,
+  },
+  medicationCard: {
+    borderRadius: 20,
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 4,
+  },
+  medicationGradient: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 16,
+  },
+  medicationIconContainer: {
+    width: 50,
+    height: 50,
+    borderRadius: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 14,
   },
   medicationInfo: {
     flex: 1,
   },
-  medicationText: {
+  medicationName: {
     fontSize: 17,
     fontWeight: "700",
-    color: "#1f2937",
+    color: "#1A1A2E",
+    marginBottom: 6,
   },
   medicationMeta: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 6,
+    gap: 8,
   },
   doseBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: "#F5F5F5",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+  },
+  doseText: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#666",
+  },
+  timeBadge: {
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 8,
   },
-  doseText: {
+  timeBadgeText: {
     fontSize: 12,
     fontWeight: "600",
   },
@@ -430,87 +593,99 @@ const styles = StyleSheet.create({
   medicationTime: {
     fontSize: 20,
     fontWeight: "800",
-    color: "#dc2626",
+    color: "#FF6B6B",
   },
-  statusIndicator: {
-    flexDirection: "row",
+  emptyContainer: {
+    padding: 40,
     alignItems: "center",
-    marginTop: 6,
-    gap: 6,
-  },
-  statusDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: "#fbbf24",
-  },
-  statusText: {
-    fontSize: 12,
-    color: "#6b7280",
-    fontWeight: "500",
-  },
-  emptyState: {
-    alignItems: "center",
-    paddingVertical: 40,
-  },
-  emptyStateIconContainer: {
-    width: 80,
-    height: 80,
+    backgroundColor: "#FFF",
     borderRadius: 24,
-    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
+    elevation: 4,
+  },
+  emptyIconBg: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
     alignItems: "center",
+    justifyContent: "center",
     marginBottom: 20,
-    backgroundColor: "#fee2e2",
   },
-  emptyStateIcon: {
-    fontSize: 40,
-  },
-  noMedicationText: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: "#1f2937",
+  emptyTitle: {
+    fontSize: 24,
+    fontWeight: "800",
+    color: "#1A1A2E",
     textAlign: "center",
   },
-  noMedicationSubtext: {
-    fontSize: 14,
-    color: "#6b7280",
+  emptyText: {
+    fontSize: 15,
+    color: "#666",
     marginTop: 8,
     textAlign: "center",
-    fontWeight: "500",
+    lineHeight: 22,
   },
   addButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
     marginTop: 24,
-    borderRadius: 16,
-    overflow: "hidden",
-    backgroundColor: "#dc2626",
-    paddingHorizontal: 28,
+    backgroundColor: "#FF6B6B",
+    paddingHorizontal: 24,
     paddingVertical: 14,
+    borderRadius: 14,
   },
   addButtonText: {
-    fontSize: 16,
+    color: "#FFF",
     fontWeight: "700",
-    color: "#ffffff",
+    fontSize: 15,
   },
   hintCard: {
-    backgroundColor: "#ffffff",
-    borderRadius: 20,
-    padding: 24,
+    padding: 40,
     alignItems: "center",
+    backgroundColor: "#FFF",
+    borderRadius: 24,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
+    elevation: 4,
   },
-  hintIcon: {
-    fontSize: 32,
-    marginBottom: 12,
+  hintIconBg: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 20,
+  },
+  hintTitle: {
+    fontSize: 22,
+    fontWeight: "700",
+    color: "#1A1A2E",
+    marginBottom: 8,
   },
   hintText: {
     fontSize: 15,
-    color: "#6b7280",
+    color: "#666",
     textAlign: "center",
-    fontWeight: "500",
     lineHeight: 22,
+  },
+  todayButtonAlt: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    marginTop: 20,
+    backgroundColor: "#42A5F5",
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 12,
+  },
+  todayButtonAltText: {
+    color: "#FFF",
+    fontWeight: "700",
+    fontSize: 15,
   },
 });

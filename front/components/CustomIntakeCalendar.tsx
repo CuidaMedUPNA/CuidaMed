@@ -4,9 +4,9 @@ import { MarkingProps } from "react-native-calendars/src/calendar/day/marking";
 import { DateData } from "react-native-calendars/src/types";
 
 export const TRAMOS_HORARIOS_CONFIG = {
-  manana: { key: "manana", color: "#f59e0b" },
-  tarde: { key: "tarde", color: "#3b82f6" },
-  noche: { key: "noche", color: "#8b5cf6" },
+  manana: { key: "manana", color: "#FF8E53" },
+  tarde: { key: "tarde", color: "#42A5F5" },
+  noche: { key: "noche", color: "#7E57C2" },
 };
 type TramoKey = keyof typeof TRAMOS_HORARIOS_CONFIG;
 
@@ -65,8 +65,7 @@ const CustomIntakeCalendar: FC<CustomIntakeCalendarProps> = ({
     if (selectedDate) {
       marks[selectedDate] = {
         selected: true,
-        selectedColor: "#e63946",
-        disableTouchEvent: true,
+        selectedColor: "#FF6B6B",
       };
     }
 
@@ -76,20 +75,26 @@ const CustomIntakeCalendar: FC<CustomIntakeCalendarProps> = ({
   const calendarTheme = {
     backgroundColor: "#ffffff",
     calendarBackground: "#ffffff",
-    textSectionTitleColor: "#e63946",
-    textSectionTitleDisabledColor: "#ffcdd2",
-    selectedDayBackgroundColor: "#e63946",
+    textSectionTitleColor: "#FF6B6B",
+    textSectionTitleDisabledColor: "#FFCDD2",
+    selectedDayBackgroundColor: "#FF6B6B",
     selectedDayTextColor: "#ffffff",
-    todayTextColor: "#e63946",
-    dayTextColor: "#2d3436",
-    textDisabledColor: "#ffcdd2",
-    dotColor: "#e63946",
+    todayTextColor: "#FF6B6B",
+    dayTextColor: "#1A1A2E",
+    textDisabledColor: "#C7C7CC",
+    dotColor: "#FF6B6B",
     selectedDotColor: "#ffffff",
-    arrowColor: "#e63946",
-    disabledArrowColor: "#ffcdd2",
-    monthTextColor: "#e63946",
-    indicatorColor: "#e63946",
+    arrowColor: "#FF6B6B",
+    disabledArrowColor: "#FFCDD2",
+    monthTextColor: "#1A1A2E",
+    indicatorColor: "#FF6B6B",
     weekVerticalMargin: 5,
+    textDayFontWeight: "500" as const,
+    textMonthFontWeight: "700" as const,
+    textDayHeaderFontWeight: "600" as const,
+    textDayFontSize: 16,
+    textMonthFontSize: 18,
+    textDayHeaderFontSize: 13,
   };
 
   return (
