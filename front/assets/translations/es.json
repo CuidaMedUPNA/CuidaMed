@@ -108,6 +108,23 @@
     "noAccount": "¿No tienes una cuenta?",
     "registerHere": "Regístrate aquí"
   },
+  "calendar": {
+    "today": "Hoy",
+    "intakesOfDay": "Tomas del día",
+    "intake": "toma",
+    "intakes": "tomas",
+    "morning": "Mañana",
+    "afternoon": "Tarde",
+    "night": "Noche",
+    "noMedication": "Sin medicación",
+    "noIntakesForDate": "No hay tomas registradas para esta fecha",
+    "addTreatment": "Agregar tratamiento",
+    "selectDay": "Selecciona un día",
+    "selectDayHint": "Toca en el calendario para ver tus medicamentos programados",
+    "viewToday": "Ver hoy",
+    "startTreatment": "¡Comienza tu tratamiento!",
+    "noMedicationsHint": "Aún no tienes medicamentos programados. Añade tu primer tratamiento para empezar a gestionar tu salud."
+  },
   "common": {
     "done": "Hecho"
   }

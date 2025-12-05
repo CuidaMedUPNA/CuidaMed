@@ -19,28 +19,28 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 
-const getTimeSlotColor = (time: string) => {
+const getTimeSlotColor = (time: string, t: (key: string) => string) => {
   const hour = parseInt(time.split(":")[0], 10);
 
   if (hour >= 6 && hour < 12) {
     return {
       bg: "#FFF8E1",
       accent: "#FF8E53",
-      label: "Mañana",
+      label: t("calendar.morning"),
       icon: "wb-sunny",
     };
   } else if (hour >= 12 && hour < 20) {
     return {
       bg: "#E3F2FD",
       accent: "#42A5F5",
-      label: "Tarde",
+      label: t("calendar.afternoon"),
       icon: "wb-cloudy",
     };
   } else {
     return {
       bg: "#EDE7F6",
       accent: "#7E57C2",
-      label: "Noche",
+      label: t("calendar.night"),
       icon: "nightlight-round",
     };
   }
@@ -149,7 +149,9 @@ export default function CalendarScreen() {
                   <Text style={styles.subtitleBadgeText}>{totalTomasHoy}</Text>
                 </View>
                 <Text style={styles.headerSubtitle}>
-                  {totalTomasHoy === 1 ? "toma" : "tomas"}
+                  {totalTomasHoy === 1
+                    ? t("calendar.intake")
+                    : t("calendar.intakes")}
                 </Text>
               </View>
             )}
@@ -162,7 +164,9 @@ export default function CalendarScreen() {
                 activeOpacity={0.8}
               >
                 <MaterialIcons name="today" size={20} color="#FFF" />
-                <Text style={styles.todayButtonText}>Hoy</Text>
+                <Text style={styles.todayButtonText}>
+                  {t("calendar.today")}
+                </Text>
               </TouchableOpacity>
             )}
             <View style={styles.headerIconContainer}>
@@ -207,7 +211,9 @@ export default function CalendarScreen() {
           {selectedDate && (
             <View style={styles.tomasSection}>
               <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Tomas del día</Text>
+                <Text style={styles.sectionTitle}>
+                  {t("calendar.intakesOfDay")}
+                </Text>
                 <View style={styles.dateChip}>
                   <MaterialIcons name="event" size={16} color="#FF6B6B" />
                   <Text style={styles.dateChipText}>
@@ -222,7 +228,7 @@ export default function CalendarScreen() {
               {tomasDelDiaSeleccionado.length > 0 ? (
                 <View style={styles.medicationList}>
                   {tomasDelDiaSeleccionado.map((toma, index) => {
-                    const timeSlot = getTimeSlotColor(toma[1]);
+                    const timeSlot = getTimeSlotColor(toma[1], t);
                     const dosis = dosisPorMedicamento[toma[0]];
                     return (
                       <View key={index} style={styles.medicationCard}>
@@ -297,9 +303,11 @@ export default function CalendarScreen() {
                       color="#FF6B6B"
                     />
                   </LinearGradient>
-                  <Text style={styles.emptyTitle}>Sin medicación</Text>
+                  <Text style={styles.emptyTitle}>
+                    {t("calendar.noMedication")}
+                  </Text>
                   <Text style={styles.emptyText}>
-                    No hay tomas registradas para esta fecha
+                    {t("calendar.noIntakesForDate")}
                   </Text>
                   <TouchableOpacity
                     style={styles.addButton}
@@ -313,7 +321,7 @@ export default function CalendarScreen() {
                       color="#FFF"
                     />
                     <Text style={styles.addButtonText}>
-                      Agregar tratamiento
+                      {t("calendar.addTreatment")}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -331,9 +339,11 @@ export default function CalendarScreen() {
                   >
                     <MaterialIcons name="touch-app" size={40} color="#42A5F5" />
                   </LinearGradient>
-                  <Text style={styles.hintTitle}>Selecciona un día</Text>
+                  <Text style={styles.hintTitle}>
+                    {t("calendar.selectDay")}
+                  </Text>
                   <Text style={styles.hintText}>
-                    Toca en el calendario para ver tus medicamentos programados
+                    {t("calendar.selectDayHint")}
                   </Text>
                   <TouchableOpacity
                     style={styles.todayButtonAlt}
@@ -341,7 +351,9 @@ export default function CalendarScreen() {
                     activeOpacity={0.8}
                   >
                     <MaterialIcons name="today" size={18} color="#FFF" />
-                    <Text style={styles.todayButtonAltText}>Ver hoy</Text>
+                    <Text style={styles.todayButtonAltText}>
+                      {t("calendar.viewToday")}
+                    </Text>
                   </TouchableOpacity>
                 </>
               ) : (
@@ -357,11 +369,10 @@ export default function CalendarScreen() {
                     />
                   </LinearGradient>
                   <Text style={styles.hintTitle}>
-                    ¡Comienza tu tratamiento!
+                    {t("calendar.startTreatment")}
                   </Text>
                   <Text style={styles.hintText}>
-                    Aún no tienes medicamentos programados. Añade tu primer
-                    tratamiento para empezar a gestionar tu salud.
+                    {t("calendar.noMedicationsHint")}
                   </Text>
                   <TouchableOpacity
                     style={styles.addButton}
@@ -373,7 +384,9 @@ export default function CalendarScreen() {
                       size={20}
                       color="#FFF"
                     />
-                    <Text style={styles.addButtonText}>Añadir tratamiento</Text>
+                    <Text style={styles.addButtonText}>
+                      {t("calendar.addTreatment")}
+                    </Text>
                   </TouchableOpacity>
                 </>
               )}
