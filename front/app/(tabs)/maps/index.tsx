@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import {
   View,
   Text,
@@ -6,14 +6,19 @@ import {
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
-  Animated,
   Modal,
   ScrollView,
   Dimensions,
+  RefreshControl,
+  PanResponder,
+  Animated,
 } from "react-native";
 import * as Location from "expo-location";
 import MapView, { Marker } from "../../../components/MapComponents/Map";
 import { useTranslation } from "react-i18next";
+import { LinearGradient } from "expo-linear-gradient";
+import { MaterialIcons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { width, height } = Dimensions.get("window");
 const isMobile = width < 768;
@@ -73,7 +78,6 @@ const parseOpeningHours = (
   }
 
   const horaActual = new Date().getHours();
-  const diaActual = new Date().getDay();
 
   const formatoSimple = openingHours.replace(/Mo-Fr|Mo-Sa|Mo-Su/gi, "L-V");
 
@@ -100,7 +104,8 @@ const parseOpeningHours = (
 export default function TuFarmaciaPage() {
   const [location, setLocation] = useState<LocationData | null>(null);
   const [farmacias, setFarmacias] = useState<FarmaciaData[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingLocation, setLoadingLocation] = useState(true);
+  const [loadingFarmacias, setLoadingFarmacias] = useState(false);
   const [radioFiltro, setRadioFiltro] = useState(3000);
   const [disponibilidadFiltro, setDisponibilidadFiltro] = useState("todos");
   const [modalFiltro, setModalFiltro] = useState<string | null>(null);
@@ -108,193 +113,295 @@ export default function TuFarmaciaPage() {
   const [errorLocation, setErrorLocation] = useState(false);
 
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
+  const initialLoadDone = useRef(false);
+  const prevRadioRef = useRef(radioFiltro);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const obtenerFarmacias = async () => {
-    try {
-      setLoading(true);
-      setErrorLocation(false);
+  // Animación para el modal deslizable
+  const modalTranslateY = useRef(new Animated.Value(0)).current;
 
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        alert(t("maps.location_permission_denied"));
-        setErrorLocation(true);
-        setLoading(false);
-        return;
-      }
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: (_, gestureState) => {
+        return gestureState.dy > 10;
+      },
+      onPanResponderMove: (_, gestureState) => {
+        if (gestureState.dy > 0) {
+          modalTranslateY.setValue(gestureState.dy);
+        }
+      },
+      onPanResponderRelease: (_, gestureState) => {
+        if (gestureState.dy > 100 || gestureState.vy > 0.5) {
+          // Cerrar modal si se desliza más de 100px o con velocidad
+          Animated.timing(modalTranslateY, {
+            toValue: 500,
+            duration: 200,
+            useNativeDriver: true,
+          }).start(() => {
+            setModalFiltro(null);
+            modalTranslateY.setValue(0);
+          });
+        } else {
+          // Volver a la posición original
+          Animated.spring(modalTranslateY, {
+            toValue: 0,
+            useNativeDriver: true,
+            bounciness: 8,
+          }).start();
+        }
+      },
+    })
+  ).current;
 
-      const loc = await Location.getCurrentPositionAsync({});
-      const { latitude, longitude } = loc.coords;
+  // Obtener farmacias (puede ser más lento)
+  const obtenerFarmacias = useCallback(
+    async (lat: number, lon: number) => {
+      try {
+        setLoadingFarmacias(true);
 
-      setLocation({
-        latitude,
-        longitude,
-        latitudeDelta: isMobile ? 0.05 : 0.01,
-        longitudeDelta: isMobile ? 0.05 : 0.01,
-      });
-
-      const query = `
+        const query = `
         [out:json];
         (
-          node[amenity=pharmacy](around:${radioFiltro},${latitude},${longitude});
-          way[amenity=pharmacy](around:${radioFiltro},${latitude},${longitude});
+          node[amenity=pharmacy](around:${radioFiltro},${lat},${lon});
+          way[amenity=pharmacy](around:${radioFiltro},${lat},${lon});
         );
         out center;
       `;
 
-      const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(
-        query
-      )}`;
-      const response = await fetch(url);
-      const data = await response.json();
+        const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(
+          query
+        )}`;
+        const response = await fetch(url);
+        const data = await response.json();
 
-      const farmaciasMapeadas: FarmaciaData[] = data.elements
-        .map((el: any) => {
-          const lat = el.lat || el.center?.lat;
-          const lon = el.lon || el.center?.lon;
+        const farmaciasMapeadas: FarmaciaData[] = data.elements
+          .map((el: any) => {
+            const elLat = el.lat || el.center?.lat;
+            const elLon = el.lon || el.center?.lon;
 
-          if (!lat || !lon) return null;
+            if (!elLat || !elLon) return null;
 
-          const distancia = calcularDistancia(latitude, longitude, lat, lon);
-          const horarioInfo = parseOpeningHours(el.tags?.["opening_hours"]);
+            const distancia = calcularDistancia(lat, lon, elLat, elLon);
+            const horarioInfo = parseOpeningHours(el.tags?.["opening_hours"]);
 
-          return {
-            id: el.id,
-            nombre: el.tags?.name || "Farmacia",
-            latitude: lat,
-            longitude: lon,
-            direccion: el.tags?.["addr:street"]
-              ? `${el.tags["addr:street"]}${
-                  el.tags["addr:housenumber"]
-                    ? " " + el.tags["addr:housenumber"]
-                    : ""
-                }`
-              : el.tags?.["addr:city"] || t("maps.unknown_address"),
-            abierto: horarioInfo.abierto,
-            horario24h: horarioInfo.es24h,
-            telefono: el.tags?.phone || null,
-            horarioTexto: horarioInfo.texto,
-            distancia: distancia,
-          };
-        })
-        .filter((f: any) => f !== null)
-        .sort((a: FarmaciaData, b: FarmaciaData) => a.distancia - b.distancia)
-        .slice(0, 21);
+            return {
+              id: el.id,
+              nombre: el.tags?.name || "Farmacia",
+              latitude: elLat,
+              longitude: elLon,
+              direccion: el.tags?.["addr:street"]
+                ? `${el.tags["addr:street"]}${
+                    el.tags["addr:housenumber"]
+                      ? " " + el.tags["addr:housenumber"]
+                      : ""
+                  }`
+                : el.tags?.["addr:city"] || t("maps.unknown_address"),
+              abierto: horarioInfo.abierto,
+              horario24h: horarioInfo.es24h,
+              telefono: el.tags?.phone || null,
+              horarioTexto: horarioInfo.texto,
+              distancia: distancia,
+            };
+          })
+          .filter((f: any) => f !== null)
+          .sort((a: FarmaciaData, b: FarmaciaData) => a.distancia - b.distancia)
+          .slice(0, 21);
 
-      setFarmacias(farmaciasMapeadas);
+        setFarmacias(farmaciasMapeadas);
+      } catch (err) {
+        console.log(t("maps.error"), err);
+      } finally {
+        setLoadingFarmacias(false);
+      }
+    },
+    [radioFiltro, t]
+  );
+
+  // Obtener ubicación (rápido)
+  const obtenerUbicacion = useCallback(async () => {
+    try {
+      setLoadingLocation(true);
+      setErrorLocation(false);
+
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        alert(t("maps.location_permission_denied"));
+        setErrorLocation(true);
+        setLoadingLocation(false);
+        return null;
+      }
+
+      const loc = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced, // Más rápido que High
+      });
+      const { latitude, longitude } = loc.coords;
+
+      const newLocation = {
+        latitude,
+        longitude,
+        latitudeDelta: isMobile ? 0.05 : 0.01,
+        longitudeDelta: isMobile ? 0.05 : 0.01,
+      };
+
+      setLocation(newLocation);
+      setLoadingLocation(false);
+      return { latitude, longitude };
     } catch (err) {
-      console.log(t("maps.error"), err);
+      console.log("Error ubicación:", err);
       setErrorLocation(true);
-    } finally {
-      setLoading(false);
+      setLoadingLocation(false);
+      return null;
     }
-  };
+  }, [t]);
 
+  // Cargar todo al inicio
   useEffect(() => {
-    obtenerFarmacias();
-  }, [radioFiltro]);
+    if (initialLoadDone.current) return;
+    initialLoadDone.current = true;
+
+    const inicializar = async () => {
+      const coords = await obtenerUbicacion();
+      if (coords) {
+        obtenerFarmacias(coords.latitude, coords.longitude);
+      }
+    };
+    inicializar();
+  }, [obtenerUbicacion, obtenerFarmacias]);
+
+  // Recargar farmacias cuando cambia el radio (solo si ya hay ubicación)
+  useEffect(() => {
+    if (prevRadioRef.current !== radioFiltro && location) {
+      prevRadioRef.current = radioFiltro;
+      obtenerFarmacias(location.latitude, location.longitude);
+    }
+  }, [radioFiltro, location, obtenerFarmacias]);
+
+  // Función para refrescar (pull-to-refresh)
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    const coords = await obtenerUbicacion();
+    if (coords) {
+      await obtenerFarmacias(coords.latitude, coords.longitude);
+    }
+    setRefreshing(false);
+  }, [obtenerUbicacion, obtenerFarmacias]);
+
+  // Reset modal animation cuando se abre
+  useEffect(() => {
+    if (modalFiltro) {
+      modalTranslateY.setValue(0);
+    }
+  }, [modalFiltro, modalTranslateY]);
 
   const filtrados = farmacias.filter((f) => {
     const coincideNombre =
       nombreFiltro === "" ||
       f.nombre.toLowerCase().includes(nombreFiltro.toLowerCase());
     const coincideDisponibilidad =
-      disponibilidadFiltro === t("maps.filters.all") ||
-      (disponibilidadFiltro === t("maps.filters.open") && f.abierto) ||
-      (disponibilidadFiltro === t("maps.filters.closed") && !f.abierto) ||
-      (disponibilidadFiltro === t("maps.filters.24h") && f.horario24h);
+      disponibilidadFiltro === "todos" ||
+      (disponibilidadFiltro === "abierto" && f.abierto) ||
+      (disponibilidadFiltro === "cerrado" && !f.abierto) ||
+      (disponibilidadFiltro === "24h" && f.horario24h);
     return coincideNombre && coincideDisponibilidad;
-  });
-
-  const pulseAnim = useRef(new Animated.Value(1)).current;
-  const rotateAnim = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulseAnim, {
-          toValue: 1.15,
-          duration: 1000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(pulseAnim, {
-          toValue: 1,
-          duration: 1000,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-
-    Animated.loop(
-      Animated.timing(rotateAnim, {
-        toValue: 1,
-        duration: 2000,
-        useNativeDriver: true,
-      })
-    ).start();
-  }, []);
-
-  const spin = rotateAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: ["0deg", "360deg"],
   });
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.headerGradient}>
-          <View style={styles.headerTitleContainer}>
-            <Text style={styles.headerText}>Mapa Farmacias</Text>
+      <LinearGradient
+        colors={["#FF6B6B", "#FF8E53", "#FFA07A"]}
+        style={[styles.heroHeader, { paddingTop: insets.top + 16 }]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      >
+        <View style={styles.headerContent}>
+          <View style={styles.headerTextContainer}>
+            <Text style={styles.headerTitle}>
+              {t("maps.title", { defaultValue: "Farmacias Cercanas" })}
+            </Text>
+            <View style={styles.subtitleContainer}>
+              <View style={styles.subtitleBadge}>
+                <Text style={styles.subtitleBadgeText}>{filtrados.length}</Text>
+              </View>
+              <Text style={styles.headerSubtitle}>
+                {t("maps.nearby", { defaultValue: "cerca de ti" })}
+              </Text>
+            </View>
           </View>
+          <TouchableOpacity
+            style={styles.filterHeaderButton}
+            onPress={() => setModalFiltro("filtros")}
+            activeOpacity={0.8}
+          >
+            <View style={styles.filterHeaderButtonInner}>
+              <MaterialIcons name="tune" size={24} color="#FF6B6B" />
+            </View>
+          </TouchableOpacity>
         </View>
-      </View>
+      </LinearGradient>
 
-      <View style={styles.filterContainer}>
+      <View style={styles.searchSection}>
         <View style={styles.searchContainer}>
           <View style={styles.searchInputWrapper}>
-            <Text style={styles.searchIcon}>🔍</Text>
+            <MaterialIcons
+              name="search"
+              size={22}
+              color="#8E8E93"
+              style={styles.searchIcon}
+            />
             <TextInput
               placeholder={t("maps.search_placeholder")}
-              placeholderTextColor="#999"
-              style={styles.input}
+              placeholderTextColor="#8E8E93"
+              style={styles.searchInput}
               value={nombreFiltro}
               onChangeText={setNombreFiltro}
             />
+            {nombreFiltro.length > 0 && (
+              <TouchableOpacity onPress={() => setNombreFiltro("")}>
+                <MaterialIcons name="close" size={20} color="#8E8E93" />
+              </TouchableOpacity>
+            )}
           </View>
-          <TouchableOpacity
-            style={styles.filterButton}
-            onPress={() => setModalFiltro("filtros")}
-          >
-            <Text style={styles.filterIcon}>⚙️</Text>
-            {!isMobile && <Text style={styles.filterButtonText}>Filtros</Text>}
-          </TouchableOpacity>
         </View>
 
-        {(radioFiltro !== 3000 ||
-          disponibilidadFiltro !== t("maps.filters.all")) && (
+        {(radioFiltro !== 3000 || disponibilidadFiltro !== "todos") && (
           <View style={styles.activeFiltersContainer}>
             {radioFiltro !== 3000 && (
               <View style={styles.filterChip}>
+                <MaterialIcons name="place" size={14} color="#FF6B6B" />
                 <Text style={styles.filterChipText}>
-                  📍 {radioFiltro / 1000} km
+                  {radioFiltro / 1000} km
                 </Text>
                 <TouchableOpacity onPress={() => setRadioFiltro(3000)}>
-                  <Text style={styles.filterChipClose}>✕</Text>
+                  <MaterialIcons name="close" size={16} color="#FF6B6B" />
                 </TouchableOpacity>
               </View>
             )}
-            {disponibilidadFiltro !== t("maps.filters.all") && (
+            {disponibilidadFiltro !== "todos" && (
               <View style={styles.filterChip}>
+                <MaterialIcons
+                  name={
+                    disponibilidadFiltro === "abierto"
+                      ? "check-circle"
+                      : disponibilidadFiltro === "cerrado"
+                      ? "cancel"
+                      : "schedule"
+                  }
+                  size={14}
+                  color="#FF6B6B"
+                />
                 <Text style={styles.filterChipText}>
-                  {disponibilidadFiltro === t("maps.filters.open")
-                    ? t("maps.filters.open_emoji")
-                    : disponibilidadFiltro === t("maps.filters.closed")
-                    ? t("maps.filters.closed_emoji")
-                    : t("maps.filters.24h_emoji")}
+                  {disponibilidadFiltro === "abierto"
+                    ? t("maps.open")
+                    : disponibilidadFiltro === "cerrado"
+                    ? t("maps.closed")
+                    : "24h"}
                 </Text>
                 <TouchableOpacity
-                  onPress={() => setDisponibilidadFiltro(t("maps.filters.all"))}
+                  onPress={() => setDisponibilidadFiltro("todos")}
                 >
-                  <Text style={styles.filterChipClose}>✕</Text>
+                  <MaterialIcons name="close" size={16} color="#FF6B6B" />
                 </TouchableOpacity>
               </View>
             )}
@@ -303,23 +410,23 @@ export default function TuFarmaciaPage() {
       </View>
 
       <View style={styles.content}>
-        {loading ? (
+        {loadingLocation ? (
           <View style={styles.loadingContainer}>
-            {/* <Animated.View
-              style={[
-                styles.pharmacyLoaderContainer,
-                { transform: [{ scale: pulseAnim }, { rotate: spin }] },
-              ]}
+            <LinearGradient
+              colors={["#fff0f0", "#fee0e0"]}
+              style={styles.loadingIconBg}
             >
-              <Text style={styles.pharmacyLoader}>💊</Text>
-            </Animated.View> */}
+              <MaterialIcons name="my-location" size={48} color="#FF6B6B" />
+            </LinearGradient>
             <ActivityIndicator
               size="large"
-              color="#ED3729"
+              color="#FF6B6B"
               style={styles.spinner}
             />
             <Text style={styles.loadingText}>
-              {t("maps.loading_farmacies")}
+              {t("maps.getting_location", {
+                defaultValue: "Obteniendo ubicación",
+              })}
             </Text>
             <Text style={styles.loadingSubtext}>
               {t("maps.loading_farmacies_subtext")}
@@ -337,7 +444,7 @@ export default function TuFarmaciaPage() {
                 <Marker
                   coordinate={location}
                   title={t("maps.your_location")}
-                  pinColor="#474d8bff"
+                  pinColor="#FF6B6B"
                 />
                 {filtrados.map((f) => (
                   <Marker
@@ -348,113 +455,182 @@ export default function TuFarmaciaPage() {
                     }}
                     title={f.nombre}
                     description={f.direccion}
-                    pinColor={f.abierto ? "#00ffaaff" : "#8b6464ff"}
+                    pinColor={f.abierto ? "#4CAF50" : "#9E9E9E"}
                   />
                 ))}
               </MapView>
+              {loadingFarmacias && (
+                <View style={styles.mapLoadingOverlay}>
+                  <ActivityIndicator size="small" color="#FF6B6B" />
+                  <Text style={styles.mapLoadingText}>
+                    {t("maps.loading_farmacies")}
+                  </Text>
+                </View>
+              )}
             </View>
 
             <ScrollView
               style={styles.pharmacyList}
               showsVerticalScrollIndicator={false}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={onRefresh}
+                  colors={["#FF6B6B"]}
+                  tintColor="#FF6B6B"
+                  title={t("maps.pull_to_refresh", {
+                    defaultValue: "Actualizar",
+                  })}
+                  titleColor="#8E8E93"
+                />
+              }
             >
               <View style={styles.listHeader}>
-                <Text style={styles.listHeaderEmoji}>📍</Text>
+                <MaterialIcons name="local-pharmacy" size={20} color="#FFF" />
                 <Text style={styles.listHeaderText}>
-                  {filtrados.length}{" "}
-                  {filtrados.length === 1
-                    ? t("maps.pharmacy")
-                    : t("maps.pharmacies")}
+                  {loadingFarmacias
+                    ? t("maps.searching", { defaultValue: "Buscando..." })
+                    : `${filtrados.length} ${
+                        filtrados.length === 1
+                          ? t("maps.pharmacy")
+                          : t("maps.pharmacies")
+                      }`}
                 </Text>
+                {loadingFarmacias && (
+                  <ActivityIndicator
+                    size="small"
+                    color="#FFF"
+                    style={{ marginLeft: "auto" }}
+                  />
+                )}
               </View>
 
               {filtrados.map((f, index) => (
                 <TouchableOpacity
                   key={f.id}
-                  style={[
-                    styles.pharmacyCard,
-                    index < 3 && styles.pharmacyCardTop,
-                  ]}
+                  style={styles.pharmacyCard}
                   activeOpacity={0.7}
                 >
-                  <View style={styles.cardTopRow}>
-                    <View style={styles.pharmacyNameContainer}>
-                      <Text style={styles.pharmacyName}>{f.nombre}</Text>
-                      {f.horario24h && (
-                        <View style={styles.badge24h}>
-                          <Text style={styles.badge24hText}>24h</Text>
+                  <View style={styles.cardContent}>
+                    <View style={styles.pharmacyIconContainer}>
+                      <LinearGradient
+                        colors={
+                          f.abierto
+                            ? ["#E8F5E9", "#C8E6C9"]
+                            : ["#F5F5F5", "#EEEEEE"]
+                        }
+                        style={styles.pharmacyIconBg}
+                      >
+                        <MaterialIcons
+                          name="local-pharmacy"
+                          size={24}
+                          color={f.abierto ? "#4CAF50" : "#9E9E9E"}
+                        />
+                      </LinearGradient>
+                    </View>
+
+                    <View style={styles.pharmacyInfo}>
+                      <View style={styles.pharmacyNameRow}>
+                        <Text style={styles.pharmacyName} numberOfLines={1}>
+                          {f.nombre}
+                        </Text>
+                        {f.horario24h && (
+                          <View style={styles.badge24h}>
+                            <Text style={styles.badge24hText}>24h</Text>
+                          </View>
+                        )}
+                      </View>
+
+                      <View style={styles.pharmacyDetailRow}>
+                        <MaterialIcons
+                          name="schedule"
+                          size={14}
+                          color="#8E8E93"
+                        />
+                        <Text style={styles.pharmacyDetailText}>
+                          {f.horarioTexto}
+                        </Text>
+                      </View>
+
+                      <View style={styles.pharmacyDetailRow}>
+                        <MaterialIcons name="place" size={14} color="#8E8E93" />
+                        <Text
+                          style={styles.pharmacyDetailText}
+                          numberOfLines={1}
+                        >
+                          {f.direccion}
+                        </Text>
+                      </View>
+
+                      {f.telefono && (
+                        <View style={styles.pharmacyDetailRow}>
+                          <MaterialIcons
+                            name="phone"
+                            size={14}
+                            color="#8E8E93"
+                          />
+                          <Text style={styles.pharmacyPhoneText}>
+                            {f.telefono}
+                          </Text>
                         </View>
                       )}
                     </View>
-                    <View
-                      style={[
-                        styles.statusBadge,
-                        f.abierto
-                          ? styles.statusBadgeOpen
-                          : styles.statusBadgeClosed,
-                      ]}
-                    >
+
+                    <View style={styles.pharmacyRight}>
                       <View
                         style={[
-                          styles.statusDot,
-                          f.abierto
-                            ? styles.statusDotOpen
-                            : styles.statusDotClosed,
-                        ]}
-                      />
-                      <Text
-                        style={[
-                          styles.statusText,
-                          f.abierto
-                            ? styles.statusTextOpen
-                            : styles.statusTextClosed,
+                          styles.statusBadge,
+                          f.abierto ? styles.statusOpen : styles.statusClosed,
                         ]}
                       >
-                        {f.abierto ? t("maps.open") : t("maps.closed")}
-                      </Text>
+                        <View
+                          style={[
+                            styles.statusDot,
+                            f.abierto ? styles.dotOpen : styles.dotClosed,
+                          ]}
+                        />
+                        <Text
+                          style={[
+                            styles.statusText,
+                            f.abierto ? styles.textOpen : styles.textClosed,
+                          ]}
+                        >
+                          {f.abierto ? t("maps.open") : t("maps.closed")}
+                        </Text>
+                      </View>
+                      <View style={styles.distanceBadge}>
+                        <Text style={styles.distanceText}>
+                          {f.distancia.toFixed(1)} km
+                        </Text>
+                      </View>
                     </View>
                   </View>
-
-                  <View style={styles.cardInfoRow}>
-                    <Text style={styles.infoIcon}>⏰</Text>
-                    <Text style={styles.pharmacySchedule}>
-                      {f.horarioTexto}
-                    </Text>
-                  </View>
-
-                  <View style={styles.cardInfoRow}>
-                    <Text style={styles.infoIcon}>📍</Text>
-                    <Text style={styles.pharmacyAddress}>{f.direccion}</Text>
-                    <View style={styles.distanceBadge}>
-                      <Text style={styles.distanceText}>
-                        {f.distancia.toFixed(1)} km
-                      </Text>
-                    </View>
-                  </View>
-
-                  {f.telefono && (
-                    <View style={styles.cardInfoRow}>
-                      <Text style={styles.infoIcon}>📞</Text>
-                      <Text style={styles.pharmacyPhone}>{f.telefono}</Text>
-                    </View>
-                  )}
                 </TouchableOpacity>
               ))}
             </ScrollView>
           </View>
         ) : errorLocation ? (
           <View style={styles.errorContainer}>
-            <View style={styles.errorIconContainer}>
-              <Text style={styles.errorIcon}>📍</Text>
-            </View>
+            <LinearGradient
+              colors={["#fff0f0", "#fee0e0"]}
+              style={styles.errorIconBg}
+            >
+              <MaterialIcons name="location-off" size={56} color="#FF6B6B" />
+            </LinearGradient>
             <Text style={styles.errorTitle}>{t("maps.unknown_address")}</Text>
             <Text style={styles.errorText}>
               {t("maps.location_permission_denied")}
             </Text>
             <TouchableOpacity
               style={styles.retryButton}
-              onPress={obtenerFarmacias}
+              onPress={async () => {
+                const coords = await obtenerUbicacion();
+                if (coords) {
+                  obtenerFarmacias(coords.latitude, coords.longitude);
+                }
+              }}
             >
+              <MaterialIcons name="refresh" size={20} color="#FFF" />
               <Text style={styles.retryButtonText}>{t("maps.retry")}</Text>
             </TouchableOpacity>
           </View>
@@ -464,7 +640,7 @@ export default function TuFarmaciaPage() {
       <Modal
         visible={!!modalFiltro}
         transparent
-        animationType={isMobile ? "slide" : "fade"}
+        animationType="slide"
         onRequestClose={() => setModalFiltro(null)}
       >
         <TouchableOpacity
@@ -472,12 +648,24 @@ export default function TuFarmaciaPage() {
           onPress={() => setModalFiltro(null)}
           activeOpacity={1}
         >
-          <View
-            style={[styles.modalContent, isMobile && styles.modalContentMobile]}
+          <Animated.View
+            style={[
+              styles.modalContent,
+              { transform: [{ translateY: modalTranslateY }] },
+            ]}
             onStartShouldSetResponder={() => true}
           >
+            <View {...panResponder.panHandlers}>
+              <View style={styles.modalHandle} />
+              <Text style={styles.swipeHint}>
+                {t("maps.swipe_to_close", {
+                  defaultValue: "Desliza para cerrar",
+                })}
+              </Text>
+            </View>
+
             <View style={styles.modalHeader}>
-              <View style={styles.modalTitleContainer}>
+              <View>
                 <Text style={styles.modalTitle}>{t("maps.filters.title")}</Text>
                 <Text style={styles.modalSubtitle}>
                   {t("maps.filters.customize_search")}
@@ -487,21 +675,28 @@ export default function TuFarmaciaPage() {
                 onPress={() => setModalFiltro(null)}
                 style={styles.modalCloseButton}
               >
-                <Text style={styles.modalCloseText}>✕</Text>
+                <MaterialIcons name="close" size={24} color="#1A1A2E" />
               </TouchableOpacity>
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false}>
-              {/* Filtro por Farmacia */}
+              {/* Filtro por nombre */}
               <View style={styles.filterSection}>
-                <Text style={styles.filterSectionTitle}>
-                  {t("maps.filters.pharmacy_name")}
-                </Text>
+                <View style={styles.filterSectionHeader}>
+                  <MaterialIcons
+                    name="local-pharmacy"
+                    size={20}
+                    color="#FF6B6B"
+                  />
+                  <Text style={styles.filterSectionTitle}>
+                    {t("maps.filters.pharmacy_name")}
+                  </Text>
+                </View>
                 <View style={styles.modalInputWrapper}>
-                  <Text style={styles.modalInputIcon}>🔍</Text>
+                  <MaterialIcons name="search" size={20} color="#8E8E93" />
                   <TextInput
                     placeholder={t("maps.search_placeholder")}
-                    placeholderTextColor="#999"
+                    placeholderTextColor="#8E8E93"
                     style={styles.modalInput}
                     value={nombreFiltro}
                     onChangeText={setNombreFiltro}
@@ -509,11 +704,13 @@ export default function TuFarmaciaPage() {
                 </View>
               </View>
 
-              {/* Filtro por Distancia */}
               <View style={styles.filterSection}>
-                <Text style={styles.filterSectionTitle}>
-                  {t("maps.filters.distance")}
-                </Text>
+                <View style={styles.filterSectionHeader}>
+                  <MaterialIcons name="place" size={20} color="#FF6B6B" />
+                  <Text style={styles.filterSectionTitle}>
+                    {t("maps.filters.distance")}
+                  </Text>
+                </View>
                 <View style={styles.optionsGrid}>
                   {[1, 2, 3, 5].map((km) => (
                     <TouchableOpacity
@@ -525,14 +722,22 @@ export default function TuFarmaciaPage() {
                       ]}
                       activeOpacity={0.7}
                     >
-                      <Text style={styles.optionKm}>{km}</Text>
                       <Text
                         style={[
-                          styles.optionText,
-                          radioFiltro === km * 1000 && styles.optionTextActive,
+                          styles.optionNumber,
+                          radioFiltro === km * 1000 &&
+                            styles.optionNumberActive,
                         ]}
                       >
-                        {t("maps.filters.km")}
+                        {km}
+                      </Text>
+                      <Text
+                        style={[
+                          styles.optionLabel,
+                          radioFiltro === km * 1000 && styles.optionLabelActive,
+                        ]}
+                      >
+                        km
                       </Text>
                     </TouchableOpacity>
                   ))}
@@ -540,23 +745,30 @@ export default function TuFarmaciaPage() {
               </View>
 
               <View style={styles.filterSection}>
-                <Text style={styles.filterSectionTitle}>
-                  {t("maps.filters.availability")}
-                </Text>
+                <View style={styles.filterSectionHeader}>
+                  <MaterialIcons name="schedule" size={20} color="#FF6B6B" />
+                  <Text style={styles.filterSectionTitle}>
+                    {t("maps.filters.availability")}
+                  </Text>
+                </View>
                 <View style={styles.optionsGrid}>
                   {[
-                    { key: "todos", label: t("maps.filters.all"), icon: "🏥" },
+                    {
+                      key: "todos",
+                      label: t("maps.filters.all"),
+                      icon: "store",
+                    },
                     {
                       key: "abierto",
                       label: t("maps.filters.open"),
-                      icon: "✅",
+                      icon: "check-circle",
                     },
                     {
                       key: "cerrado",
                       label: t("maps.filters.closed"),
-                      icon: "❌",
+                      icon: "cancel",
                     },
-                    { key: "24h", label: t("maps.filters.24h"), icon: "⏰" },
+                    { key: "24h", label: "24h", icon: "schedule" },
                   ].map((disp) => (
                     <TouchableOpacity
                       key={disp.key}
@@ -568,12 +780,20 @@ export default function TuFarmaciaPage() {
                       ]}
                       activeOpacity={0.7}
                     >
-                      <Text style={styles.optionEmoji}>{disp.icon}</Text>
+                      <MaterialIcons
+                        name={disp.icon as any}
+                        size={24}
+                        color={
+                          disponibilidadFiltro === disp.key
+                            ? "#FF6B6B"
+                            : "#8E8E93"
+                        }
+                      />
                       <Text
                         style={[
-                          styles.optionText,
+                          styles.optionLabel,
                           disponibilidadFiltro === disp.key &&
-                            styles.optionTextActive,
+                            styles.optionLabelActive,
                         ]}
                       >
                         {disp.label}
@@ -588,12 +808,20 @@ export default function TuFarmaciaPage() {
                 onPress={() => setModalFiltro(null)}
                 activeOpacity={0.8}
               >
-                <Text style={styles.applyButtonText}>
-                  {t("maps.filters.apply_filters")}
-                </Text>
+                <LinearGradient
+                  colors={["#FF6B6B", "#FF8E53"]}
+                  style={styles.applyButtonGradient}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                >
+                  <MaterialIcons name="check" size={20} color="#FFF" />
+                  <Text style={styles.applyButtonText}>
+                    {t("maps.filters.apply_filters")}
+                  </Text>
+                </LinearGradient>
               </TouchableOpacity>
             </ScrollView>
-          </View>
+          </Animated.View>
         </TouchableOpacity>
       </Modal>
     </View>
@@ -605,620 +833,548 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f8f9fa",
   },
-  header: {
-    overflow: "hidden",
+
+  heroHeader: {
+    paddingBottom: 20,
+    paddingHorizontal: 20,
   },
-  headerGradient: {
+  headerContent: {
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: isMobile ? 16 : 24,
-    paddingVertical: 16,
-    paddingTop: isMobile ? 48 : 24,
-    backgroundColor: "#fff",
-    shadowColor: "#ED3729",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 8,
-  },
-  menuButton: {
-    marginRight: 12,
-  },
-  menuIconContainer: {
-    width: 44,
-    height: 44,
-    borderRadius: 14,
-    backgroundColor: "#FEE5E3",
-    justifyContent: "center",
     alignItems: "center",
   },
-  menuIcon: {
-    fontSize: 20,
-    color: "#ED3729",
-    fontWeight: "600",
-  },
-  headerTitleContainer: {
+  headerTextContainer: {
     flex: 1,
   },
-  headerText: {
-    fontSize: isMobile ? 22 : 26,
+  headerTitle: {
+    fontSize: 28,
     fontWeight: "800",
-    color: "#1f2937",
-    letterSpacing: -0.8,
+    color: "#FFF",
+    letterSpacing: -0.5,
   },
-  headerSubtext: {
-    fontSize: 13,
-    color: "#6b7280",
-    marginTop: 3,
+  subtitleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 6,
+    gap: 8,
+  },
+  subtitleBadge: {
+    backgroundColor: "rgba(255,255,255,0.25)",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  subtitleBadgeText: {
+    color: "#FFF",
+    fontWeight: "700",
+    fontSize: 14,
+  },
+  headerSubtitle: {
+    color: "rgba(255,255,255,0.9)",
+    fontSize: 15,
     fontWeight: "500",
   },
-  pharmacyIconGradient: {
-    width: 52,
-    height: 52,
-    backgroundColor: "#ED3729",
+  filterHeaderButton: {
+    marginLeft: 16,
+  },
+  filterHeaderButtonInner: {
+    width: 48,
+    height: 48,
     borderRadius: 16,
+    backgroundColor: "#FFF",
+    alignItems: "center",
     justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#ED3729",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.4,
-    shadowRadius: 10,
-    elevation: 8,
-  },
-  pharmacyIconText: {
-    fontSize: 30,
-  },
-  filterContainer: {
-    marginHorizontal: isMobile ? 16 : 24,
-    marginTop: 20,
-    marginBottom: 12,
-  },
-  searchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  searchInputWrapper: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    borderRadius: 18,
-    paddingHorizontal: 18,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.08,
-    shadowRadius: 10,
-    elevation: 3,
-    borderWidth: 1,
-    borderColor: "rgba(237, 55, 41, 0.1)",
-  },
-  searchIcon: {
-    fontSize: 18,
-    marginRight: 10,
-  },
-  input: {
-    flex: 1,
-    color: "#1f2937",
-    paddingVertical: isMobile ? 15 : 17,
-    fontSize: 15,
-    fontWeight: "500",
-  },
-  filterButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#ED3729",
-    paddingHorizontal: isMobile ? 16 : 22,
-    paddingVertical: isMobile ? 15 : 17,
-    borderRadius: 18,
-    gap: 8,
-    shadowColor: "#ED3729",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.35,
-    shadowRadius: 10,
-    elevation: 6,
-  },
-  filterIcon: {
-    fontSize: 18,
-  },
-  filterButtonText: {
-    color: "#fff",
-    fontWeight: "700",
-    fontSize: 15,
-  },
-  activeFiltersContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    marginTop: 14,
-    gap: 10,
-  },
-  filterChip: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 24,
-    borderWidth: 1.5,
-    borderColor: "#ED3729",
-    gap: 8,
-    shadowColor: "#ED3729",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  filterChipText: {
-    color: "#ED3729",
-    fontSize: 13,
-    fontWeight: "600",
-  },
-  filterChipClose: {
-    color: "#ED3729",
-    fontSize: 16,
-    fontWeight: "700",
-  },
-  content: {
-    flex: 1,
-    marginHorizontal: isMobile ? 16 : 24,
-  },
-  mapContainer: {
-    flex: 1,
-  },
-  mapWrapper: {
-    borderRadius: 24,
-    overflow: "hidden",
-    marginBottom: 18,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.12,
-    shadowRadius: 16,
-    elevation: 8,
-    borderWidth: 1,
-    borderColor: "rgba(0,0,0,0.05)",
-  },
-  map: {
-    height: isMobile ? 240 : 340,
-  },
-  pharmacyList: {
-    flex: 1,
-  },
-  listHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#1f2937",
-    paddingHorizontal: 18,
-    paddingVertical: 16,
-    borderRadius: 18,
-    marginBottom: 14,
-    gap: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 8,
     elevation: 4,
   },
-  listHeaderEmoji: {
-    fontSize: 20,
+
+  searchSection: {
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingBottom: 8,
   },
-  listHeaderText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "700",
-    flex: 1,
-  },
-  listHeaderBadge: {
-    backgroundColor: "#ED3729",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  listHeaderBadgeText: {
-    color: "#fff",
-    fontSize: 11,
-    fontWeight: "800",
-  },
-  pharmacyCard: {
-    backgroundColor: "#fff",
-    padding: 18,
-    borderRadius: 20,
-    marginBottom: 14,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.08,
-    shadowRadius: 10,
-    elevation: 3,
-    borderWidth: 1,
-    borderColor: "rgba(0,0,0,0.04)",
-    position: "relative",
-  },
-  pharmacyCardTop: {
-    borderLeftWidth: 4,
-    borderLeftColor: "#ED3729",
-  },
-  topBadge: {
-    position: "absolute",
-    top: -8,
-    right: 16,
-    backgroundColor: "#ED3729",
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 12,
-    shadowColor: "#ED3729",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 4,
-  },
-  topBadgeText: {
-    color: "#fff",
-    fontSize: 12,
-    fontWeight: "800",
-  },
-  cardTopRow: {
+  searchContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: 14,
+    alignItems: "center",
   },
-  pharmacyNameContainer: {
+  searchInputWrapper: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    backgroundColor: "#FFF",
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  searchIcon: {
     marginRight: 10,
   },
-  pharmacyName: {
-    fontSize: 17,
-    fontWeight: "800",
-    color: "#1f2937",
+  searchInput: {
     flex: 1,
-    letterSpacing: -0.3,
-  },
-  statusBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-    borderRadius: 14,
-    gap: 6,
-  },
-  statusBadgeOpen: {
-    backgroundColor: "#d1fae5",
-  },
-  statusBadgeClosed: {
-    backgroundColor: "#f1f5f9",
-  },
-  statusDot: {
-    width: 7,
-    height: 7,
-    borderRadius: 4,
-  },
-  statusDotOpen: {
-    backgroundColor: "#10b981",
-  },
-  statusDotClosed: {
-    backgroundColor: "#64748b",
-  },
-  statusText: {
-    fontSize: 12,
-    fontWeight: "700",
-  },
-  statusTextOpen: {
-    color: "#059669",
-  },
-  statusTextClosed: {
-    color: "#64748b",
-  },
-  badge24h: {
-    backgroundColor: "#fef3c7",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 10,
-  },
-  badge24hText: {
-    color: "#92400e",
-    fontSize: 11,
-    fontWeight: "800",
-  },
-  cardInfoRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 8,
-    gap: 10,
-  },
-  infoIcon: {
     fontSize: 15,
-  },
-  pharmacySchedule: {
-    fontSize: 14,
-    color: "#374151",
-    fontWeight: "600",
-    flex: 1,
-  },
-  pharmacyAddress: {
-    fontSize: 14,
-    color: "#6b7280",
-    flex: 1,
+    color: "#1A1A2E",
     fontWeight: "500",
   },
-  pharmacyPhone: {
-    fontSize: 14,
-    color: "#ED3729",
-    fontWeight: "700",
-    flex: 1,
+  activeFiltersContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginTop: 12,
+    gap: 8,
   },
-  distanceBadge: {
-    backgroundColor: "#FEE5E3",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 10,
-  },
-  distanceText: {
-    color: "#ED3729",
-    fontSize: 12,
-    fontWeight: "700",
-  },
-  pharmacyLoaderContainer: {
-    width: 110,
-    height: 110,
-    borderRadius: 55,
-    backgroundColor: "#FEE5E3",
-    justifyContent: "center",
+  filterChip: {
+    flexDirection: "row",
     alignItems: "center",
-    marginBottom: 24,
-    shadowColor: "#ED3729",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.2,
-    shadowRadius: 12,
-    elevation: 8,
+    backgroundColor: "#FFF0F0",
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
+    gap: 6,
+    borderWidth: 1,
+    borderColor: "#FFD0D0",
   },
-  pharmacyLoader: {
-    fontSize: 55,
+  filterChipText: {
+    color: "#FF6B6B",
+    fontSize: 13,
+    fontWeight: "600",
   },
-  spinner: {
-    marginTop: 16,
+
+  content: {
+    flex: 1,
+    paddingHorizontal: 20,
   },
+
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#fff",
-    borderRadius: 28,
+    backgroundColor: "#FFF",
+    borderRadius: 24,
     marginVertical: 20,
     padding: 40,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 6,
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
+    elevation: 4,
+  },
+  loadingIconBg: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 16,
+  },
+  spinner: {
+    marginTop: 16,
   },
   loadingText: {
-    marginTop: 20,
-    fontSize: 17,
-    color: "#1f2937",
+    marginTop: 16,
+    fontSize: 18,
+    color: "#1A1A2E",
     fontWeight: "700",
     textAlign: "center",
   },
   loadingSubtext: {
     marginTop: 8,
     fontSize: 14,
-    color: "#6b7280",
+    color: "#8E8E93",
     fontWeight: "500",
     textAlign: "center",
   },
-  errorContainer: {
+
+  mapContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    borderRadius: 28,
-    marginVertical: 20,
-    padding: 40,
+  },
+  mapWrapper: {
+    borderRadius: 20,
+    overflow: "hidden",
+    marginBottom: 16,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 12,
-    elevation: 6,
+    elevation: 4,
+    position: "relative",
   },
-  errorIconContainer: {
-    width: 90,
-    height: 90,
-    borderRadius: 45,
-    backgroundColor: "#FEE5E3",
+  map: {
+    height: isMobile ? 220 : 300,
+  },
+  mapLoadingOverlay: {
+    position: "absolute",
+    bottom: 12,
+    left: 12,
+    right: 12,
+    backgroundColor: "rgba(255,255,255,0.95)",
+    borderRadius: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  mapLoadingText: {
+    fontSize: 13,
+    color: "#1A1A2E",
+    fontWeight: "600",
+  },
+
+  pharmacyList: {
+    flex: 1,
+  },
+  listHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#1A1A2E",
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    borderRadius: 16,
+    marginBottom: 12,
+    gap: 10,
+  },
+  listHeaderText: {
+    color: "#FFF",
+    fontSize: 15,
+    fontWeight: "700",
+  },
+
+  pharmacyCard: {
+    backgroundColor: "#FFF",
+    borderRadius: 20,
+    marginBottom: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    elevation: 3,
+    overflow: "hidden",
+  },
+  cardContent: {
+    flexDirection: "row",
+    padding: 16,
+    alignItems: "center",
+  },
+  pharmacyIconContainer: {
+    marginRight: 14,
+  },
+  pharmacyIconBg: {
+    width: 50,
+    height: 50,
+    borderRadius: 16,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  pharmacyInfo: {
+    flex: 1,
+  },
+  pharmacyNameRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 6,
+    gap: 8,
+  },
+  pharmacyName: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#1A1A2E",
+    flex: 1,
+  },
+  badge24h: {
+    backgroundColor: "#FFF3E0",
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 8,
+  },
+  badge24hText: {
+    color: "#E65100",
+    fontSize: 11,
+    fontWeight: "800",
+  },
+  pharmacyDetailRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 4,
+    gap: 6,
+  },
+  pharmacyDetailText: {
+    fontSize: 13,
+    color: "#8E8E93",
+    flex: 1,
+    fontWeight: "500",
+  },
+  pharmacyPhoneText: {
+    fontSize: 13,
+    color: "#FF6B6B",
+    fontWeight: "600",
+  },
+  pharmacyRight: {
+    alignItems: "flex-end",
+    gap: 8,
+  },
+  statusBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 12,
+    gap: 5,
+  },
+  statusOpen: {
+    backgroundColor: "#E8F5E9",
+  },
+  statusClosed: {
+    backgroundColor: "#F5F5F5",
+  },
+  statusDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  dotOpen: {
+    backgroundColor: "#4CAF50",
+  },
+  dotClosed: {
+    backgroundColor: "#9E9E9E",
+  },
+  statusText: {
+    fontSize: 12,
+    fontWeight: "700",
+  },
+  textOpen: {
+    color: "#2E7D32",
+  },
+  textClosed: {
+    color: "#757575",
+  },
+  distanceBadge: {
+    backgroundColor: "#FFF0F0",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 10,
+  },
+  distanceText: {
+    color: "#FF6B6B",
+    fontSize: 12,
+    fontWeight: "700",
+  },
+
+  errorContainer: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 24,
+    backgroundColor: "#FFF",
+    borderRadius: 24,
+    marginVertical: 20,
+    padding: 40,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
+    elevation: 4,
   },
-  errorIcon: {
-    fontSize: 45,
+  errorIconBg: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 20,
   },
   errorTitle: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: "800",
-    color: "#1f2937",
-    marginBottom: 14,
+    color: "#1A1A2E",
+    marginBottom: 12,
     textAlign: "center",
-    letterSpacing: -0.5,
   },
   errorText: {
     fontSize: 15,
-    color: "#6b7280",
+    color: "#8E8E93",
     textAlign: "center",
-    marginBottom: 28,
-    lineHeight: 24,
+    marginBottom: 24,
+    lineHeight: 22,
     paddingHorizontal: 20,
     fontWeight: "500",
   },
   retryButton: {
-    backgroundColor: "#ED3729",
-    paddingVertical: 16,
-    paddingHorizontal: 36,
-    borderRadius: 18,
-    shadowColor: "#ED3729",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.35,
-    shadowRadius: 10,
-    elevation: 6,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#FF6B6B",
+    paddingVertical: 14,
+    paddingHorizontal: 28,
+    borderRadius: 16,
+    gap: 8,
+    shadowColor: "#FF6B6B",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
   retryButtonText: {
-    color: "#fff",
+    color: "#FFF",
     fontWeight: "700",
-    fontSize: 16,
+    fontSize: 15,
   },
+
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.65)",
-    justifyContent: isMobile ? "flex-end" : "center",
-    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "flex-end",
   },
   modalContent: {
-    width: isMobile ? width : width * 0.5,
-    maxWidth: 520,
-    backgroundColor: "#fff",
-    borderRadius: isMobile ? 0 : 28,
+    backgroundColor: "#FFF",
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
-    padding: 28,
-    maxHeight: isMobile ? height * 0.88 : height * 0.85,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 16,
-    elevation: 12,
+    padding: 24,
+    maxHeight: height * 0.85,
   },
-  modalContentMobile: {
-    width: width,
+  modalHandle: {
+    width: 40,
+    height: 5,
+    backgroundColor: "#D0D0D0",
+    borderRadius: 3,
+    alignSelf: "center",
+    marginBottom: 8,
+  },
+  swipeHint: {
+    fontSize: 12,
+    color: "#BDBDBD",
+    textAlign: "center",
+    marginBottom: 16,
+    fontWeight: "500",
   },
   modalHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    marginBottom: 28,
-    paddingBottom: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: "#f3f4f6",
-  },
-  modalTitleContainer: {
-    flex: 1,
+    marginBottom: 24,
   },
   modalTitle: {
     fontSize: 24,
     fontWeight: "800",
-    color: "#1f2937",
+    color: "#1A1A2E",
     letterSpacing: -0.5,
   },
   modalSubtitle: {
-    fontSize: 13,
-    color: "#6b7280",
+    fontSize: 14,
+    color: "#8E8E93",
     marginTop: 4,
     fontWeight: "500",
   },
   modalCloseButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: "#f3f4f6",
-    justifyContent: "center",
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#F5F5F5",
     alignItems: "center",
-    marginLeft: 12,
+    justifyContent: "center",
   },
-  modalCloseText: {
-    fontSize: 20,
-    color: "#6b7280",
-    fontWeight: "700",
-  },
+
   filterSection: {
-    marginBottom: 28,
+    marginBottom: 24,
+  },
+  filterSectionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 14,
+    gap: 10,
   },
   filterSectionTitle: {
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: "700",
-    color: "#374151",
-    marginBottom: 14,
+    color: "#1A1A2E",
   },
   modalInputWrapper: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#f9fafb",
+    backgroundColor: "#F8F9FA",
     borderRadius: 14,
     paddingHorizontal: 16,
-    borderWidth: 1.5,
-    borderColor: "#e5e7eb",
-  },
-  modalInputIcon: {
-    fontSize: 16,
-    marginRight: 10,
+    paddingVertical: 14,
+    gap: 12,
+    borderWidth: 1,
+    borderColor: "#E8E8E8",
   },
   modalInput: {
     flex: 1,
-    color: "#1f2937",
-    paddingVertical: 15,
     fontSize: 15,
+    color: "#1A1A2E",
     fontWeight: "500",
   },
   optionsGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 12,
+    gap: 10,
   },
   optionButton: {
     flex: 1,
-    flexDirection: "column",
+    minWidth: 70,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#f9fafb",
+    backgroundColor: "#F8F9FA",
     borderRadius: 16,
+    paddingVertical: 16,
+    paddingHorizontal: 12,
     borderWidth: 2,
-    padding: 16,
-    paddingHorizontal: 0,
-    borderColor: "#e5e7eb",
+    borderColor: "#E8E8E8",
   },
   optionActive: {
-    backgroundColor: "#FEE5E3",
-    borderColor: "#ED3729",
-    shadowColor: "#ED3729",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    elevation: 3,
+    backgroundColor: "#FFF0F0",
+    borderColor: "#FF6B6B",
   },
-  optionKm: {
-    fontSize: 26,
+  optionNumber: {
+    fontSize: 24,
     fontWeight: "800",
-    color: "#6b7280",
+    color: "#8E8E93",
     marginBottom: 2,
   },
-  optionEmoji: {
-    fontSize: 24,
-    marginBottom: 6,
+  optionNumberActive: {
+    color: "#FF6B6B",
   },
-  optionText: {
-    color: "#6b7280",
-    fontSize: 13,
+  optionLabel: {
+    fontSize: 12,
     fontWeight: "600",
+    color: "#8E8E93",
+    marginTop: 4,
   },
-  optionTextActive: {
-    color: "#ED3729",
-    fontWeight: "800",
+  optionLabelActive: {
+    color: "#FF6B6B",
   },
+
   applyButton: {
-    backgroundColor: "#ED3729",
-    paddingVertical: 18,
-    borderRadius: 18,
+    marginTop: 8,
+    marginBottom: 20,
+    borderRadius: 16,
+    overflow: "hidden",
+    shadowColor: "#FF6B6B",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  applyButtonGradient: {
+    flexDirection: "row",
     alignItems: "center",
-    marginTop: 12,
-    shadowColor: "#ED3729",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.35,
-    shadowRadius: 10,
-    elevation: 6,
+    justifyContent: "center",
+    paddingVertical: 16,
+    gap: 8,
   },
   applyButtonText: {
-    color: "#fff",
-    fontSize: 17,
-    fontWeight: "800",
-    letterSpacing: 0.3,
+    color: "#FFF",
+    fontSize: 16,
+    fontWeight: "700",
   },
 });
