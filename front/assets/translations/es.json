@@ -9,6 +9,13 @@
   "delete": "Eliminar",
   "success": "¡Éxito!",
   "warning": "¡Advertencia!",
+  "splash": {
+    "initializing": "Iniciando aplicación...",
+    "loading_resources": "Cargando recursos...",
+    "checking_session": "Verificando sesión...",
+    "preparing_interface": "Preparando interfaz...",
+    "tagline": "Tu salud, bajo control"
+  },
   "errors": {
     "required": "Campo requerido",
     "fillAllFields": "Por favor, rellena todos los campos",
