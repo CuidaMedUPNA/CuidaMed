@@ -105,6 +105,47 @@ export const intakeHandlers: Partial<RouteHandlers> = {
   },
 
   getTodayIntakes: async (request, reply) => {
-    reply.status(200).send();
+    const userId = request.user?.userId;
+    if (!userId) {
+      return reply.status(401).send({ error: "Unauthorized" });
+    }
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const todayIntakes = [];
+
+    try {
+      const treatments = await getTreatmentsByUserId(userId);
+
+      for (const treatment of treatments) {
+        const intakes = await getIntakesByTreatmentId(treatment.id);
+
+        for (const intake of intakes) {
+          const intakeStartDate = new Date(intake.startDate);
+          const intakeEndDate = intake.endDate
+            ? new Date(intake.endDate)
+            : null;
+
+          const todayDayOfWeek = today.getDay() === 0 ? 7 : today.getDay();
+
+          const hasScheduleForToday = intake.dosingTimes.some(
+            (dosingTime) =>
+              dosingTime.dayOfWeek === null ||
+              dosingTime.dayOfWeek === todayDayOfWeek
+          );
+          if (
+            intakeStartDate <= today &&
+            (intakeEndDate === null || intakeEndDate >= today) &&
+            hasScheduleForToday
+          ) {
+            todayIntakes.push(intake);
+          }
+        }
+      }
+      return reply.status(200).send(todayIntakes);
+    } catch (error) {
+      request.log.error(error);
+      return reply.status(500).send({ error: "Internal Server Error" });
+    }
   },
 };

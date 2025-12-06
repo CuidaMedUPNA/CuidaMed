@@ -66,6 +66,16 @@ paths:
                   error:
                     type: string
                     example: "Bad Request"
+        "401":
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Unauthorized"
         "500":
           description: Error interno del servidor
           content:
