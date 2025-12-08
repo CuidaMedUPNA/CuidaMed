@@ -1,6 +1,6 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
+import { TouchableOpacity, View, Text, StyleSheet, Alert } from "react-native";
 
 interface Toma {
   id: string;
@@ -10,42 +10,78 @@ interface Toma {
   tomada: boolean;
 }
 
-export const IntakeCard = ({ toma }: { toma: Toma }) => {
+interface IntakeCardProps {
+  toma: Toma;
+  onMarkAsTaken?: (tomaId: string) => void;
+}
+
+export const IntakeCard = ({ toma, onMarkAsTaken }: IntakeCardProps) => {
+  const handlePress = () => {
+    if (!toma.tomada && onMarkAsTaken) {
+      Alert.alert(
+        "Marcar como tomada",
+        `¿Has tomado ${toma.medicamento} (${toma.dosis})?`,
+        [
+          {
+            text: "Cancelar",
+            style: "cancel",
+          },
+          {
+            text: "Sí, tomada",
+            onPress: () => onMarkAsTaken(toma.id),
+            style: "default",
+          },
+        ]
+      );
+    }
+  };
+
   return (
     <TouchableOpacity
-      style={styles.intakeCard}
+      style={[styles.intakeCard, toma.tomada && styles.intakeCardTomada]}
       activeOpacity={0.85}
+      onPress={handlePress}
+      disabled={toma.tomada}
     >
       <LinearGradient
-        colors={["#fffafaff", "#ffe0e0ff"]}
+        colors={
+          toma.tomada ? ["#F0FDF4", "#DCFCE7"] : ["#fffafaff", "#ffe0e0ff"]
+        }
         style={styles.intakeCardGradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
       >
         <LinearGradient
-          colors={["#FF6B6B", "#EF4444"]}
+          colors={toma.tomada ? ["#22C55E", "#16A34A"] : ["#FF6B6B", "#EF4444"]}
           style={styles.intakeIconContainer}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
         >
           <MaterialIcons
-            name="schedule"
+            name={toma.tomada ? "check-circle" : "schedule"}
             size={26}
             color="#FFF"
           />
         </LinearGradient>
 
         <View style={styles.intakeInfo}>
-          <Text style={styles.intakeMedicamento}>
+          <Text
+            style={[
+              styles.intakeMedicamento,
+              toma.tomada && { color: "#059669" },
+            ]}
+          >
             {toma.medicamento}
           </Text>
           <View style={styles.intakeDosisContainer}>
             <MaterialIcons
               name="medication"
               size={14}
-              color="#94A3B8"
+              color={toma.tomada ? "#10B981" : "#94A3B8"}
             />
-            <Text style={styles.intakeDosis}>
+            <Text
+              style={[styles.intakeDosis, toma.tomada && { color: "#10B981" }]}
+            >
               {toma.dosis}
             </Text>
           </View>
@@ -53,33 +89,64 @@ export const IntakeCard = ({ toma }: { toma: Toma }) => {
 
         <View style={styles.intakeHourContainer}>
           <View
+            style={[
+              styles.estadoBadge,
+              {
+                backgroundColor: toma.tomada
+                  ? "rgba(34, 197, 94, 0.15)"
+                  : "rgba(239, 68, 68, 0.1)",
+                borderWidth: 1,
+                borderColor: toma.tomada
+                  ? "rgba(34, 197, 94, 0.3)"
+                  : "rgba(239, 68, 68, 0.2)",
+              },
+            ]}
+          >
+            <Text
+              style={[
+                styles.intakeState,
+                { color: toma.tomada ? "#15803D" : "#DC2626" },
+              ]}
+            >
+              {toma.tomada ? "✓ Tomada" : "Pendiente"}
+            </Text>
+          </View>
+          <View
             style={{
               flexDirection: "row",
               alignItems: "center",
               gap: 4,
+              marginTop: 8,
             }}
           >
             <MaterialIcons
               name="access-time"
               size={16}
-              color="#FF6B6B"
+              color={toma.tomada ? "#22C55E" : "#FF6B6B"}
             />
-            <Text style={styles.intakeHour}>
+            <Text
+              style={[
+                styles.intakeHour,
+                { color: toma.tomada ? "#22C55E" : "#FF6B6B" },
+              ]}
+            >
               {toma.hora}
             </Text>
           </View>
         </View>
 
-        <View
-          style={{
-            marginLeft: 8,
-            backgroundColor: "#FF6B6B",
-            borderRadius: 12,
-            padding: 8,
-          }}
-        >
-          <MaterialIcons name="chevron-right" size={20} color="#FFF" />
-        </View>
+        {!toma.tomada && (
+          <View
+            style={{
+              marginLeft: 8,
+              backgroundColor: "#FF6B6B",
+              borderRadius: 12,
+              padding: 8,
+            }}
+          >
+            <MaterialIcons name="chevron-right" size={20} color="#FFF" />
+          </View>
+        )}
       </LinearGradient>
     </TouchableOpacity>
   );
@@ -95,6 +162,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 12,
     elevation: 5,
+  },
+  intakeCardTomada: {
+    opacity: 0.85,
   },
   intakeCardGradient: {
     flexDirection: "row",
@@ -135,6 +205,16 @@ const styles = StyleSheet.create({
   intakeHour: {
     fontSize: 18,
     fontWeight: "800",
-    color: "#FF6B6B",
+    color: "#1A1A2E",
+  },
+  estadoBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8,
+    marginTop: 6,
+  },
+  intakeState: {
+    fontSize: 11,
+    fontWeight: "700",
   },
 });

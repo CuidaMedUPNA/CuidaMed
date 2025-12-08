@@ -22,6 +22,16 @@ interface Toma {
   dosis: string;
   hora: string;
   tomada: boolean;
+  markedManually?: boolean;
+}
+
+function isIntakeTaken(scheduledTime: string): boolean {
+  const now = new Date();
+  const [hours, minutes] = scheduledTime.split(':').map(Number);
+  const scheduledDate = new Date();
+  scheduledDate.setHours(hours, minutes, 0, 0);
+  
+  return now > scheduledDate;
 }
 
 async function fetchTomasDeHoy(): Promise<Toma[]> {
@@ -36,7 +46,7 @@ async function fetchTomasDeHoy(): Promise<Toma[]> {
         medicamento: intake.medicineName,
         dosis: `${intake.doseAmount} ${intake.doseUnit}`,
         hora: dosing.scheduledTime,
-        tomada: false,
+        tomada: isIntakeTaken(dosing.scheduledTime),
       }))
     );
   } catch (error) {
@@ -47,6 +57,7 @@ async function fetchTomasDeHoy(): Promise<Toma[]> {
 
 export const MainPage = () => {
   const [refreshing, setRefreshing] = useState(false);
+  const [manuallyMarked, setManuallyMarked] = useState<Set<string>>(new Set());
   
   const {
     data: tomas,
@@ -59,12 +70,22 @@ export const MainPage = () => {
   });
 
   const router = useRouter();
-  // TODO: Implementar funcionalidad de tomas completadas
-  // const tomasPendientes = tomas?.filter((t) => !t.tomada).length ?? 0;
-  // const tomasCompletadas = tomas?.filter((t) => t.tomada).length ?? 0;
-  // const totalTomas = (tomas?.length ?? 0) || 1;
-  // const progreso = (tomasCompletadas / totalTomas) * 100;
-  const progreso = 0;
+  
+  // Aplicar marcado manual
+  const tomasConMarcado = tomas?.map(toma => ({
+    ...toma,
+    tomada: toma.tomada || manuallyMarked.has(toma.id),
+    markedManually: manuallyMarked.has(toma.id),
+  }));
+  
+  const tomasPendientes = tomasConMarcado?.filter((t) => !t.tomada).length ?? 0;
+  const tomasCompletadas = tomasConMarcado?.filter((t) => t.tomada).length ?? 0;
+  const totalTomas = (tomasConMarcado?.length ?? 0) || 1;
+  const progreso = (tomasCompletadas / totalTomas) * 100;
+
+  const handleMarkAsTaken = (tomaId: string) => {
+    setManuallyMarked(prev => new Set(prev).add(tomaId));
+  };
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -102,8 +123,7 @@ export const MainPage = () => {
         }
       >
         <View style={styles.content}>
-          {/* TODO: Implementar funcionalidad de tomas completadas */}
-          {/* {tomas && tomas.length !== 0 && (
+          {tomas && tomas.length !== 0 && (
             <View style={styles.resumenContainer}>
               <View style={styles.resumenCard}>
                 <LinearGradient
@@ -139,7 +159,7 @@ export const MainPage = () => {
                 </LinearGradient>
               </View>
             </View>
-          )} */}
+          )}
 
           <View style={styles.tomasSection}>
             <View style={styles.sectionHeader}>
@@ -226,8 +246,12 @@ export const MainPage = () => {
               </View>
             )}
 
-            {tomas?.map((toma) => (
-              <IntakeCard key={toma.id} toma={toma} />
+            {tomasConMarcado?.map((toma) => (
+              <IntakeCard 
+                key={toma.id} 
+                toma={toma} 
+                onMarkAsTaken={handleMarkAsTaken}
+              />
             ))}
           </View>
         </View>

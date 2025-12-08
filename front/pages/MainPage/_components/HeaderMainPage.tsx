@@ -16,7 +16,7 @@ export const HeaderMainPage = ({
     <View>
       <View style={styles.headerTop}>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-          <Text style={styles.appName}>¡Hola! Javier</Text>
+          <Text style={styles.appName}>¡Bienvenido!</Text>
           <Image source={logo} style={styles.logo} />
         </View>
         <TouchableOpacity
@@ -51,8 +51,8 @@ export const HeaderMainPage = ({
 
 const styles = StyleSheet.create({
   logo: {
-    width: 40,
-    height: 40,
+    width: 60,
+    height: 60,
   },
   container: {
     flex: 1,

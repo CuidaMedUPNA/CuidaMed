@@ -4,7 +4,12 @@ import { ActivityIndicator, View } from "react-native";
 import "@/i18n";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "@/api/client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { CustomSplashScreen } from "@/components/CustomSplashScreen";
+import * as SplashScreen from "expo-splash-screen";
+
+// Mantener la splash screen nativa mientras cargamos
+SplashScreen.preventAutoHideAsync();
 
 const queryClient = new QueryClient();
 
@@ -12,6 +17,12 @@ function RootLayoutNav() {
   const { isLogged, isLoading } = useAuth();
   const router = useRouter();
   const segments = useSegments();
+  const [showCustomSplash, setShowCustomSplash] = useState(true);
+
+  useEffect(() => {
+    // Ocultar la splash nativa cuando el componente esté listo
+    SplashScreen.hideAsync();
+  }, []);
 
   useEffect(() => {
     if (isLoading) return;
@@ -24,6 +35,13 @@ function RootLayoutNav() {
       router.replace("/login");
     }
   }, [isLogged, isLoading, router, segments]);
+
+  // Mostrar splash screen personalizada
+  if (showCustomSplash) {
+    return (
+      <CustomSplashScreen onFinish={() => setShowCustomSplash(false)} />
+    );
+  }
 
   if (isLoading) {
     return (
