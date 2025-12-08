@@ -20,7 +20,14 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "usesCleartextTraffic": true
+      "usesCleartextTraffic": true,
+      "package": "com.cuidamed.app",
+      "googleServicesFile": "./config/google-services.json",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyDdro8q8skoONN1TQ25t1i472jJHsIJb50"
+        }
+      }
     },
     "web": {
       "output": "static",
@@ -44,6 +51,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "524f0cb7-7f70-4d46-8de5-52d330456de9"
+      }
     }
   }
 }

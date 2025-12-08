@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "252775603902",
+    "project_id": "cuidamed-5e0cc",
+    "storage_bucket": "cuidamed-5e0cc.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:252775603902:android:469d777f3e75ecb42d08ef",
+        "android_client_info": {
+          "package_name": "com.cuidamed.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQrl81lMeHzj2oZzk4q-0kOC2u0hxcryU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
