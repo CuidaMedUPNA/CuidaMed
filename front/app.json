@@ -22,7 +22,12 @@
       "predictiveBackGestureEnabled": false,
       "usesCleartextTraffic": true,
       "package": "com.cuidamed.app",
-      "googleServicesFile": "./config/google-services.json"
+      "googleServicesFile": "./config/google-services.json",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyDdro8q8skoONN1TQ25t1i472jJHsIJb50"
+        }
+      }
     },
     "web": {
       "output": "static",
@@ -50,7 +55,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "6786d05b-549c-49b0-8cb7-f41e218a51f8"
+        "projectId": "524f0cb7-7f70-4d46-8de5-52d330456de9"
       }
     }
   }
