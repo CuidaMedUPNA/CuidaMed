@@ -22,7 +22,6 @@ const CustomNavBar: React.FC<BottomTabBarProps> = ({
   return (
     <View style={styles.container}>
       {state.routes.map((route, index) => {
-        console.log("route", route);
         if (["_sitemap", "+not-found"].includes(route.name)) {
           return null;
         }

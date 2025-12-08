@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   View,
@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  RefreshControl,
 } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -13,6 +14,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { IntakeCard } from "./_components/IntakeCard";
 import { HeaderMainPage } from "./_components/HeaderMainPage";
 import { useRouter } from "expo-router";
+import { getTodayIntakes } from "@cuidamed-api/client";
 
 interface Toma {
   id: string;
@@ -23,46 +25,29 @@ interface Toma {
 }
 
 async function fetchTomasDeHoy(): Promise<Toma[]> {
-  return [
-    {
-      id: "1",
-      medicamento: "Paracetamol",
-      dosis: "500mg",
-      hora: "08:00 AM",
-      tomada: true,
-    },
-    {
-      id: "2",
-      medicamento: "Ibuprofeno",
-      dosis: "200mg",
-      hora: "12:00 PM",
-      tomada: false,
-    },
-    {
-      id: "3",
-      medicamento: "Amoxicilina",
-      dosis: "500mg",
-      hora: "03:00 PM",
-      tomada: false,
-    },
-    {
-      id: "4",
-      medicamento: "Loratadina",
-      dosis: "10mg",
-      hora: "06:00 PM",
-      tomada: false,
-    },
-    {
-      id: "5",
-      medicamento: "Metformina",
-      dosis: "850mg",
-      hora: "09:00 PM",
-      tomada: false,
-    },
-  ];
+  try {
+    const response = await getTodayIntakes();
+    
+    const intakes = response.data || [];
+    
+    return intakes.flatMap((intake: any) =>
+      intake.dosingTimes.map((dosing: any) => ({
+        id: `${intake.id}-${dosing.id}`,
+        medicamento: intake.medicineName,
+        dosis: `${intake.doseAmount} ${intake.doseUnit}`,
+        hora: dosing.scheduledTime,
+        tomada: false,
+      }))
+    );
+  } catch (error) {
+    console.error("Error fetching today's intakes:", error);
+    throw error;
+  }
 }
 
 export const MainPage = () => {
+  const [refreshing, setRefreshing] = useState(false);
+  
   const {
     data: tomas,
     isLoading,
@@ -74,10 +59,18 @@ export const MainPage = () => {
   });
 
   const router = useRouter();
-  const tomasPendientes = tomas?.filter((t) => !t.tomada).length ?? 0;
-  const tomasCompletadas = tomas?.filter((t) => t.tomada).length ?? 0;
-  const totalTomas = (tomas?.length ?? 0) || 1;
-  const progreso = (tomasCompletadas / totalTomas) * 100;
+  // TODO: Implementar funcionalidad de tomas completadas
+  // const tomasPendientes = tomas?.filter((t) => !t.tomada).length ?? 0;
+  // const tomasCompletadas = tomas?.filter((t) => t.tomada).length ?? 0;
+  // const totalTomas = (tomas?.length ?? 0) || 1;
+  // const progreso = (tomasCompletadas / totalTomas) * 100;
+  const progreso = 0;
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  };
 
   const todayDate = new Date().toLocaleDateString("es-ES", {
     weekday: "long",
@@ -96,9 +89,21 @@ export const MainPage = () => {
         <HeaderMainPage todayDate={todayDate} progreso={progreso} />
       </LinearGradient>
 
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        style={styles.container} 
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={["#FF6B6B"]}
+            tintColor="#FF6B6B"
+          />
+        }
+      >
         <View style={styles.content}>
-          {tomas && tomas.length !== 0 && (
+          {/* TODO: Implementar funcionalidad de tomas completadas */}
+          {/* {tomas && tomas.length !== 0 && (
             <View style={styles.resumenContainer}>
               <View style={styles.resumenCard}>
                 <LinearGradient
@@ -134,7 +139,7 @@ export const MainPage = () => {
                 </LinearGradient>
               </View>
             </View>
-          )}
+          )} */}
 
           <View style={styles.tomasSection}>
             <View style={styles.sectionHeader}>
